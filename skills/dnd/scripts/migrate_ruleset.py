@@ -131,31 +131,31 @@ def cmd_migrate(campaign: str, ruleset: str, assume_yes: bool) -> int:
     if _has_ruleset_field(text):
         # Idempotent path — also surface the actual declared ruleset
         declared = campaign_ruleset(campaign)
-        print(f"[migrate_ruleset] Already migrated. Declared ruleset: {declared}")
+        print(f"[migrate_ruleset] Ya estaba migrada. Reglamento declarado: {declared}")
         return 0
 
     if not assume_yes:
         print(
-            f"\nCampaign '{campaign}' predates the ruleset field.\n"
-            f"  Path:   {state}\n"
-            f"  Action: stamp '**Ruleset:** {ruleset}' on the header line.\n"
-            f"  Backup: state.md.backup-pre-ruleset-<timestamp>\n"
+            f"\nLa campaña '{campaign}' es anterior al campo de reglamento.\n"
+            f"  Ruta:   {state}\n"
+            f"  Acción: estampar '**Ruleset:** {ruleset}' en la línea de encabezado.\n"
+            f"  Respaldo: state.md.backup-pre-ruleset-<timestamp>\n"
         )
         try:
-            ans = input(f"Proceed? [Y/n] ").strip().lower()
+            ans = input(f"¿Proceder? [Y/n] ").strip().lower()
         except EOFError:
             ans = ""
         if ans and ans not in ("y", "yes"):
-            print("[migrate_ruleset] Cancelled.")
+            print("[migrate_ruleset] Cancelado.")
             return 3
 
     bak = _backup(state)
     new_text = _inject_ruleset(text, ruleset)
     state.write_text(new_text, encoding="utf-8")
     print(
-        f"[migrate_ruleset] OK — '{campaign}' stamped as ruleset {ruleset}.\n"
-        f"  Backup: {bak}\n"
-        f"  Revert: cp '{bak}' '{state}'"
+        f"[migrate_ruleset] OK — '{campaign}' marcada con reglamento {ruleset}.\n"
+        f"  Respaldo: {bak}\n"
+        f"  Revertir: cp '{bak}' '{state}'"
     )
     return 0
 

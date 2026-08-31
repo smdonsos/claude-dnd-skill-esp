@@ -135,41 +135,41 @@ def main() -> int:
     if PLUGIN_MODE:
         local_ver = _plugin_local_version()
         remote_ver = _fetch_remote_version()
-        print(f"D&D plugin (dm) — installed version {local_ver}.")
+        print(f"Plugin D&D (dm) — versión instalada {local_ver}.")
         if remote_ver is None:
-            print("Couldn't reach the marketplace to check for a newer release "
-                  "(offline, or the repo isn't published there yet).")
-            print("Update any time with:  /plugin update dm")
+            print("No se pudo contactar al marketplace para chequear una versión más nueva "
+                  "(sin conexión, o el repo todavía no está publicado ahí).")
+            print("Actualizá en cualquier momento con:  /plugin update dm")
         elif _is_newer(remote_ver, local_ver):
-            print(f"⬆  Update available: {local_ver} → {remote_ver}")
-            print("   Update with:  /plugin update dm")
-            print("   Then /reload-plugins (or restart Claude Code) to load it.")
+            print(f"⬆  Actualización disponible: {local_ver} → {remote_ver}")
+            print("   Actualizá con:  /plugin update dm")
+            print("   Después /reload-plugins (o reiniciá Claude Code) para cargarla.")
         else:
-            print(f"✓  Up to date (latest published is {remote_ver}).")
-        print("\n(Plugin code is managed by Claude Code; `/dnd update` reports status "
-              "but defers the actual update to /plugin update.)")
+            print(f"✓  Actualizado (la última versión publicada es {remote_ver}).")
+        print("\n(El código del plugin lo gestiona Claude Code; `/dnd update` informa el estado "
+              "pero delega la actualización real a /plugin update.)")
         return 0
 
     if GIT_ROOT is None:
-        print(f"Skill at {SKILL_DIR} is not a git checkout and not a plugin install.",
+        print(f"El skill en {SKILL_DIR} no es un git checkout ni una instalación de plugin.",
               file=sys.stderr)
         print(
-            "If you installed manually, reinstall via:\n"
+            "Si lo instalaste manualmente, reinstalá con:\n"
             "    git clone https://github.com/neuralinitiative/claude-dnd-skill\n"
-            "or install it as a plugin (see README).",
+            "o instalalo como plugin (ver README).",
             file=sys.stderr,
         )
         return 2
 
     branch = git("rev-parse", "--abbrev-ref", "HEAD").stdout.strip()
     local_ver = _read_local_version()
-    print(f"Skill location: {SKILL_DIR}  (branch: {branch}, version: {local_ver})")
+    print(f"Ubicación del skill: {SKILL_DIR}  (rama: {branch}, versión: {local_ver})")
 
     dirty = git("status", "--porcelain").stdout.strip()
     if dirty:
-        print("Local changes detected — refusing to update:", file=sys.stderr)
+        print("Se detectaron cambios locales — se rechaza la actualización:", file=sys.stderr)
         print(dirty, file=sys.stderr)
-        print("\nCommit, stash, or discard your changes and re-run.", file=sys.stderr)
+        print("\nHacé commit, stash, o descartá tus cambios y volvé a correr.", file=sys.stderr)
         return 3
 
     git("fetch", "--quiet", "origin", branch)
@@ -177,30 +177,30 @@ def main() -> int:
     remote = git("rev-parse", f"origin/{branch}").stdout.strip()
 
     if local == remote:
-        print(f"Up to date with origin/{branch} ({local[:7]}).")
+        print(f"Actualizado con origin/{branch} ({local[:7]}).")
         return 0
 
     behind = git("rev-list", "--count", f"HEAD..origin/{branch}").stdout.strip()
     log = git("log", "--oneline", f"HEAD..origin/{branch}").stdout.strip()
     remote_ver = _read_remote_version(branch)
-    print(f"Local:  {local[:7]}  (version {local_ver})")
-    print(f"Remote: {remote[:7]}  (version {remote_ver})")
-    print(f"\n{behind} commits behind origin/{branch}:")
+    print(f"Local:  {local[:7]}  (versión {local_ver})")
+    print(f"Remoto: {remote[:7]}  (versión {remote_ver})")
+    print(f"\n{behind} commits detrás de origin/{branch}:")
     print(log)
     if local_ver != remote_ver and not local_ver.startswith("("):
-        print(f"\nVersion change: {local_ver} → {remote_ver}  "
-              f"(see CHANGELOG.md after update for details)")
+        print(f"\nCambio de versión: {local_ver} → {remote_ver}  "
+              f"(ver CHANGELOG.md después de actualizar para más detalles)")
 
     if args.check:
         return 0
 
     if not args.yes:
         try:
-            answer = input("\nPull now? (y/N) ").strip().lower()
+            answer = input("\n¿Actualizar ahora? (y/N) ").strip().lower()
         except EOFError:
             answer = ""
         if answer not in {"y", "yes"}:
-            print("Skipped.")
+            print("Omitido.")
             return 0
 
     pull = git("pull", "--ff-only", "origin", branch, check=False)
@@ -208,12 +208,12 @@ def main() -> int:
     sys.stderr.write(pull.stderr)
     if pull.returncode != 0:
         print(
-            "\nFast-forward failed — resolve manually with git in the skill directory.",
+            "\nEl fast-forward falló — resolvé manualmente con git en el directorio del skill.",
             file=sys.stderr,
         )
         return pull.returncode
 
-    print(f"\nUpdated to {remote[:7]}. Restart Claude Code to load new skill files.")
+    print(f"\nActualizado a {remote[:7]}. Reiniciá Claude Code para cargar los archivos nuevos del skill.")
     return 0
 
 

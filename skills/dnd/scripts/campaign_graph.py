@@ -807,7 +807,7 @@ def cmd_extract_apply(args) -> int:
 
     review = bool(getattr(args, "review", False))
     if review and pick is not None:
-        print("error: --review and --pick are mutually exclusive", file=sys.stderr)
+        print("error: --review y --pick son mutuamente excluyentes", file=sys.stderr)
         return 2
 
     data = _load(args.campaign)
@@ -829,7 +829,7 @@ def cmd_extract_apply(args) -> int:
             print(f"    note: {p['note']}")
         while True:
             try:
-                a = input("    apply? [y]es / [n]o / [q]uit: ").strip().lower()
+                a = input("    ¿aplicar? [y]es / [n]o / [q]uit: ").strip().lower()
             except EOFError:
                 return "q"
             if a in {"y", "yes", ""}:
@@ -838,7 +838,7 @@ def cmd_extract_apply(args) -> int:
                 return "n"
             if a in {"q", "quit", "exit"}:
                 return "q"
-            print("    please enter y / n / q")
+            print("    ingresá y / n / q")
 
     quit_review = False
     for i, p in enumerate(proposals, 1):
@@ -860,16 +860,16 @@ def cmd_extract_apply(args) -> int:
         applied_nodes += made
         if ok:
             applied_edges += 1
-            print(f"  applied {msg}")
+            print(f"  aplicado {msg}")
         else:
             if msg != "already in graph":
-                print(f"  skip {i}: {msg}", file=sys.stderr)
+                print(f"  omitido {i}: {msg}", file=sys.stderr)
             skipped += 1
 
     _save(args.campaign, data)
-    msg = f"# done: +{applied_nodes} nodes, +{applied_edges} edges, {skipped} skipped"
+    msg = f"# listo: +{applied_nodes} nodos, +{applied_edges} edges, {skipped} omitidos"
     if review_skipped:
-        msg += f", {review_skipped} declined in review"
+        msg += f", {review_skipped} rechazados en revisión"
     print(msg)
     return 0
 

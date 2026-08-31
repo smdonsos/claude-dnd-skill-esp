@@ -147,34 +147,34 @@ def _verify_campaign_data() -> tuple:
 def _retire_standalone(yes: bool, dry_run: bool) -> int:
     """Back up and remove the legacy standalone skill dir. Returns 0/1/2."""
     if LEGACY_SKILL.is_symlink():
-        _say("• The legacy skill is a SYMLINK (likely a dev clone or GNU Stow setup).")
-        _say(f"  Leaving it untouched. Remove the link yourself when ready:")
+        _say("• El skill legado es un SYMLINK (probablemente un dev clone o setup de GNU Stow).")
+        _say(f"  Se deja intacto. Eliminá el enlace vos mismo cuando quieras:")
         _say(f"      rm '{LEGACY_SKILL}'")
         return 0
 
     stamp = time.strftime("%Y%m%d-%H%M%S")
     backup = LEGACY_SKILL.with_name(f"dnd.v1-backup-{stamp}")
     _say()
-    _say(f"• Retire the old standalone skill so /dnd no longer shadows /dm:dnd:")
+    _say(f"• Retirar el skill standalone viejo para que /dnd deje de tapar a /dm:dnd:")
     _say(f"      {LEGACY_SKILL}")
-    _say(f"  It will be moved to a backup (not deleted):")
+    _say(f"  Se moverá a un respaldo (no se borra):")
     _say(f"      {backup}")
     if dry_run:
-        _say("  [dry-run] no changes made.")
+        _say("  [dry-run] no se hizo ningún cambio.")
         return 0
     if not yes:
         try:
-            ans = input("  Proceed? [y/N] ").strip().lower()
+            ans = input("  ¿Proceder? [y/N] ").strip().lower()
         except EOFError:
             ans = ""
         if ans not in ("y", "yes"):
-            _say("  Skipped. (Re-run with --yes to auto-confirm, or remove it manually later.)")
+            _say("  Omitido. (Volvé a correr con --yes para confirmar automáticamente, o eliminalo manualmente después.)")
             return 1
     try:
         shutil.move(str(LEGACY_SKILL), str(backup))
-        _say(f"  ✓ Moved to {backup}")
+        _say(f"  ✓ Movido a {backup}")
     except OSError as e:
-        _say(f"  ✗ Could not move it: {e}", )
+        _say(f"  ✗ No se pudo mover: {e}", )
         return 2
     return 0
 
@@ -188,54 +188,54 @@ def main() -> int:
                     help="relocate runtime state but leave the old skill in place")
     args = ap.parse_args()
 
-    _say("D&D skill — v1 (standalone) → v2 (plugin) migration")
+    _say("Skill D&D — migración v1 (standalone) → v2 (plugin)")
     _say("=" * 52)
 
     if not LEGACY_SKILL.exists():
-        _say(f"No standalone install found at {LEGACY_SKILL}.")
-        _say("Nothing to migrate — you're either already on the plugin or starting fresh.")
-        _say("Install the plugin with:")
+        _say(f"No se encontró instalación standalone en {LEGACY_SKILL}.")
+        _say("Nada que migrar — ya estás en el plugin, o estás empezando de cero.")
+        _say("Instalá el plugin con:")
         _say("    /plugin marketplace add neuralinitiative/claude-dnd-skill")
         _say("    /plugin install dm@neural-initiative")
         return 0
 
-    _say(f"• Found a standalone install (version {_read_legacy_version()}) at:")
+    _say(f"• Se encontró una instalación standalone (versión {_read_legacy_version()}) en:")
     _say(f"      {LEGACY_SKILL}")
 
     # 1) Carry over runtime state (device pairings, token, TLS certs, session).
     _say()
-    _say(f"• Relocating runtime state → {_runtime_dir()}")
+    _say(f"• Reubicando el estado runtime → {_runtime_dir()}")
     carried = _relocate_runtime(args.dry_run)
     if not carried:
-        _say("  (nothing to carry — older runtime files not present; "
-             "a 1.13.x standalone already kept them in the shared runtime dir)")
+        _say("  (nada que trasladar — no hay archivos runtime antiguos; "
+             "un standalone 1.13.x ya los tenía en el directorio runtime compartido)")
     else:
         for name, note in carried:
             _say(f"    - {name}: {note}")
         kept = [n for n, note in carried if "carried" in note or "would copy" in note]
         if any(n in VALUABLE for n in kept):
-            _say("  → Device pairings / TLS trust preserved; phones won't need re-approval.")
+            _say("  → Emparejamientos de dispositivos / confianza TLS preservados; los teléfonos no van a necesitar re-aprobación.")
 
     # 2) Reassure about campaign data (shared root — never moved).
     root, n_camp, n_char = _verify_campaign_data()
     _say()
-    _say(f"• Campaign data lives at the shared DATA root and is untouched:")
-    _say(f"      {root}   ({n_camp} campaign(s), {n_char} character(s))")
+    _say(f"• Los datos de campaña viven en la raíz de DATOS compartida y no se tocan:")
+    _say(f"      {root}   ({n_camp} campaña(s), {n_char} personaje(s))")
 
     # 3) Retire the old standalone (unless asked to keep it).
     rc = 0
     if args.keep_standalone:
         _say()
-        _say("• Leaving the standalone install in place (--keep-standalone).")
-        _say("  Note: /dnd and /dm:dnd will both exist until you remove it.")
+        _say("• Se deja la instalación standalone en su lugar (--keep-standalone).")
+        _say("  Nota: /dnd y /dm:dnd van a coexistir hasta que la elimines.")
     else:
         rc = _retire_standalone(args.yes, args.dry_run)
 
     # 4) Next steps.
     _say()
-    _say("Done." if rc == 0 else "Finished with steps skipped.")
-    _say("Going forward, invoke the DM with  /dm:dnd  (the old /dnd is retired).")
-    _say("If you haven't installed the plugin yet:")
+    _say("Listo." if rc == 0 else "Terminado con pasos omitidos.")
+    _say("De ahora en más, invocá al DM con  /dm:dnd  (el viejo /dnd quedó retirado).")
+    _say("Si todavía no instalaste el plugin:")
     _say("    /plugin marketplace add neuralinitiative/claude-dnd-skill")
     _say("    /plugin install dm@neural-initiative")
     return rc
@@ -245,5 +245,5 @@ if __name__ == "__main__":
     try:
         sys.exit(main())
     except KeyboardInterrupt:
-        print("\nAborted.", file=sys.stderr)
+        print("\nCancelado.", file=sys.stderr)
         sys.exit(1)

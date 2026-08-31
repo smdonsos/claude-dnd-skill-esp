@@ -293,7 +293,7 @@ def add_archive_audit_note(camp_dir: pathlib.Path, old: str, new: str,
     except (OSError, TextDecodeError) as e:
         # Refuse rather than prepend a note onto a file whose decode would
         # already have replaced every non-ASCII byte with U+FFFD.
-        print(f"    session-log-archive.md: {e} — audit note skipped", file=sys.stderr)
+        print(f"    session-log-archive.md: {e} — nota de auditoría omitida", file=sys.stderr)
         return False
     today = datetime.date.today().isoformat()
     note = (f"<!-- rename audit {today}: '{old}' renamed to '{new}' "
@@ -352,7 +352,7 @@ def main() -> int:
 
     camp_dir = find_campaign(args.campaign)
     if not camp_dir.exists():
-        print(f"npc_rename: campaign '{args.campaign}' not found at {camp_dir}",
+        print(f"npc_rename: campaña '{args.campaign}' no encontrada en {camp_dir}",
               file=sys.stderr)
         return 1
 
@@ -360,28 +360,28 @@ def main() -> int:
     if args.random:
         taken = all_taken_slugs()
         new_name = random_name(taken)
-        print(f"  --random picked: {new_name}")
+        print(f"  --random eligió: {new_name}")
     else:
         new_name = args.new
 
     # Find hits
     hits = find_hits(camp_dir, args.old, args.include_archive)
     if not hits:
-        print(f"npc_rename: no occurrences of '{args.old}' found in {camp_dir.name}",
+        print(f"npc_rename: no se encontraron apariciones de '{args.old}' en {camp_dir.name}",
               file=sys.stderr)
         return 1
 
     total_lines = sum(len(v) for v in hits.values())
-    print(f"\n=== rename plan: '{args.old}' → '{new_name}' in {camp_dir.name} ===")
-    print(f"  files affected : {len(hits)}")
-    print(f"  total matches  : {total_lines}\n")
+    print(f"\n=== plan de renombrado: '{args.old}' → '{new_name}' en {camp_dir.name} ===")
+    print(f"  archivos afectados : {len(hits)}")
+    print(f"  coincidencias totales : {total_lines}\n")
     for f, matches in hits.items():
-        print(f"  {f.name}: {len(matches)} matches")
+        print(f"  {f.name}: {len(matches)} coincidencias")
         for ln, line in matches[:3]:
             preview = line if len(line) <= 120 else line[:117] + "..."
             print(f"    L{ln}: {preview}")
         if len(matches) > 3:
-            print(f"    ... and {len(matches) - 3} more")
+            print(f"    ... y {len(matches) - 3} más")
     # Graph rename preview
     g = camp_dir / "graph.json"
     if g.exists():
@@ -389,7 +389,7 @@ def main() -> int:
             data = json.loads(g.read_text(encoding="utf-8"))
             graph_match = any(n.get("name") == args.old for n in data.get("nodes", []))
             if graph_match:
-                print(f"  graph.json: 1 node will be renamed (edges preserved)")
+                print(f"  graph.json: se renombrará 1 nodo (edges preservados)")
         except json.JSONDecodeError:
             pass
     # PC file rename preview
@@ -397,21 +397,21 @@ def main() -> int:
         old_pc = camp_dir / "characters" / f"{slug(args.old)}.md"
         if old_pc.exists():
             print(f"  characters/{slug(args.old)}.md → characters/{slug(new_name)}.md")
-            print(f"  WARNING: PC rename also updates global roster at "
+            print(f"  ADVERTENCIA: el renombrado de PC también actualiza el roster global en "
                   f"{characters_dir() / (slug(args.old) + '.md')}")
 
     if args.dry_run:
-        print("\n  --dry-run set; no writes performed.")
+        print("\n  --dry-run activado; no se escribió nada.")
         return 0
 
     if not args.yes:
-        if not _confirm("\nApply rename (with backup)?"):
-            print("  cancelled.")
+        if not _confirm("\n¿Aplicar el renombrado (con respaldo)?"):
+            print("  cancelado.")
             return 1
 
     # Backup
     backup = _backup(camp_dir)
-    print(f"\n  backup: {backup}")
+    print(f"\n  respaldo: {backup}")
 
     # Apply text renames
     total_replacements = 0
@@ -421,15 +421,15 @@ def main() -> int:
         except (OSError, TextDecodeError) as e:
             # Backup is already taken above; refuse this file rather than
             # write U+FFFD back into it, and keep going with the rest.
-            print(f"    {f.name}: {e} — skipped (unreadable encoding)", file=sys.stderr)
+            print(f"    {f.name}: {e} — omitido (encoding ilegible)", file=sys.stderr)
             continue
-        print(f"    {f.name}: {n} replacements")
+        print(f"    {f.name}: {n} reemplazos")
         total_replacements += n
 
     # Apply graph rename
     if g.exists():
         if apply_graph_rename(g, args.old, new_name):
-            print(f"    graph.json: node renamed")
+            print(f"    graph.json: nodo renombrado")
 
     # PC file rename
     if args.type == "pc":
@@ -444,22 +444,22 @@ def main() -> int:
             if global_old.exists():
                 shutil.copy(new_pc, global_new)
                 global_old.unlink()
-                print(f"    global roster updated")
+                print(f"    roster global actualizado")
 
     # Archive audit note (only if NOT including archive in rename)
     if not args.include_archive:
         sess = _read_session_count(camp_dir)
         if add_archive_audit_note(camp_dir, args.old, new_name, sess):
-            print(f"    session-log-archive.md: audit note added at top")
+            print(f"    session-log-archive.md: nota de auditoría agregada al principio")
 
     # Update name registry
     sess = _read_session_count(camp_dir)
     registry_retire(args.old, args.campaign, replaced_by=new_name)
     registry_add(new_name, args.type, args.campaign, sess)
-    print(f"    name_registry: '{args.old}' retired, '{new_name}' added")
+    print(f"    name_registry: '{args.old}' retirado, '{new_name}' agregado")
 
-    print(f"\n  done. {total_replacements} text replacements + graph + registry updates.")
-    print(f"  To revert: rm -rf '{camp_dir}' && mv '{backup}' '{camp_dir}'")
+    print(f"\n  listo. {total_replacements} reemplazos de texto + actualizaciones de grafo y registro.")
+    print(f"  Para revertir: rm -rf '{camp_dir}' && mv '{backup}' '{camp_dir}'")
     return 0
 
 
