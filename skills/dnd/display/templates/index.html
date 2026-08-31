@@ -3820,6 +3820,41 @@
 'use strict';
 
 // ═══════════════════════════════════════════════════════════════════
+// I18N — display companion UI strings
+// ═══════════════════════════════════════════════════════════════════
+// Fase 0 (CLA-5) of the translation project: this is the *mechanism*
+// only. Fase 4 (CLA-9) populates STRINGS.es with the ~174 cataloged UI
+// strings (settings panel, tooltips, modals, status strip, toasts,
+// SRD lookup, dice drawer, etc.) and migrates each hardcoded literal
+// in this file to call t('some.key') instead. Until Fase 4 lands, the
+// existing hardcoded English literals elsewhere in this file are
+// untouched by this scaffold — t() is unused until callers adopt it.
+//
+// Fallback order: STRINGS[LANG][key] → STRINGS.en[key] → the key
+// itself, so a string missing from either dict never renders blank.
+const STRINGS = {
+  es: {
+    // Populated in Fase 4 — see docs/i18n/glosario.md for the D&D
+    // terminology to use (spell/condition/class names, mechanic terms).
+  },
+  en: {
+    // Reference/fallback copy. Not required to be exhaustive: literals
+    // not yet migrated to t() keep rendering directly regardless.
+  },
+};
+
+// This fork ships Spanish-only; no language switcher is planned, so LANG
+// is a constant rather than a runtime setting.
+const LANG = 'es';
+
+function t(key) {
+  const dict = STRINGS[LANG] || STRINGS.en;
+  if (Object.prototype.hasOwnProperty.call(dict, key)) return dict[key];
+  if (Object.prototype.hasOwnProperty.call(STRINGS.en, key)) return STRINGS.en[key];
+  return key;
+}
+
+// ═══════════════════════════════════════════════════════════════════
 // SCENE MANAGEMENT
 // ═══════════════════════════════════════════════════════════════════
 
