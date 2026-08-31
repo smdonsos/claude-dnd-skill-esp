@@ -46,5 +46,8 @@ venv/
 # Copyrighted reference material (official rulebooks, etc.) kept locally for
 # terminology consultation during translation work — never redistributed via
 # this repo. See docs/i18n/ (Fase 0) for the extracted, freely-redistributable
-# glossary derived from these sources.
+# glossary derived from these sources. The .txt is a local pdftotext -layout
+# dump of the .pdf (see docs/i18n/glosario.md "Método de verificación") —
+# same copyright status, so it never gets committed either.
 /*.pdf
+/*.txt

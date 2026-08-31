@@ -26,8 +26,11 @@ def _names(hints):
 class SuggestTests(unittest.TestCase):
 
     def test_condition_typo(self):
+        # "conditions" is translated (Fase 3/CLA-8) — the English typo must
+        # still resolve via the untranslated `index` slug, surfaced under
+        # the (Spanish) display name "envenenado".
         hints = lookup.suggest("poisonned", category="condition")
-        self.assertIn("poisoned", _names(hints))
+        self.assertIn("envenenado", _names(hints))
 
     def test_spell_typo(self):
         hints = lookup.suggest("fireballl", category="spell")
@@ -42,9 +45,11 @@ class SuggestTests(unittest.TestCase):
         self.assertIn("cunning action", _names(hints))
 
     def test_cross_category_typo(self):
-        # No category given — should still find the near-miss across categories.
+        # No category given — should still find the near-miss across
+        # categories. "conditions" is translated (Fase 3/CLA-8), so the
+        # English typo resolves under the Spanish display name.
         hints = lookup.suggest("poisonned")
-        self.assertIn("poisoned", _names(hints))
+        self.assertIn("envenenado", _names(hints))
 
     def test_respects_result_cap(self):
         hints = lookup.suggest("fireballl", category="spell", n=2)
