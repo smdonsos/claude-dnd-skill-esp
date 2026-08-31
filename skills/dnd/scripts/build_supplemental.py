@@ -36,6 +36,7 @@ import urllib.parse
 from html.parser import HTMLParser
 
 from paths import campaigns_dir as _campaigns_dir, find_campaign as _find_campaign, skill_root as _skill_root
+from lookup import _norm
 SKILLS_DIR       = str(_skill_root())
 CAMPAIGNS_DIR    = str(_campaigns_dir())
 
@@ -159,10 +160,6 @@ def _save_supplemental(data: dict) -> None:
     with open(SUPPLEMENTAL_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
     print(f"Saved → {SUPPLEMENTAL_FILE}")
-
-
-def _norm(s: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
 
 
 def _in_supplemental(supp: dict, name: str) -> bool:
