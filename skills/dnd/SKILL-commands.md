@@ -1,142 +1,142 @@
-# D&D Skill — Command Procedures
+# D&D Skill — Procedimientos de comandos
 
-Full step-by-step procedures for all `/dm:dnd` slash commands. Load this file at `/dm:dnd load` or before executing any slash command.
+Procedimientos completos, paso a paso, para todos los comandos slash `/dm:dnd`. Cargá este archivo en `/dm:dnd load` o antes de ejecutar cualquier comando slash.
 
-> **Path note:** commands below use `${CLAUDE_SKILL_DIR}` for the skill directory. This file is read verbatim, so that token is **not** auto-expanded here — substitute the absolute skill-dir path (from `SKILL.md`) before running any command, or it will fail with a broken `/scripts/…` path.
-
----
-
-## `/dm:dnd new <campaign-name> [theme]`
-1. **Session setup — call `AskUserQuestion`** with **two questions**:
-
-   **Q1 *"Display & input mode?"***
-   - `No display` → continue without display.
-   - `Display (local)` → `bash ${CLAUDE_SKILL_DIR}/display/start-display.sh`, print URL, set `_display_running = true`, then `python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --clear`.
-   - `Display (LAN)` → `bash ${CLAUDE_SKILL_DIR}/display/start-display.sh --lan`, print both URLs, set `_display_running = true`, then `--clear` as above.
-   - `Display + autorun (LAN)` → as **Display (LAN)**, and write `autorun: true` to `state.md → ## Session Flags`.
-
-   **Q2 *"Dice rolls?"*** — set how PC d20s are handled (see SKILL.md "Dice convention"):
-   - `Players roll their own` (default) → write `roll_mode: players` to `state.md → ## Session Flags`. You will call for each PC roll and wait — never auto-roll a PC.
-   - `DM rolls everything openly` → write `roll_mode: auto`. You resolve PC rolls yourself with full math shown.
-
-   Default to `roll_mode: players` if the question is dismissed.
-2. **Ruleset selection (added 2026-05-08).** Ask: *"D&D 5e ruleset for this campaign? **2014** (SRD 5.1, default — full mechanics, classic Player's Handbook structure) or **2024** (SRD 5.2, weapon mastery + origin feats + background ASIs + revised exhaustion)?"* Default to `2014` if no answer or ambiguous. Write the chosen value to `state.md` header line as `**Ruleset:** 2014` or `**Ruleset:** 2024`.
-
-   If 2024 was chosen: verify the dataset exists with `ls ${CLAUDE_SKILL_DIR}/data/dnd5e_srd_2024.json`. If missing, run `python3 ${CLAUDE_SKILL_DIR}/scripts/build_srd.py --ruleset 2024` (one-time, ~3 min). Until the dataset exists, lookup-based features will fall back to 2014.
-3. `mkdir -p ~/.claude/dnd/campaigns/<name>/characters`
-4. Copy and populate templates from `${CLAUDE_SKILL_DIR}/templates/` — state.md, world.md, npcs.md, session-log.md. The state.md header keeps the `**Ruleset:**` field set in step 2.
-5. Ask: **party size** and **starting level**
-6. **Tone/Genre Wizard** — present all four in one message:
-   - Tone: `grimdark / dark fantasy / heroic / horror / political / swashbuckling / cosmic`
-   - Magic level: `none / low / medium / high`
-   - Setting type: `medieval / renaissance / ancient / nautical / underground`
-   - Danger level: `lethal / gritty / standard / heroic`
-   *(If `[theme]` supplied, pre-fill Tone and ask remaining three. Randomise any blank via dice.py and log `"d6=N → [result]"` in world.md.)*
-7. **World Foundations** — geography/biome/climate, magic system, pantheon (2–3 active deities), calendar. Write to `## World Foundations` in world.md. Seed `state.md → ## World State → In-world date`.
-8. **Three Truths** — one settlement, one nearby threat, one mystery (with clue trail). Write to respective sections in world.md.
-9. **Threat Escalation Arc** — fill the five-stage table in world.md immediately after threat generation. Set current stage to 1. Write `Threat arc stage: 1 — Now` to `state.md → ## World State`.
-10. **2 Factions** — archetype, all fields including current activity. Write to `## Factions` in world.md. Write one-line faction states to `state.md → ## World State`.
-11. **3 NPCs with relationship web** — full entries (role, stats, demeanor, motivation, secret, speech quirk, faction, current goal, schedule, personality axes). Generate all three first, then fill Relationships (every NPC needs ≥2 links to others). Update index table.
-12. **3–5 Quest Seeds** from threat, factions, mystery, NPC motivations. Write to `## Quest Seed Bank` in world.md.
-13. **Dynamic Campaign Arc** — auto-generate the arc from all world data just created. Use Opus for this step. Ask: *"Generate a committed narrative arc? [y/n — recommended]"*
-
-   **If yes:** Drawing from theme, threat arc stages, factions, Three Truths, NPC motivations, and quest seeds, derive:
-   - **`theme`** — one sentence: what is this story ultimately about? Not the threat — its meaning.
-   - **`resolution`** — the committed endpoint shape: if the party succeeds, what's the emotional truth? Keep specific events open; commit to the shape.
-   - **Acts 1–3**, each with 2 beats. Each beat has:
-     - `label` — a dramatic name
-     - `what_changes` — before/after: what's fundamentally different once this lands? **CRITICAL: write this as a CONSEQUENCE, not an event.** A consequence is a state-of-the-world after the beat. An event is one specific thing that happens. Consequences survive when players pre-empt the obvious event delivery; events break and the beat goes stale. Example contrast for a 2b "All Is Lost" beat:
-       - ❌ Event-shaped (fragile): *"Vedra's nomination succeeds and she takes the third seat."* If the party flips the clerk, this can't land — beat goes stale.
-       - ✅ Consequence-shaped (robust): *"The party experiences a concrete cost from the Kept's escalation that they cannot reverse — a cover blown, an ally compromised, or a position they relied on no longer available."* This survives multiple delivery paths.
-     - `world_pressure` — the specific faction or NPC move (naming actual entities from this world) that makes the beat feel inevitable. This MAY be event-shaped — but if the players pre-empt it, you're expected to revise per SKILL.md rule 8 (pre-emption is a revision trigger).
-   - **`steering_notes`** — how to reach the first beat without forcing it
-
-   Beat layout:
-   - Act 1: **1a Inciting Incident** (the threat becomes personal for the party), **1b Complication** (the problem is bigger or stranger than it first appeared)
-   - Act 2: **2a Midpoint Shift** (what the party *thought* they were doing changes), **2b All Is Lost** (a genuine setback — something fails, is lost, or collapses)
-   - Act 3: **3a Final Confrontation** (the decisive moment the campaign turns on), **3b Resolution** (what's different about the world and the characters after)
-
-   Write to `state.md → ## Campaign Arc` with `type: dynamic`. Deliver a one-paragraph arc summary to the DM.
-
-   **If no:** Write `type: sandbox` to `## Campaign Arc`. The story remains open-ended with no arc tracking.
-
-14. Write state.md with session count 0, starting location.
-15. **Physical dice server check (only if installed).** Skip this step unless the optional dice server is set up: probe with `test -d ~/.dnd-dice || test "$DND_DICE_PHYSICAL" = "1"` and short-circuit out if the test fails. When it passes, run `curl -sf http://localhost:7777/health` (timeout 1s). If it returns OK, fetch the LAN IP with `python3 -c "import socket; s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM); s.connect(('8.8.8.8', 80)); print(s.getsockname()[0]); s.close()"` and announce: *"Dice server is up. Once each player has made a character via `/dm:dnd character new`, they should open `http://<ip>:7777/?player=<pc-name>` on their phone (lowercase, hyphens for spaces) and tap **consecrate** before play starts. NPC/DM rolls auto-resolve on the host."* If unreachable, skip silently.
-16. Confirm creation, offer `/dm:dnd character new`.
+> **Nota de ruta:** los comandos de abajo usan `${CLAUDE_SKILL_DIR}` para el directorio del skill. Este archivo se lee de forma literal, así que ese token **no** se expande automáticamente acá — sustituí la ruta absoluta del skill dir (de `SKILL.md`) antes de correr cualquier comando, o va a fallar con una ruta `/scripts/…` rota.
 
 ---
 
-## `/dm:dnd load <campaign-name>`
-0. **Pick the campaign if none was named.** If `<campaign-name>` was supplied (or the player clearly named one), use it. Otherwise `ls` the campaigns dir (`~/.claude/dnd/campaigns/` or `$DND_CAMPAIGN_ROOT/campaigns/`) and **call `AskUserQuestion`**: *"Which campaign?"* with the existing campaign names as options (most-recently-played first — sort by `state.md` mtime). The player can pick "Other" to type a name. If there are no campaigns, tell them and offer `/dm:dnd new`.
-1. **Session setup — call `AskUserQuestion`** with **two questions** (not typed y/n prompts):
+## `/dm:dnd new <nombre-campaña> [tema]`
+1. **Configuración de sesión — llamá a `AskUserQuestion`** con **dos preguntas**:
 
-   **Q1 *"Display & input mode?"***
-   - `No display` → continue without display.
-   - `Display (local)` → `bash ${CLAUDE_SKILL_DIR}/display/start-display.sh`, print URL, set `_display_running = true`.
-   - `Display (LAN)` → `bash ${CLAUDE_SKILL_DIR}/display/start-display.sh --lan`, print both URLs, set `_display_running = true`.
-   - `Display + autorun (LAN)` → as **Display (LAN)**, and also write `autorun: true` to `state.md → ## Session Flags`; enter the autorun wait after the recap.
+   **P1 *"¿Modo de pantalla y de entrada?"***
+   - `Sin pantalla` → continuar sin display.
+   - `Pantalla (local)` → `bash ${CLAUDE_SKILL_DIR}/display/start-display.sh`, imprimir la URL, poner `_display_running = true`, luego `python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --clear`.
+   - `Pantalla (LAN)` → `bash ${CLAUDE_SKILL_DIR}/display/start-display.sh --lan`, imprimir ambas URLs, poner `_display_running = true`, luego `--clear` como arriba.
+   - `Pantalla + autorun (LAN)` → igual que **Pantalla (LAN)**, y además escribir `autorun: true` en `state.md → ## Session Flags`.
 
-   **Q2 *"Dice rolls?"*** — confirm how PC d20s are handled this session (see SKILL.md "Dice convention"). Pre-fill the recommended option from the existing `roll_mode` in `state.md` if present, else `players`:
-   - `Players roll their own` → write `roll_mode: players`. Call for each PC roll and wait — never auto-roll a PC.
-   - `DM rolls everything openly` → write `roll_mode: auto`. Resolve PC rolls yourself with full math shown.
+   **P2 *"¿Tiradas de dados?"*** — define cómo se manejan los d20 de los PJ (ver "Convención de tiradas" en SKILL.md):
+   - `Los jugadores tiran los suyos` (default) → escribir `roll_mode: players` en `state.md → ## Session Flags`. Vas a pedir cada tirada de PJ y esperar — nunca tirar por un PJ.
+   - `El DM tira todo abiertamente` → escribir `roll_mode: auto`. Vos resolvés las tiradas de PJ mostrando toda la matemática.
 
-   - (Defaults if the player dismisses: no display, no autorun, `roll_mode: players` — or the existing saved value.)
-   - **Session tail replay:** before clearing the display, check if the campaign's `session_tail.json` exists. The campaign-side path is the authoritative one — `~/.claude/dnd/campaigns/<name>/session_tail.json`. **Do NOT read** the legacy/fallback at `${CLAUDE_SKILL_DIR}/display/session_tail.json`; that file may exist from older sessions or other campaigns and will mislead the replay. If the campaign-side file does not exist, skip replay (display starts blank). If it does, read it. After `--clear` and full stats push (step 4 below), replay the tail by sending each entry via the appropriate `send.py` flag. Entry type → flag mapping:
-     - `player` key present → `send.py --player <name>` with text via stdin
-     - `npc` key present → `send.py --npc <name>` with text via stdin
-     - `dice` key present → `send.py --dice` with text via stdin
-     - `xp_award` key present → `send.py --xp-award '<json of the xp_award sub-dict>'`
-     - `inspiration_award` key present → `send.py --inspiration-award '<name>'`
-     - none of the above (plain DM narration) → `send.py` with text via stdin
-     This restores the last scene to the display before the recap. The tail is written continuously by `dnd-display-app.py` — it always contains the last session's final exchanges regardless of how the session ended.
-   - Clear previous transcript: `python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --clear`
+   Default a `roll_mode: players` si se descarta la pregunta.
+2. **Selección de reglamento (agregado 2026-05-08).** Preguntá: *"¿Reglamento de D&D 5e para esta campaña? **2014** (SRD 5.1, default — mecánicas completas, estructura clásica del Manual del Jugador) o **2024** (SRD 5.2, maestría de armas + dotes de trasfondo + ASIs por trasfondo + cansancio revisado)?"* Default a `2014` si no hay respuesta o es ambigua. Escribí el valor elegido en la línea de encabezado de `state.md` como `**Ruleset:** 2014` o `**Ruleset:** 2024`.
 
-     ⚠ **`--clear` wipes both text log AND stats** (player card, world time, factions, quests). It must always be paired with the full `--replace-players ... --world-time ... --factions ... --quests ...` push from step 4 — otherwise the sidebar card and sheet tab render empty. Same rule applies any time you `--clear` mid-session (e.g. restoring scene state after a re-replay): always re-push the full character JSON + world-time + factions + quests in the same bash burst as the clear.
-   - Register active campaign for DM Help: `python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --set-campaign <campaign-name>`
-   - If autorun **yes** → write `autorun: true` to `state.md → ## Session Flags`; enter the autorun wait after the recap paragraph.
-   - If autorun **no** → continue without autorun; DM drives turns manually.
-   - **Physical dice server check (only if installed).** Skip this step unless the optional dice server is set up: probe with `test -d ~/.dnd-dice || test "$DND_DICE_PHYSICAL" = "1"` and short-circuit out if the test fails. When it passes, run `curl -sf http://localhost:7777/health` (timeout 1s). If it returns OK, fetch the LAN IP with `python3 -c "import socket; s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM); s.connect(('8.8.8.8', 80)); print(s.getsockname()[0]); s.close()"` and announce to the table: *"Dice server is up. Each player, open `http://<ip>:7777/?player=<your-pc-name>` on your phone (lowercase name, hyphens for spaces — same name I'll use when calling for rolls) and tap **consecrate** before we begin. NPC and DM rolls auto-resolve here."* Then list the PC short-names from `characters/` so players know what to type. If the server is unreachable, skip silently — `dice.py` falls back to local random.
+   Si se eligió 2024: verificá que el dataset exista con `ls ${CLAUDE_SKILL_DIR}/data/dnd5e_srd_2024.json`. Si falta, corré `python3 ${CLAUDE_SKILL_DIR}/scripts/build_srd.py --ruleset 2024` (una sola vez, ~3 min). Hasta que el dataset exista, las funciones basadas en lookup usan 2014 como fallback.
+3. `mkdir -p ~/.claude/dnd/campaigns/<nombre>/characters`
+4. Copiá y completá las plantillas de `${CLAUDE_SKILL_DIR}/templates/` — state.md, world.md, npcs.md, session-log.md. El encabezado de state.md mantiene el campo `**Ruleset:**` fijado en el paso 2.
+5. Preguntá: **tamaño del grupo** y **nivel inicial**
+6. **Asistente de Tono/Género** — presentá los cuatro en un solo mensaje:
+   - Tono: `grimdark / fantasía oscura / heroico / terror / político / capa y espada / cósmico`
+   - Nivel de magia: `ninguno / bajo / medio / alto`
+   - Tipo de ambientación: `medieval / renacentista / antigua / náutica / subterránea`
+   - Nivel de peligro: `letal / crudo / estándar / heroico`
+   *(Si se proporcionó `[tema]`, precargá el Tono y preguntá las otras tres. Elegí al azar cualquier campo vacío con dice.py y registrá `"d6=N → [resultado]"` en world.md.)*
+7. **Fundamentos del mundo** — geografía/bioma/clima, sistema de magia, panteón (2–3 deidades activas), calendario. Escribí en `## World Foundations` en world.md. Sembrá `state.md → ## World State → In-world date`.
+8. **Tres Verdades** — un asentamiento, una amenaza cercana, un misterio (con pistas). Escribí en las secciones correspondientes de world.md.
+9. **Arco de Escalada de la Amenaza** — completá la tabla de cinco etapas en world.md justo después de generar la amenaza. Poné la etapa actual en 1. Escribí `Threat arc stage: 1 — Now` en `state.md → ## World State`.
+10. **2 Facciones** — arquetipo, todos los campos incluida la actividad actual. Escribí en `## Factions` en world.md. Escribí los estados de facción en una línea en `state.md → ## World State`.
+11. **3 PNJ con red de relaciones** — entradas completas (rol, stats, actitud, motivación, secreto, tic de habla, facción, objetivo actual, horario, ejes de personalidad). Generá los tres primero, después completá Relaciones (cada PNJ necesita ≥2 vínculos con otros). Actualizá la tabla índice.
+12. **3–5 Semillas de Misión** a partir de la amenaza, facciones, misterio, motivaciones de PNJ. Escribí en `## Quest Seed Bank` en world.md.
+13. **Arco de Campaña Dinámico** — generá automáticamente el arco a partir de todos los datos del mundo recién creados. Usá Opus para este paso. Preguntá: *"¿Generar un arco narrativo comprometido? [s/n — recomendado]"*
 
-2. **Backwards-compat: ruleset migration check.** Before reading state.md, run:
+   **Si sí:** A partir del tono, las etapas del arco de amenaza, las facciones, las Tres Verdades, las motivaciones de PNJ y las semillas de misión, derivá:
+   - **`theme`** — una oración: ¿de qué trata en el fondo esta historia? No la amenaza — su significado.
+   - **`resolution`** — la forma comprometida del desenlace: si el grupo tiene éxito, ¿cuál es la verdad emocional? Mantené los eventos específicos abiertos; comprometete con la forma.
+   - **Actos 1–3**, cada uno con 2 beats. Cada beat tiene:
+     - `label` — un nombre dramático
+     - `what_changes` — antes/después: ¿qué es fundamentalmente distinto una vez que esto aterriza? **CRÍTICO: escribí esto como una CONSECUENCIA, no como un evento.** Una consecuencia es un estado del mundo después del beat. Un evento es una cosa específica que pasa. Las consecuencias sobreviven cuando los jugadores se adelantan a la entrega obvia del evento; los eventos se rompen y el beat queda obsoleto. Ejemplo de contraste para un beat 2b "Todo Está Perdido":
+       - ❌ Con forma de evento (frágil): *"La nominación de Vedra tiene éxito y toma el tercer asiento."* Si el grupo voltea al escribano, esto no puede aterrizar — el beat queda obsoleto.
+       - ✅ Con forma de consecuencia (robusto): *"El grupo sufre un costo concreto de la escalada de los Kept que no puede revertir — una tapadera al descubierto, un aliado comprometido, o una posición en la que confiaban que ya no está disponible."* Esto sobrevive múltiples caminos de entrega.
+     - `world_pressure` — el movimiento específico de facción o PNJ (nombrando entidades reales de este mundo) que hace que el beat se sienta inevitable. Esto PUEDE tener forma de evento — pero si los jugadores se adelantan, se espera que revises según la regla 8 de SKILL.md (adelantarse dispara una revisión).
+   - **`steering_notes`** — cómo llegar al primer beat sin forzarlo
+
+   Disposición de los beats:
+   - Acto 1: **1a Incidente Incitador** (la amenaza se vuelve personal para el grupo), **1b Complicación** (el problema es más grande o más extraño de lo que parecía al principio)
+   - Acto 2: **2a Giro del Punto Medio** (lo que el grupo *creía* que estaba haciendo cambia), **2b Todo Está Perdido** (un revés genuino — algo falla, se pierde, o se derrumba)
+   - Acto 3: **3a Confrontación Final** (el momento decisivo sobre el que gira la campaña), **3b Resolución** (qué es distinto del mundo y de los personajes después)
+
+   Escribí en `state.md → ## Campaign Arc` con `type: dynamic`. Entregá al DM un resumen del arco de un párrafo.
+
+   **Si no:** Escribí `type: sandbox` en `## Campaign Arc`. La historia queda abierta, sin seguimiento de arco.
+
+14. Escribí state.md con contador de sesión 0, ubicación inicial.
+15. **Chequeo de servidor de dados físico (solo si está instalado).** Salteá este paso a menos que el servidor de dados opcional esté configurado: probá con `test -d ~/.dnd-dice || test "$DND_DICE_PHYSICAL" = "1"` y cortá si el test falla. Si pasa, corré `curl -sf http://localhost:7777/health` (timeout 1s). Si devuelve OK, obtené la IP de LAN con `python3 -c "import socket; s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM); s.connect(('8.8.8.8', 80)); print(s.getsockname()[0]); s.close()"` y anunciá: *"El servidor de dados está activo. Una vez que cada jugador haya creado un personaje con `/dm:dnd character new`, deberían abrir `http://<ip>:7777/?player=<nombre-pj>` en su teléfono (minúsculas, guiones en vez de espacios) y tocar **consagrar** antes de empezar. Las tiradas de PNJ/DM se resuelven automáticamente en el host."* Si no es alcanzable, salteá en silencio.
+16. Confirmá la creación, ofrecé `/dm:dnd character new`.
+
+---
+
+## `/dm:dnd load <nombre-campaña>`
+0. **Elegí la campaña si no se nombró ninguna.** Si se proporcionó `<nombre-campaña>` (o el jugador claramente nombró una), usala. Si no, hacé `ls` en el directorio de campañas (`~/.claude/dnd/campaigns/` o `$DND_CAMPAIGN_ROOT/campaigns/`) y **llamá a `AskUserQuestion`**: *"¿Qué campaña?"* con los nombres de campañas existentes como opciones (la jugada más recientemente primero — ordenar por mtime de `state.md`). El jugador puede elegir "Otra" para escribir un nombre. Si no hay campañas, avisale y ofrecé `/dm:dnd new`.
+1. **Configuración de sesión — llamá a `AskUserQuestion`** con **dos preguntas** (no prompts tipeados de s/n):
+
+   **P1 *"¿Modo de pantalla y de entrada?"***
+   - `Sin pantalla` → continuar sin display.
+   - `Pantalla (local)` → `bash ${CLAUDE_SKILL_DIR}/display/start-display.sh`, imprimir la URL, poner `_display_running = true`.
+   - `Pantalla (LAN)` → `bash ${CLAUDE_SKILL_DIR}/display/start-display.sh --lan`, imprimir ambas URLs, poner `_display_running = true`.
+   - `Pantalla + autorun (LAN)` → igual que **Pantalla (LAN)**, y además escribir `autorun: true` en `state.md → ## Session Flags`; entrar a la espera de autorun después del resumen.
+
+   **P2 *"¿Tiradas de dados?"*** — confirmá cómo se manejan los d20 de los PJ esta sesión (ver "Convención de tiradas" en SKILL.md). Precargá la opción recomendada a partir del `roll_mode` existente en `state.md` si está presente, si no `players`:
+   - `Los jugadores tiran los suyos` → escribir `roll_mode: players`. Pedí cada tirada de PJ y esperá — nunca tires por un PJ.
+   - `El DM tira todo abiertamente` → escribir `roll_mode: auto`. Resolvé las tiradas de PJ mostrando toda la matemática.
+
+   - (Defaults si el jugador descarta la pregunta: sin pantalla, sin autorun, `roll_mode: players` — o el valor guardado existente.)
+   - **Repetición de la cola de sesión (session tail):** antes de limpiar el display, chequeá si existe `session_tail.json` de la campaña. La ruta del lado de la campaña es la autoritativa — `~/.claude/dnd/campaigns/<nombre>/session_tail.json`. **No leas** el legado/fallback en `${CLAUDE_SKILL_DIR}/display/session_tail.json`; ese archivo puede existir de sesiones anteriores u otras campañas y va a confundir la repetición. Si el archivo del lado de la campaña no existe, salteá la repetición (el display arranca vacío). Si existe, leelo. Después de `--clear` y el push completo de stats (paso 4 abajo), repetí la cola enviando cada entrada con el flag apropiado de `send.py`. Mapeo tipo de entrada → flag:
+     - clave `player` presente → `send.py --player <nombre>` con texto vía stdin
+     - clave `npc` presente → `send.py --npc <nombre>` con texto vía stdin
+     - clave `dice` presente → `send.py --dice` con texto vía stdin
+     - clave `xp_award` presente → `send.py --xp-award '<json del sub-diccionario xp_award>'`
+     - clave `inspiration_award` presente → `send.py --inspiration-award '<nombre>'`
+     - ninguna de las anteriores (narración pura del DM) → `send.py` con texto vía stdin
+     Esto restaura la última escena en el display antes del resumen. La cola se escribe continuamente por `dnd-display-app.py` — siempre contiene los últimos intercambios de la sesión anterior sin importar cómo terminó la sesión.
+   - Limpiar la transcripción previa: `python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --clear`
+
+     ⚠ **`--clear` borra tanto el log de texto COMO las stats** (tarjeta de jugador, tiempo del mundo, facciones, misiones). Siempre debe ir emparejado con el push completo `--replace-players ... --world-time ... --factions ... --quests ...` del paso 4 — si no, la tarjeta lateral y la pestaña de hoja de personaje se renderizan vacías. La misma regla aplica cualquier vez que hagas `--clear` a mitad de sesión (ej. restaurando el estado de escena después de una re-repetición): siempre re-envía el JSON completo de personajes + world-time + factions + quests en la misma ráfaga de bash que el clear.
+   - Registrar la campaña activa para DM Help: `python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --set-campaign <nombre-campaña>`
+   - Si autorun **sí** → escribir `autorun: true` en `state.md → ## Session Flags`; entrar a la espera de autorun después del párrafo de resumen.
+   - Si autorun **no** → continuar sin autorun; el DM lleva los turnos manualmente.
+   - **Chequeo de servidor de dados físico (solo si está instalado).** Salteá este paso a menos que el servidor de dados opcional esté configurado: probá con `test -d ~/.dnd-dice || test "$DND_DICE_PHYSICAL" = "1"` y cortá si el test falla. Si pasa, corré `curl -sf http://localhost:7777/health` (timeout 1s). Si devuelve OK, obtené la IP de LAN con `python3 -c "import socket; s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM); s.connect(('8.8.8.8', 80)); print(s.getsockname()[0]); s.close()"` y anunciá a la mesa: *"El servidor de dados está activo. Cada jugador, abran `http://<ip>:7777/?player=<su-nombre-pj>` en su teléfono (nombre en minúsculas, guiones en vez de espacios — el mismo nombre que voy a usar al pedir tiradas) y toquen **consagrar** antes de empezar. Las tiradas de PNJ y DM se resuelven automáticamente acá."* Después listá los nombres cortos de los PJ de `characters/` para que los jugadores sepan qué escribir. Si el servidor no es alcanzable, salteá en silencio — `dice.py` cae de vuelta a aleatorio local.
+
+2. **Retrocompatibilidad: chequeo de migración de reglamento.** Antes de leer state.md, corré:
 
    ```bash
-   python3 ${CLAUDE_SKILL_DIR}/scripts/migrate_ruleset.py <campaign-name> --check
+   python3 ${CLAUDE_SKILL_DIR}/scripts/migrate_ruleset.py <nombre-campaña> --check
    ```
 
-   - Exit code `0` (`migrated`) → proceed to step 3.
-   - Exit code `1` (`needs-migration`) → this is a legacy campaign predating the ruleset field. Surface to DM exactly once: *"Campaign predates ruleset versioning. Stamp as **2014** (recommended for legacy campaigns) or **2024**? state.md will be backed up to `state.md.backup-pre-ruleset-<timestamp>` before any write. [2014/2024/skip]"*. On answer, run:
+   - Código de salida `0` (`migrated`) → proceder al paso 3.
+   - Código de salida `1` (`needs-migration`) → esto es una campaña legada anterior al campo de reglamento. Mostrale al DM exactamente una vez: *"Esta campaña es anterior al versionado de reglamento. ¿La marco como **2014** (recomendado para campañas legadas) o **2024**? state.md se respaldará en `state.md.backup-pre-ruleset-<timestamp>` antes de cualquier escritura. [2014/2024/omitir]"*. Con la respuesta, corré:
 
      ```bash
-     python3 ${CLAUDE_SKILL_DIR}/scripts/migrate_ruleset.py <campaign-name> --ruleset 2014 --yes
-     # or --ruleset 2024
+     python3 ${CLAUDE_SKILL_DIR}/scripts/migrate_ruleset.py <nombre-campaña> --ruleset 2014 --yes
+     # o --ruleset 2024
      ```
 
-     Migrator is idempotent and creates a timestamped backup. On `skip`, do not migrate; `paths.campaign_ruleset()` will return `2014` as the safety default at read time, but the field stays unstamped (DM will be re-prompted next load).
-   - Exit code `2` (`missing`) → state.md not found; do not proceed with /dm:dnd load. Surface error to DM.
+     El migrador es idempotente y crea un respaldo con timestamp. Con `omitir`, no migres; `paths.campaign_ruleset()` va a devolver `2014` como default de seguridad al leer, pero el campo queda sin marcar (se le va a volver a preguntar al DM en la próxima carga).
+   - Código de salida `2` (`missing`) → no se encontró state.md; no continúes con /dm:dnd load. Mostrale el error al DM.
 
-   Future migrations (e.g. when 2026 ruleset arrives) follow the same pattern: a small migrator script under `scripts/migrate_<topic>.py` invoked here as a `--check` then `--yes` pair.
+   Migraciones futuras (ej. cuando llegue el reglamento 2026) siguen el mismo patrón: un pequeño script migrador bajo `scripts/migrate_<tema>.py` invocado acá como un par `--check` y después `--yes`.
 
-3. **Read campaign ruleset** for this session: `python3 ${CLAUDE_SKILL_DIR}/scripts/paths.py campaign-ruleset <name>` (or import `campaign_ruleset` directly). Stash the result; pass `--ruleset <value>` to `lookup.py`, `build_supplemental.py`, and `combat.py` mastery calls so they route to the correct dataset. The display companion picks up the same value automatically via `push_stats.py --set-campaign`.
+3. **Leé el reglamento de la campaña** para esta sesión: `python3 ${CLAUDE_SKILL_DIR}/scripts/paths.py campaign-ruleset <nombre>` (o importá `campaign_ruleset` directamente). Guardá el resultado; pasá `--ruleset <valor>` a las llamadas de `lookup.py`, `build_supplemental.py`, y `combat.py mastery` para que enruten al dataset correcto. El display companion recibe el mismo valor automáticamente vía `push_stats.py --set-campaign`.
 
-4. Read SKILL-scripts.md (for script syntax this session)
-5. **Mark this campaign active** (for the autosave hook): write `{"name": "<campaign-name>"}` to `$(python3 ${CLAUDE_SKILL_DIR}/scripts/paths.py runtime-dir)/active-campaign.json`. This is what `autosave_checkpoint.py` reads to know which campaign to checkpoint; a stale marker is harmless. Then read state.md, world.md, npcs.md (index only), and all characters/*.md
-   - **state.md contains `## DM Style Notes`** — read and internalize before narrating anything. These are table-specific calibration patterns that override default DM instincts.
-   - **state.md contains `## Pinned Facts`** — read and keep hot for the whole session. These are stable soft facts the table has chosen never to forget (a promise made, a dead relative's name, a house rule, a running joke, a detail the player flagged as mattering). Unlike Live State Flags, they don't change turn-to-turn — they are standing canon. Weave them in when relevant and never contradict one; if a pinned fact is now wrong, correct it via `/dm:dnd pin` rather than silently overriding it. If the section reads *(none pinned yet)*, there's nothing to load.
-   - **world.md:** Load in full — World Foundations, Three Truths, and factions inform narration and faction moves. Do NOT read `world-seeds.md` at load (generation artifact, not live reference).
-   - **world-nodes.md (imported campaigns only):** Do **NOT** load at session start. It holds the full Quest Seed Bank and Adventure Nodes for the whole module; read only the current act's nodes on demand when a scene needs them. If the file is absent (dynamic/sandbox, or an older import), there is nothing to lazy-load — `world.md` already carries the nodes, unchanged from prior behavior.
-   - **arc.md (imported campaigns only):** Do **NOT** load at session start. `state.md → ## Campaign Arc` already carries the current + next chapter window. Read `arc.md` only when advancing chapters or when a player asks about the broader arc. If absent, the arc lives inline in `state.md` (dynamic/sandbox) — read it there as before. **Sanity-check the pointer at load:** if `## Campaign Arc`'s `current_chapter` shows its `outstanding_beats` already cleared, or the last session plainly ended in the *next* chapter's location or situation, the pointer never advanced — surface it (*"the current chapter looks finished; pick up in `<next_chapter>`?"*) instead of opening another scene in a chapter that's already done. A pointer that never moves is exactly how a structured campaign quietly drifts off its own arc and starts improvising.
-   - **source/<chapter-id>.md (imported campaigns only):** the full module text, one file per chapter. Never loaded at session start. Before running a scene in a chapter, read that chapter's `source/<id>.md` (the `source_ref` in the arc) — and only that chapter. This is the predefined-story equivalent of reading a single NPC's full entry on demand.
-   - **npcs.md:** Index row only at load. **Before writing substantive dialogue or decisions for any named NPC, read their full entry in `npcs-full.md`.** Do not wait for an explicit `/dm:dnd npc [name]` call — do it proactively when a scene centers on that character. Index rows carry surface traits only; personality axes, relationships, and hidden goals are in the full entry.
-   - **Do NOT read session-log.md at load** — recent events are already in `state.md → ## Recent Events`. Only read session-log.md if the player explicitly requests a recap, or if DM Calibration from the last 1-2 sessions is needed and not already internalized.
-6. Push full party stats to display sidebar. **CRITICAL:** use `--json` with a complete player object — **never** the `--player` shorthand here. `--player` only updates existing fields; it cannot populate the card or sheet tabs. The display shows "Full sheet not loaded" when `sheet` is absent.
+4. Leé SKILL-scripts.md (para la sintaxis de scripts de esta sesión)
+5. **Marcá esta campaña como activa** (para el hook de autosave): escribí `{"name": "<nombre-campaña>"}` en `$(python3 ${CLAUDE_SKILL_DIR}/scripts/paths.py runtime-dir)/active-campaign.json`. Esto es lo que lee `autosave_checkpoint.py` para saber qué campaña checkpointear; un marcador desactualizado es inofensivo. Después leé state.md, world.md, npcs.md (solo el índice), y todos los characters/*.md
+   - **state.md contiene `## DM Style Notes`** — leé e internalizá antes de narrar cualquier cosa. Son patrones de calibración específicos de esta mesa que anulan los instintos por defecto del DM.
+   - **state.md contiene `## Pinned Facts`** — leé y mantené presentes durante toda la sesión. Son hechos blandos y estables que la mesa eligió no olvidar nunca (una promesa hecha, el nombre de un pariente muerto, una regla casera, una broma recurrente, un detalle que el jugador marcó como importante). A diferencia de Live State Flags, no cambian turno a turno — son canon permanente. Incorporalos cuando sea relevante y nunca contradigas uno; si un hecho fijado ahora es incorrecto, corregilo vía `/dm:dnd pin` en vez de sobreescribirlo en silencio. Si la sección dice *(none pinned yet)*, no hay nada que cargar.
+   - **world.md:** Cargá completo — Fundamentos del Mundo, Tres Verdades, y facciones informan la narración y los movimientos de facción. NO leas `world-seeds.md` al cargar (artefacto de generación, no referencia en vivo).
+   - **world-nodes.md (solo campañas importadas):** NO cargar al inicio de sesión. Contiene todo el Banco de Semillas de Misión y los Nodos de Aventura del módulo completo; leé solo los nodos del acto actual cuando una escena los necesite. Si el archivo no existe (dinámica/sandbox, o una importación más vieja), no hay nada que cargar de forma perezosa — `world.md` ya lleva los nodos, sin cambios respecto al comportamiento anterior.
+   - **arc.md (solo campañas importadas):** NO cargar al inicio de sesión. `state.md → ## Campaign Arc` ya lleva la ventana del capítulo actual + siguiente. Leé `arc.md` solo al avanzar de capítulo o cuando un jugador pregunte sobre el arco más amplio. Si no existe, el arco vive inline en `state.md` (dinámica/sandbox) — leelo ahí como antes. **Chequeá el puntero al cargar:** si el `current_chapter` de `## Campaign Arc` muestra sus `outstanding_beats` ya vacíos, o la última sesión claramente terminó en la ubicación o situación del *siguiente* capítulo, el puntero nunca avanzó — mostralo (*"el capítulo actual parece terminado; ¿seguimos en `<next_chapter>`?"*) en vez de abrir otra escena en un capítulo que ya está resuelto. Un puntero que nunca se mueve es exactamente cómo una campaña estructurada se desvía en silencio de su propio arco y empieza a improvisar.
+   - **source/<chapter-id>.md (solo campañas importadas):** el texto completo del módulo, un archivo por capítulo. Nunca se carga al inicio de sesión. Antes de correr una escena en un capítulo, leé el `source/<id>.md` de ese capítulo (el `source_ref` en el arco) — y solo ese capítulo. Es el equivalente de historia predefinida de leer la entrada completa de un solo PNJ bajo demanda.
+   - **npcs.md:** Solo la fila del índice al cargar. **Antes de escribir diálogo sustancial o decisiones para cualquier PNJ nombrado, leé su entrada completa en `npcs-full.md`.** No esperes una llamada explícita a `/dm:dnd npc [nombre]` — hacelo proactivamente cuando una escena gira en torno a ese personaje. Las filas del índice llevan solo rasgos superficiales; los ejes de personalidad, relaciones, y objetivos ocultos están en la entrada completa.
+   - **NO leas session-log.md al cargar** — los eventos recientes ya están en `state.md → ## Recent Events`. Leé session-log.md solo si el jugador pide explícitamente un resumen, o si se necesita Calibración del DM de las últimas 1-2 sesiones y no está ya internalizada.
+6. Enviá las stats completas del grupo a la barra lateral del display. **CRÍTICO:** usá `--json` con un objeto de jugador completo — **nunca** el atajo `--player` acá. `--player` solo actualiza campos existentes; no puede poblar la tarjeta ni las pestañas de hoja. El display muestra "Full sheet not loaded" cuando falta `sheet`.
 
    ```bash
    python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --replace-players --json '{
      "players": [
        {
-         "name": "CharName",
-         "race": "Race",
-         "class": "Class (Background)",
+         "name": "NombrePJ",
+         "race": "Raza",
+         "class": "Clase (Trasfondo)",
          "level": N,
          "hp": {"current": N, "max": N, "temp": 0},
          "ac": N,
@@ -149,456 +149,456 @@ Full step-by-step procedures for all `/dm:dnd` slash commands. Load this file at
          "spell_slots": {},
          "sheet": {
            "attacks": [{"name":"...","bonus":"+N","damage":"...","type":"...","notes":"..."}],
-           "features": [{"name":"Feature 1","text":"Description of what it does."},{"name":"Feature 2","text":"Description."}],
-           "inventory": ["Item 1", "Item 2"]
+           "features": [{"name":"Rasgo 1","text":"Descripción de qué hace."},{"name":"Rasgo 2","text":"Descripción."}],
+           "inventory": ["Objeto 1", "Objeto 2"]
          }
        }
      ]
    }'
    ```
 
-   For casters, add `"spells": {"cantrips":["..."],"level1":["..."]}` inside `sheet`. Omit for non-casters.
+   Para lanzadores de conjuros, agregá `"spells": {"cantrips":["..."],"level1":["..."]}` dentro de `sheet`. Omitilo para no-lanzadores.
 
-   **Inspiration:** read from `state.md → ## Current Situation → Party status`. Set `"inspiration": 1` (or `true`) if the character has it, `0` if not. Inspiration is NOT reset by a long rest — it persists until spent. Must be explicitly tracked in the party status line at `/dm:dnd save` (e.g., `Mara: Inspiration ✓`) and loaded at `/dm:dnd load`. Use `push_stats.py --player <name> --inspiration true/false` for mid-session updates.
+   **Inspiración:** leela de `state.md → ## Current Situation → Party status`. Poné `"inspiration": 1` (o `true`) si el personaje la tiene, `0` si no. La Inspiración NO se resetea con un descanso largo — persiste hasta gastarse. Debe registrarse explícitamente en la línea de estado del grupo en `/dm:dnd save` (ej. `Mara: Inspiration ✓`) y cargarse en `/dm:dnd load`. Usá `push_stats.py --player <nombre> --inspiration true/false` para actualizaciones a mitad de sesión.
 
-   `--replace-players` clears stale characters from previous campaigns. Build the JSON from the character file — every field above is required for the card and sheet tabs to render correctly.
+   `--replace-players` limpia personajes obsoletos de campañas anteriores. Armá el JSON a partir del archivo de personaje — cada campo de arriba es obligatorio para que la tarjeta y las pestañas de hoja se rendericen correctamente.
 
-   Also push `--world-time`, `--factions`, and `--quests` in the **same** `push_stats.py` call as the player JSON to avoid race conditions where the display server receives a partial update. Combine all into one invocation:
+   También enviá `--world-time`, `--factions`, y `--quests` en la **misma** llamada a `push_stats.py` que el JSON de jugadores para evitar condiciones de carrera donde el servidor de display recibe una actualización parcial. Combiná todo en una sola invocación:
 
    ```bash
    python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --replace-players \
-     --json '{...players...}' \
+     --json '{...jugadores...}' \
      --world-time '{...}' \
      --factions '[...]' \
      --quests '[...]'
    ```
 
-   Faction JSON structure — **`standing` is required**:
+   Estructura JSON de facciones — **`standing` es obligatorio**:
    ```json
    [{"name":"Pale Court","standing":"Allied"},{"name":"The Kept","standing":"Hostile"}]
    ```
-   `standing` values: `Allied`, `Friendly`, `Neutral`, `Suspicious`, `Hostile`. If the field is omitted, `dnd-display-app.py` defaults it to `"Neutral"` and logs a warning to stderr — but always include it explicitly. Map prose from `state.md` to exact values (e.g. "deep ally" → `"Allied"`, "active hostile" → `"Hostile"`). Use `[]` to clear.
+   Valores de `standing`: `Allied`, `Friendly`, `Neutral`, `Suspicious`, `Hostile`. Si se omite el campo, `dnd-display-app.py` lo pone por defecto en `"Neutral"` y registra una advertencia en stderr — pero incluilo siempre explícitamente. Mapeá la prosa de `state.md` a los valores exactos (ej. "aliado profundo" → `"Allied"`, "hostil activo" → `"Hostile"`). Usá `[]` para limpiar.
 
-   The faction panel only appears when at least one faction is present — do not skip this push.
+   El panel de facciones solo aparece cuando hay al menos una facción presente — no te saltees este push.
 
-   Quest JSON structure:
+   Estructura JSON de misiones:
    ```json
-   [{"name":"The Missing Shipment","status":"resolved"},{"name":"Keth the Collector","status":"threat"}]
+   [{"name":"El Cargamento Perdido","status":"resolved"},{"name":"Keth el Coleccionista","status":"threat"}]
    ```
-   Quest `status` values: `active` (amber), `threat` (red), `resolved` (green), `failed` (muted). Use `[]` to clear all quests:
+   Valores de `status` de misión: `active` (ámbar), `threat` (rojo), `resolved` (verde), `failed` (apagado). Usá `[]` para limpiar todas las misiones:
    ```bash
    python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --quests '[...]'
    ```
-   The quest panel only appears when at least one quest is present — do not skip this push.
-7. **Pull scene-context from the campaign graph.** Always run, even if you suspect `graph.json` doesn't exist — the script exits cleanly with a notice when uninitialized.
+   El panel de misiones solo aparece cuando hay al menos una misión presente — no te saltees este push.
+7. **Traé el contexto de escena del grafo de campaña.** Corré siempre, incluso si sospechás que `graph.json` no existe — el script termina limpiamente con un aviso cuando no está inicializado.
    ```bash
    python3 ${CLAUDE_SKILL_DIR}/scripts/campaign_graph.py scene-context \
-     --campaign <campaign-name> \
-     --place "<current-location-name-or-id>" \
-     --present "<comma-separated-NPC-names-likely-present>" \
+     --campaign <nombre-campaña> \
+     --place "<nombre-o-id-de-ubicación-actual>" \
+     --present "<nombres-de-PNJ-probablemente-presentes-separados-por-coma>" \
      --hops 2 \
-     --at-session <current-session-N>
+     --at-session <sesión-N-actual>
    ```
-   Identify `<current-location>` from `state.md → ## World State → location` (or the most recent location in `## Recent Events`). Identify `<present>` from the NPCs likely on-scene per `state.md` / `session-log.md`. `<current-session-N>` is `state.md → ## Session Count`.
+   Identificá `<ubicación-actual>` desde `state.md → ## World State → location` (o la ubicación más reciente en `## Recent Events`). Identificá `<presentes>` de los PNJ probablemente en escena según `state.md` / `session-log.md`. `<sesión-N-actual>` es `state.md → ## Session Count`.
 
-   Output is a focused subgraph (nodes by type + relationships block). **Internalize this subgraph before delivering the recap** — it is the authoritative source for who-relates-to-whom in the current scene. Do not re-read `npcs-full.md` for relationships you can answer from the subgraph.
+   La salida es un subgrafo enfocado (nodos por tipo + bloque de relaciones). **Internalizá este subgrafo antes de entregar el resumen** — es la fuente autoritativa de quién-se-relaciona-con-quién en la escena actual. No releas `npcs-full.md` para relaciones que podés responder desde el subgrafo.
 
-   If output reads `# graph not initialized` — graph hasn't been seeded for this campaign yet. **Graph init is a hard requirement, not deferrable.** The continuity-archive compression rule (step 6 below + `/dm:dnd save`) assumes graph.json is present and canonical for relational state; deferring init creates state-archive drift that compounds session-over-session. Run the init flow before delivering the recap:
+   Si la salida dice `# graph not initialized` — el grafo todavía no fue sembrado para esta campaña. **La inicialización del grafo es un requisito duro, no aplazable.** La regla de compresión del archivo de continuidad (paso 6 de abajo + `/dm:dnd save`) asume que graph.json está presente y es canónico para el estado relacional; aplazar la inicialización crea desvío del archivo de estado que se acumula sesión tras sesión. Corré el flujo de inicialización antes de entregar el resumen:
 
-   1. **Detect legacy.** A campaign is "legacy" if any of: `Session count > 1` in state.md header, OR `## Continuity Archive` has at least one `### Session N` entry, OR session-log.md is > 100 lines. A freshly-created campaign at `/dm:dnd new` time fails all three signals — do NOT classify it as legacy.
+   1. **Detectá legado.** Una campaña es "legada" si alguna de: `Session count > 1` en el encabezado de state.md, O `## Continuity Archive` tiene al menos una entrada `### Session N`, O session-log.md tiene > 100 líneas. Una campaña recién creada con `/dm:dnd new` falla las tres señales — NO la clasifiques como legada.
 
-   2. **Backup the campaign directory** (always — both fresh and legacy):
+   2. **Respaldá el directorio de campaña** (siempre — tanto fresca como legada):
       ```bash
-      cp -R ~/.claude/dnd/campaigns/<name> \
-            ~/.claude/dnd/campaigns/<name>.backup-$(date +%Y%m%d-%H%M%S)
+      cp -R ~/.claude/dnd/campaigns/<nombre> \
+            ~/.claude/dnd/campaigns/<nombre>.backup-$(date +%Y%m%d-%H%M%S)
       ```
-      Tell the DM the backup path explicitly so they can revert if needed.
+      Decile al DM la ruta del respaldo explícitamente para que pueda revertir si hace falta.
 
-   3. **Run `/dm:dnd graph init <name>`** — propose seed nodes/edges from `npcs.md`, `world.md`, and `state.md` (Live State Flags + Active Quests + recent NPC dispositions). Show the DM a single approval block (counts by type + named entries) and ask for one go/no-go. After approval, batch-execute the `add-node` and `add-edge` calls. Use `--since N` matching when each node/edge first became canon (use `1` for foundational; the actual session number for newer NPCs/edges).
+   3. **Corré `/dm:dnd graph init <nombre>`** — proponé nodos/edges semilla a partir de `npcs.md`, `world.md`, y `state.md` (Live State Flags + Active Quests + disposiciones recientes de PNJ). Mostrale al DM un único bloque de aprobación (conteos por tipo + entradas nombradas) y pedí un solo sí/no. Después de la aprobación, ejecutá en lote las llamadas `add-node` y `add-edge`. Usá coincidencia `--since N` según cuándo cada nodo/edge se volvió canon (usá `1` para lo fundacional; el número de sesión real para PNJ/edges más nuevos).
 
-   4. **Validate** with a `scene-context` query at the current location to confirm the subgraph is reachable.
+   4. **Validá** con una consulta `scene-context` en la ubicación actual para confirmar que el subgrafo es alcanzable.
 
-   5. **(Legacy only)** Offer the one-time Continuity Archive compression pass:
+   5. **(Solo legado)** Ofrecé el paso único de compresión del Archivo de Continuidad:
 
-      > "This campaign is legacy ({session_count} sessions, {archive_count} archive entries). Now that `graph.json` is the canonical source for faction memberships, NPC dispositions, and typed-edge relationships, I can do a one-time pass to trim the existing `## Continuity Archive` entries of relational restatements that the graph now answers. Mechanical changes, plot beats, atmospheric/decision moments, and disclosed information stay in full. Estimated reduction: 5–30% of archive bytes (varies by how relational vs. content-heavy your existing entries are). Backup is already at `<backup-path>`. Proceed? [y/n]"
+      > "Esta campaña es legada ({session_count} sesiones, {archive_count} entradas de archivo). Ahora que `graph.json` es la fuente canónica para membresías de facción, disposiciones de PNJ, y relaciones tipadas, puedo hacer un paso único para recortar las entradas existentes de `## Continuity Archive` de reafirmaciones relacionales que el grafo ya responde. Los cambios mecánicos, beats de trama, momentos atmosféricos/de decisión, e información revelada se mantienen íntegros. Reducción estimada: 5–30% de los bytes del archivo (varía según qué tan relacionales vs. densas en contenido sean tus entradas existentes). El respaldo ya está en `<ruta-de-respaldo>`. ¿Continuamos? [s/n]"
 
-      - `y` → trim each archive entry surgically; keep the bullet structure; remove ONLY pure-relational restatements (e.g. "X is allied with Y", "Z saw the party's faces", "W is a member of faction F") that have a corresponding edge in the just-initialized graph. Preserve: XP/level/items/HP, plot beats ("Beat 2a sealed"), atmospheric moments, disclosed content, calibration material, off-screen world events. Add a one-line note at the top of `## Continuity Archive`: *"Compressed YYYY-MM-DD (graph init pass). Relational state is canonical in graph.json — entries below preserve mechanical changes, plot beats, disclosed content, atmospheric/decision moments, and calibration material."*
-      - `n` → leave the archive untouched. The going-forward compression rule (per `/dm:dnd save`) still applies to NEW entries from this session forward.
+      - `s` → recortá cada entrada del archivo quirúrgicamente; mantené la estructura de viñetas; eliminá SOLO reafirmaciones puramente relacionales (ej. "X es aliado de Y", "Z vio las caras del grupo", "W es miembro de la facción F") que tengan un edge correspondiente en el grafo recién inicializado. Preservá: PX/nivel/objetos/PG, beats de trama ("Beat 2a sellado"), momentos atmosféricos, contenido revelado, material de calibración, eventos del mundo fuera de escena. Agregá una nota de una línea al principio de `## Continuity Archive`: *"Comprimido AAAA-MM-DD (paso de inicialización del grafo). El estado relacional es canónico en graph.json — las entradas de abajo preservan cambios mecánicos, beats de trama, contenido revelado, momentos atmosféricos/de decisión, y material de calibración."*
+      - `n` → dejá el archivo sin tocar. La regla de compresión a futuro (según `/dm:dnd save`) sigue aplicando a las entradas NUEVAS de esta sesión en adelante.
 
-      For fresh (non-legacy) campaigns: skip the offer entirely — there's nothing to compress yet, and the going-forward rule covers all future entries.
+      Para campañas frescas (no legadas): salteá la oferta por completo — todavía no hay nada que comprimir, y la regla a futuro cubre todas las entradas futuras.
 
-   6. Re-run scene-context (now populated). Then proceed to step 6 (recap).
+   6. Volvé a correr scene-context (ahora poblado). Después continuá al paso 6 (resumen).
 
-8. Deliver one in-character paragraph recapping current situation — where the party is, what's at stake, what was last happening.
-9. Enter active DM mode — no `/dm:dnd` prefix needed from this point.
+8. Entregá un párrafo en personaje resumiendo la situación actual — dónde está el grupo, qué está en juego, qué pasaba por última vez.
+9. Entrá en modo DM activo — no hace falta el prefijo `/dm:dnd` desde este punto.
 
 ---
 
-## `/dm:dnd import <filepath> [campaign-name]`
+## `/dm:dnd import <ruta-archivo> [nombre-campaña]`
 
-Import a pre-written campaign from a source file (PDF, MD, TXT, DOCX) and create a playable campaign from it.
+Importá una campaña pre-escrita desde un archivo fuente (PDF, MD, TXT, DOCX) y creá una campaña jugable a partir de ella.
 
-**Supported file types:** `.pdf` `.md` `.txt` `.markdown` `.docx`
+**Tipos de archivo soportados:** `.pdf` `.md` `.txt` `.markdown` `.docx`
 
-### Step 1 — Extract source text
+### Paso 1 — Extraer texto fuente
 ```bash
-python3 ${CLAUDE_SKILL_DIR}/scripts/import_campaign.py "<filepath>" --info
+python3 ${CLAUDE_SKILL_DIR}/scripts/import_campaign.py "<ruta-archivo>" --info
 ```
-**PDF sources:** extraction uses PyMuPDF (column-aware) so multi-column modules de-column into reading order and segment into chapters correctly — without it, two-column books collapse into one chapter. If the script prints a `pip3 install pymupdf` notice on its stderr, tell the DM to install it and re-run; it falls back to `pdftotext` otherwise but segmentation is less reliable.
+**Fuentes PDF:** la extracción usa PyMuPDF (con conciencia de columnas) para que los módulos multi-columna se de-columnicen en orden de lectura y se segmenten correctamente en capítulos — sin eso, los libros de dos columnas colapsan en un solo capítulo. Si el script imprime un aviso de `pip3 install pymupdf` en su stderr, decile al DM que lo instale y vuelva a correr; si no, cae de vuelta a `pdftotext` pero la segmentación es menos confiable.
 
-Print file info. If word count is over 4000, chunk the source:
+Imprimí la info del archivo. Si el conteo de palabras supera 4000, fragmentá la fuente:
 ```bash
-python3 ${CLAUDE_SKILL_DIR}/scripts/import_campaign.py "<filepath>" --chunks  # total chunks
-python3 ${CLAUDE_SKILL_DIR}/scripts/import_campaign.py "<filepath>" --chunk 0  # first chunk
+python3 ${CLAUDE_SKILL_DIR}/scripts/import_campaign.py "<ruta-archivo>" --chunks  # total de fragmentos
+python3 ${CLAUDE_SKILL_DIR}/scripts/import_campaign.py "<ruta-archivo>" --chunk 0  # primer fragmento
 ```
-For short sources (under 4000 words), read in full:
+Para fuentes cortas (menos de 4000 palabras), leé completo:
 ```bash
-python3 ${CLAUDE_SKILL_DIR}/scripts/import_campaign.py "<filepath>"
+python3 ${CLAUDE_SKILL_DIR}/scripts/import_campaign.py "<ruta-archivo>"
 ```
 
-### Step 2 — Analyse structure
-Read the extracted text and identify:
-- **Campaign title and system**
-- **Structure type:** `linear` (scene chain A→B→C) | `hub-and-spoke` (central hub + spoke locations, player-driven order) | `faction-web` (multi-faction city/complex, overlapping arcs)
-- **Acts and chapters** — numbered sections, chapter headings, or named scenes
-- **Key beats** — required story events the DM must deliver (boss reveals, faction turns, mandatory encounters)
-- **Locations** — distinct named places with descriptions
-- **NPCs** — names, roles, motivations, relationships, stat blocks if present
-- **Factions** — groups with agendas, relationships to party
-- **Quest hooks and seeds** — explicit adventure hooks, side quests, optional encounters
-- **Starting conditions** — where does the party begin, what level, what's the inciting event
+### Paso 2 — Analizar la estructura
+Leé el texto extraído e identificá:
+- **Título de la campaña y sistema**
+- **Tipo de estructura:** `linear` (cadena de escenas A→B→C) | `hub-and-spoke` (hub central + ubicaciones radiales, orden decidido por el jugador) | `faction-web` (ciudad/complejo multi-facción, arcos superpuestos)
+- **Actos y capítulos** — secciones numeradas, encabezados de capítulo, o escenas nombradas
+- **Beats clave** — eventos de historia obligatorios que el DM debe entregar (revelaciones de jefes, giros de facción, encuentros obligatorios)
+- **Ubicaciones** — lugares distintos y nombrados con descripciones
+- **PNJ** — nombres, roles, motivaciones, relaciones, bloques de estadísticas si están presentes
+- **Facciones** — grupos con agendas, relaciones con el grupo
+- **Ganchos y semillas de misión** — ganchos de aventura explícitos, misiones secundarias, encuentros opcionales
+- **Condiciones iniciales** — dónde empieza el grupo, qué nivel, cuál es el evento incitador
 
-For large sources, read all chunks before proceeding.
+Para fuentes largas, leé todos los fragmentos antes de continuar.
 
-### Step 3 — Confirm campaign name
-If `[campaign-name]` not supplied, suggest one from the title and ask to confirm.
+### Paso 3 — Confirmar nombre de campaña
+Si no se proporcionó `[nombre-campaña]`, sugerí uno a partir del título y pedí confirmación.
 
-### Step 4 — Display summary and confirm
-Show a structured summary before writing any files:
+### Paso 4 — Mostrar resumen y confirmar
+Mostrá un resumen estructurado antes de escribir ningún archivo:
 
 ```
-Title:    <source title>
-Type:     structured / <structure type>
-Acts:     N  |  Chapters: N  |  Key beats: N
-NPCs:     N named  |  Factions: N
-Locations: N distinct
+Título:      <título de la fuente>
+Tipo:        estructurada / <tipo de estructura>
+Actos:       N  |  Capítulos: N  |  Beats clave: N
+PNJ:         N nombrados  |  Facciones: N
+Ubicaciones: N distintas
 
-Campaign name: <name>
-Campaign dir:  ~/.claude/dnd/campaigns/<name>/
+Nombre de campaña: <nombre>
+Directorio:        ~/.claude/dnd/campaigns/<nombre>/
 
-Proceed? [y/n]
+¿Continuamos? [s/n]
 ```
 
-### Step 5 — Create campaign files
-On confirmation:
+### Paso 5 — Crear archivos de campaña
+Con la confirmación:
 
-1. `mkdir -p ~/.claude/dnd/campaigns/<name>/characters`
-2. Copy templates from `${CLAUDE_SKILL_DIR}/templates/`
-3. Write **world.md** (load-time core — kept small so it can be read in full every load):
-   - `## World Foundations` — setting, geography, tone, magic level, calendar if present
-   - `## Three Truths` — one settlement, one threat, one mystery (drawn from source)
-   - `## Threat Escalation Arc` — map source acts to the 5-stage table; set stage 1
-   - `## Factions` — all factions with archetype, current activity, relationship to party
+1. `mkdir -p ~/.claude/dnd/campaigns/<nombre>/characters`
+2. Copiá las plantillas de `${CLAUDE_SKILL_DIR}/templates/`
+3. Escribí **world.md** (núcleo de carga — se mantiene chico para poder leerse completo en cada carga):
+   - `## World Foundations` — ambientación, geografía, tono, nivel de magia, calendario si está presente
+   - `## Three Truths` — un asentamiento, una amenaza, un misterio (tomados de la fuente)
+   - `## Threat Escalation Arc` — mapeá los actos de la fuente a la tabla de 5 etapas; poné la etapa 1
+   - `## Factions` — todas las facciones con arquetipo, actividad actual, relación con el grupo
 
-3a. Write **world-nodes.md** (lazy reference — NOT read at load, pulled per current act):
-   - `## Quest Seed Bank` — all explicit hooks + 2–3 implied side threads
-   - `## Adventure Nodes` — named locations with one-line descriptions, grouped by act/chapter
+3a. Escribí **world-nodes.md** (referencia perezosa — NO se lee al cargar, se trae según el acto actual):
+   - `## Quest Seed Bank` — todos los ganchos explícitos + 2–3 hilos secundarios implícitos
+   - `## Adventure Nodes` — ubicaciones nombradas con descripciones de una línea, agrupadas por acto/capítulo
 
-   For a small module the split is optional, but for any published adventure it is the
-   single biggest load-time saving — the whole quest/location bank no longer sits in
-   context every session. If you write `world-nodes.md`, do **not** duplicate its
-   sections into `world.md`.
+   Para un módulo chico la separación es opcional, pero para cualquier aventura publicada es el
+   ahorro más grande en tiempo de carga — todo el banco de misiones/ubicaciones ya no vive en
+   contexto en cada sesión. Si escribís `world-nodes.md`, no dupliques sus
+   secciones en `world.md`.
 
-4. Write **npcs.md** index table (one row per NPC: name, role, location, one-line demeanor)
+4. Escribí la tabla índice de **npcs.md** (una fila por PNJ: nombre, rol, ubicación, actitud en una línea)
 
-5. Write **npcs-full.md** — full entry for each named NPC:
-   - Role, motivation, secret, speech quirk, faction affiliation
-   - Relationships to other NPCs (min 2 per NPC)
-   - Stat block summary if present in source
+5. Escribí **npcs-full.md** — entrada completa para cada PNJ nombrado:
+   - Rol, motivación, secreto, tic de habla, afiliación de facción
+   - Relaciones con otros PNJ (mín. 2 por PNJ)
+   - Resumen de bloque de estadísticas si está presente en la fuente
 
-6. Write **arc.md** from `${CLAUDE_SKILL_DIR}/templates/arc.md` — the **full** act/chapter tree: every chapter's `id`, `title`, `location`, `source_ref` (its file in the lazy corpus, see step 6b), `key_beats`, `telegraph_scene`, `branching_notes`, plus `outstanding_beats` and `steering_notes`. This is the heavy structure; it lives here so it is read on demand, not at every load.
+6. Escribí **arc.md** a partir de `${CLAUDE_SKILL_DIR}/templates/arc.md` — el árbol **completo** de actos/capítulos: el `id`, `title`, `location`, `source_ref` (su archivo en el corpus perezoso, ver paso 6b), `key_beats`, `telegraph_scene`, `branching_notes` de cada capítulo, más `outstanding_beats` y `steering_notes`. Esta es la estructura pesada; vive acá para que se lea bajo demanda, no en cada carga.
 
-6a. Write **state.md** from template:
-   - Populate `## Current Situation` — starting location and party placeholder
-   - Populate `## World State` — in-world date if given, factions, threat arc stage 1
-   - Populate `## Campaign Arc` with the **STRUCTURED ARC POINTER only** (see template): `type: structured`, `source`, `structure`, `arc_file: arc.md`, `current_act`, `current_chapter`, the `current_chapter_detail` block, `next_chapter`, `outstanding_beats`, `steering_notes`. **Delete the entire DYNAMIC ARC yaml block** from the template — do not leave both arc forms in the file. The full tree is in arc.md; state.md carries only the current + next chapter window.
-   - Leave `## Active Quests`, `## Session Flags` (autosave defaults on), `## DM Style Notes` as template defaults
+6a. Escribí **state.md** a partir de la plantilla:
+   - Poblá `## Current Situation` — ubicación inicial y placeholder de grupo
+   - Poblá `## World State` — fecha en el mundo si se dio, facciones, etapa 1 del arco de amenaza
+   - Poblá `## Campaign Arc` solo con el **PUNTERO DE ARCO ESTRUCTURADO** (ver plantilla): `type: structured`, `source`, `structure`, `arc_file: arc.md`, `current_act`, `current_chapter`, el bloque `current_chapter_detail`, `next_chapter`, `outstanding_beats`, `steering_notes`. **Borrá todo el bloque yaml de ARCO DINÁMICO** de la plantilla — no dejes las dos formas de arco en el archivo. El árbol completo está en arc.md; state.md solo lleva la ventana del capítulo actual + siguiente.
+   - Dejá `## Active Quests`, `## Session Flags` (autosave en default activado), `## DM Style Notes` con los defaults de la plantilla
 
-6b. Write the **lazy corpus** — the full source text, kept available but out of the hot path:
-   - `mkdir -p ~/.claude/dnd/campaigns/<name>/source`
-   - For each chapter in arc.md, write `source/<chapter-id>.md` (e.g. `source/1.1.md`) containing that chapter's source text from the extracted chunks. Use the same chapter ids as arc.md.
-   - Write `source-index.md` — a table mapping `chapter-id → source/<id>.md → one-line scope`, plus source title and import date.
-   - Validate the layout: `python3 ${CLAUDE_SKILL_DIR}/scripts/corpus_check.py --campaign <name>` (expects "lazy-corpus layout OK"). Fix any orphan/missing-file problems before finishing. If it prints an **oversized-chapter WARNING**, split that chapter into sub-chapters (e.g. `1.1a` / `1.1b` at natural scene breaks) across `arc.md`, `source-index.md`, and `source/`, then re-run — a single giant chapter is the one thing that still bloats a load, so keep each `source/<id>.md` comfortably under the limit.
+6b. Escribí el **corpus perezoso** — el texto fuente completo, disponible pero fuera del camino caliente:
+   - `mkdir -p ~/.claude/dnd/campaigns/<nombre>/source`
+   - Para cada capítulo en arc.md, escribí `source/<chapter-id>.md` (ej. `source/1.1.md`) con el texto fuente de ese capítulo a partir de los fragmentos extraídos. Usá los mismos ids de capítulo que arc.md.
+   - Escribí **source-index.md** — una tabla que mapea `chapter-id → source/<id>.md → alcance en una línea`, más título de la fuente y fecha de importación.
+   - Validá la disposición: `python3 ${CLAUDE_SKILL_DIR}/scripts/corpus_check.py --campaign <nombre>` (espera "lazy-corpus layout OK"). Arreglá cualquier problema de archivo huérfano/faltante antes de terminar. Si imprime una **ADVERTENCIA de capítulo sobredimensionado**, dividí ese capítulo en subcapítulos (ej. `1.1a` / `1.1b` en cortes naturales de escena) en `arc.md`, `source-index.md`, y `source/`, y volvé a correr — un solo capítulo gigante es lo único que todavía infla una carga, así que mantené cada `source/<id>.md` cómodamente bajo el límite.
 
-7. Write **session-log.md** with Session 0 import record:
+7. Escribí **session-log.md** con el registro de importación de la Sesión 0:
    ```
-   ## Session 0 — Import — <date>
-   Source: <filepath>
-   Imported: <N> acts, <N> chapters, <N> NPCs, <N> locations
+   ## Session 0 — Import — <fecha>
+   Source: <ruta-archivo>
+   Imported: <N> actos, <N> capítulos, <N> PNJ, <N> ubicaciones
    ```
 
-### Step 6 — Gap-fill wizard
-After writing files, identify anything the source left ambiguous:
-- If starting level not specified → ask
-- If party size not specified → ask
-- If calendar/in-world date absent → offer to generate or leave blank
-- If tone not clear from source → offer Tone/Genre Wizard
+### Paso 6 — Asistente de completado de vacíos
+Después de escribir los archivos, identificá cualquier cosa que la fuente dejó ambigua:
+- Si no se especifica el nivel inicial → preguntá
+- Si no se especifica el tamaño del grupo → preguntá
+- Si falta calendario/fecha en el mundo → ofrecé generarla o dejarla en blanco
+- Si el tono no está claro en la fuente → ofrecé el Asistente de Tono/Género
 
-### Step 7 — Confirm and offer next step
-Print summary of files written. Offer:
+### Paso 7 — Confirmar y ofrecer el siguiente paso
+Imprimí el resumen de archivos escritos. Ofrecé:
 ```
-Campaign "<name>" created from <source title>.
-→ /dm:dnd character new      — create your character
-→ /dm:dnd load <name>        — start playing immediately
+Campaña "<nombre>" creada a partir de <título de la fuente>.
+→ /dm:dnd character new      — creá tu personaje
+→ /dm:dnd load <nombre>      — empezá a jugar de inmediato
 ```
 
 ---
 
 ## `/dm:dnd save`
-Write session events to session-log.md, update state.md (location, active quests, party HP/resources, recent events), update any characters/*.md that changed. Mirror each updated character to global roster (`~/.claude/dnd/characters/<name>.md`).
+Escribí los eventos de la sesión en session-log.md, actualizá state.md (ubicación, misiones activas, PG/recursos del grupo, eventos recientes), actualizá cualquier characters/*.md que haya cambiado. Reflejá cada personaje actualizado en el roster global (`~/.claude/dnd/characters/<nombre>.md`).
 
-**Inspiration tracking:** On every save, record each PC's Inspiration state in `state.md → ## Current Situation → Party status`. Use explicit text: `Inspiration ✓` if held, omit or `No Inspiration` if not. Inspiration persists across sessions and is NOT cleared by long rests. Example: `Mara: HP 24/24. Inspiration ✓. Theo: HP 24/24.`
+**Seguimiento de Inspiración:** en cada save, registrá el estado de Inspiración de cada PJ en `state.md → ## Current Situation → Party status`. Usá texto explícito: `Inspiration ✓` si la tiene, omitilo o `No Inspiration` si no. La Inspiración persiste entre sesiones y NO se limpia con descansos largos. Ejemplo: `Mara: HP 24/24. Inspiration ✓. Theo: HP 24/24.`
 
-**Update `## Live State Flags` in state.md on every save.** This section is the compaction-resistant anchor — it holds facts that prose summaries flatten. After each session, review and update:
-- **Cover:** each PC's active cover, its status (INTACT / BLOWN / PARTIAL), and the one-line reason. Remove covers that are no longer active.
-- **Faction stances:** each faction with non-neutral standing toward the party. Format: `[Faction]: [Allied/Friendly/Neutral/Suspicious/Hostile] — [one-line reason]`. Remove factions that have returned to neutral.
-- **NPC dispositions:** each NPC with changed or notable standing. Format: `[Name]: [disposition] — [one-line reason]`. Remove NPCs who have returned to baseline.
+**Actualizá `## Live State Flags` en state.md en cada save.** Esta sección es el ancla resistente a compactación — contiene hechos que las prosas de resumen aplanan. Después de cada sesión, revisá y actualizá:
+- **Tapadera:** la tapadera activa de cada PJ, su estado (INTACTA / DESCUBIERTA / PARCIAL), y el motivo en una línea. Eliminá tapaderas que ya no están activas.
+- **Posturas de facción:** cada facción con postura no-neutral hacia el grupo. Formato: `[Facción]: [Allied/Friendly/Neutral/Suspicious/Hostile] — [motivo en una línea]`. Eliminá facciones que volvieron a neutral.
+- **Disposiciones de PNJ:** cada PNJ con postura cambiada o notable. Formato: `[Nombre]: [disposición] — [motivo en una línea]`. Eliminá PNJ que volvieron a la línea base.
 
-If nothing changed in a category this session, leave it as-is. If a fact was wrong in the previous save, correct it.
+Si nada cambió en una categoría esta sesión, dejala como está. Si un hecho estaba mal en el save anterior, corregilo.
 
-**Structured (imported) campaigns — keep the arc window and arc.md in sync.** Advancing the pointer is not optional bookkeeping — it is what keeps the campaign on its own rails, and a pointer that never moves is how an imported module quietly becomes an improvised one. Before you decide "no chapter advanced," check honestly: **if this session cleared the last of the current chapter's `outstanding_beats`, or the party has plainly moved into the next chapter's location or situation, the chapter advanced — treat it as such and move the pointer now.** When a chapter advances: mark the completed chapter `status: complete` in `arc.md`, set the new chapter `status: current`, and update `state.md → ## Campaign Arc` so its `current_chapter`, `current_chapter_detail`, `next_chapter`, and `outstanding_beats` reflect the new window. The full tree stays in `arc.md`; `state.md` carries only the current + next chapter so the load stays light. Only when the party is genuinely still mid-chapter, update `outstanding_beats`/`steering_notes` inline in `state.md` — no need to touch `arc.md`. (Dynamic/sandbox campaigns have no `arc.md`; update the inline arc in `state.md` as before.)
+**Campañas estructuradas (importadas) — mantené sincronizados la ventana del arco y arc.md.** Avanzar el puntero no es contabilidad opcional — es lo que mantiene a la campaña en sus propios rieles, y un puntero que nunca se mueve es cómo un módulo importado se convierte en silencio en uno improvisado. Antes de decidir "no avanzó ningún capítulo", chequeá honestamente: **si esta sesión vació el resto de los `outstanding_beats` del capítulo actual, o el grupo claramente se movió a la ubicación o situación del siguiente capítulo, el capítulo avanzó — tratalo como tal y movés el puntero ahora.** Cuando un capítulo avanza: marcá el capítulo completado como `status: complete` en `arc.md`, poné el nuevo capítulo como `status: current`, y actualizá `state.md → ## Campaign Arc` para que su `current_chapter`, `current_chapter_detail`, `next_chapter`, y `outstanding_beats` reflejen la nueva ventana. El árbol completo se queda en `arc.md`; `state.md` solo lleva el capítulo actual + siguiente para que la carga se mantenga liviana. Solo cuando el grupo genuinamente sigue a mitad de capítulo, actualizá `outstanding_beats`/`steering_notes` inline en `state.md` — sin necesidad de tocar `arc.md`. (Las campañas dinámicas/sandbox no tienen `arc.md`; actualizá el arco inline en `state.md` como antes.)
 
-Then update `## Faction Moves` in state.md: for each active faction, answer *"what did they do while the party was occupied?"* One line per faction — even if nothing visible yet. Confirm what was written.
+Después actualizá `## Faction Moves` en state.md: para cada facción activa, respondé *"¿qué hicieron mientras el grupo estaba ocupado?"* Una línea por facción — incluso si todavía no hay nada visible. Confirmá qué se escribió.
 
-**Session tail archive:** `dnd-display-app.py` continuously writes `~/.claude/dnd/campaigns/<name>/session_tail.json` — campaign-specific path, atomic-write, skip-on-empty guarded (since 2026-05-01). At save time:
+**Archivo de cola de sesión (session tail):** `dnd-display-app.py` escribe continuamente `~/.claude/dnd/campaigns/<nombre>/session_tail.json` — ruta específica de la campaña, escritura atómica, protegida contra vaciado (desde 2026-05-01). Al momento del save:
 
-1. Verify the campaign-side file exists and is non-empty:
+1. Verificá que el archivo del lado de la campaña exista y no esté vacío:
    ```bash
-   bash ${CLAUDE_SKILL_DIR}/display/verify_tail.sh <campaign-name>
+   bash ${CLAUDE_SKILL_DIR}/display/verify_tail.sh <nombre-campaña>
    ```
-   The script returns 0 if the tail is healthy (non-empty + valid JSON list), 1 if missing/empty/corrupt. If it returns 1, the tail is unsafe to rely on for next session's replay — **write a canonical replacement directly to the campaign path** with this session's 5–8 most important narrative beats as a JSON list of `{"text": "...", "_camp": "<name>"}` entries (no display call needed; the display may already be dead). Use the `${CLAUDE_SKILL_DIR}/display/write_canonical_tail.py` helper.
-2. Also write `~/.claude/dnd/campaigns/<name>/session-tail.md` (human-readable snapshot — companion to the JSON, used as fallback during /dm:dnd load if JSON read fails).
+   El script devuelve 0 si la cola está sana (lista JSON no vacía y válida), 1 si falta/está vacía/corrupta. Si devuelve 1, la cola no es segura para confiar en ella en la repetición de la próxima sesión — **escribí un reemplazo canónico directamente en la ruta de la campaña** con los 5–8 beats narrativos más importantes de esta sesión como una lista JSON de entradas `{"text": "...", "_camp": "<nombre>"}` (no hace falta llamar al display; puede que ya esté muerto). Usá el helper `${CLAUDE_SKILL_DIR}/display/write_canonical_tail.py`.
+2. También escribí `~/.claude/dnd/campaigns/<nombre>/session-tail.md` (instantánea legible por humanos — acompaña al JSON, se usa como fallback durante /dm:dnd load si falla la lectura del JSON).
 
-**Session log archival (run on every save after session count > 3):**
-session-log.md keeps only the **2 most recent full session entries**. Older entries move to `session-log-archive.md` (append, never delete). Before archiving each entry, extract a 3–5 bullet continuity summary and write it to `## Continuity Archive` in state.md. Format:
+**Archivado del log de sesión (correr en cada save después de que el contador de sesión > 3):**
+session-log.md mantiene solo las **2 entradas de sesión completas más recientes**. Las entradas más viejas se mueven a session-log-archive.md (agregar, nunca borrar). Antes de archivar cada entrada, extraé un resumen de continuidad de 3–5 viñetas y escribilo en `## Continuity Archive` en state.md. Formato:
 
 ```markdown
-### Session N — [date] — [one-line location/event label]
-- [Key fact that may resurface as a callback]
-- [NPC revelation, exact wording of something important, decision that has consequences]
-- [Roll outcome that changed the fiction]
-- [Item acquired with story significance, plot beat, atmospheric/decision moment]
+### Session N — [fecha] — [ubicación/evento en una línea]
+- [Hecho clave que puede resurgir como referencia]
+- [Revelación de PNJ, redacción exacta de algo importante, decisión con consecuencias]
+- [Resultado de tirada que cambió la ficción]
+- [Objeto adquirido con significado narrativo, beat de trama, momento atmosférico/de decisión]
 ```
 
-**Going-forward Continuity Archive compression rule (from 2026-05-07; applies when `graph.json` exists for the campaign):** When `graph.json` is present, the Continuity Archive bullets must NOT restate relational state that the graph holds canonically. Specifically, **omit** bullets/clauses that say:
-- "X is allied with Y" / "X is hostile to Y" / "X is friendly with Y" — already a typed edge with `--since N` and source-anchor
-- "X is a member of faction F" / "X works for Y" / "X reports to Y" — already a `member_of` / `works_for` / `reports_on` edge
-- "Z saw the party's faces" / "K is now in the Kept profile" — already a `hostile_to` / `surveils` edge with `--since`
-- Faction memberships and NPC dispositions that haven't changed this session
-- Restated NPC profiles (job title, age, location) that already live as node tags + summary
+**Regla de compresión a futuro del Archivo de Continuidad (desde 2026-05-07; aplica cuando `graph.json` existe para la campaña):** Cuando `graph.json` está presente, las viñetas del Archivo de Continuidad NO deben reafirmar estado relacional que el grafo ya guarda de forma canónica. Específicamente, **omití** viñetas/cláusulas que digan:
+- "X es aliado de Y" / "X es hostil a Y" / "X es amistoso con Y" — ya es un edge tipado con `--since N` y ancla de fuente
+- "X es miembro de la facción F" / "X trabaja para Y" / "X le reporta a Y" — ya es un edge `member_of` / `works_for` / `reports_on`
+- "Z vio las caras del grupo" / "K ahora está en el perfil de los Kept" — ya es un edge `hostile_to` / `surveils` con `--since`
+- Membresías de facción y disposiciones de PNJ que no cambiaron esta sesión
+- Perfiles de PNJ reafirmados (cargo, edad, ubicación) que ya viven como tags de nodo + resumen
 
-**Keep** in archive bullets:
-- Mechanical changes (XP awarded, level-ups, items gained/spent, slots burned, HP deltas at session end)
-- Plot beats (arc beat completions, "Beat 2a sealed", "Beat 2b LANDED")
-- Atmospheric / decision moments that have no graph edge ("Mira ate the bread — first food in 800 years", "Mara squeezed her hand")
-- Disclosed content (the WHAT was learned — "fragment / anchor / host", "three acceleration factors") even when the relational fact is in graph
-- Off-screen world events / faction moves
-- Calibration / DM Notes
-- Cliffhangers and pause-points
+**Mantené** en las viñetas del archivo:
+- Cambios mecánicos (PX otorgados, subidas de nivel, objetos ganados/gastados, espacios consumidos, deltas de PG al final de sesión)
+- Beats de trama (finalizaciones de beat de arco, "Beat 2a sellado", "Beat 2b ATERRIZÓ")
+- Momentos atmosféricos / de decisión sin edge en el grafo ("Mira comió el pan — primera comida en 800 años", "Mara le apretó la mano")
+- Contenido revelado (el QUÉ se aprendió — "fragmento / ancla / huésped", "tres factores de aceleración") incluso cuando el hecho relacional está en el grafo
+- Eventos del mundo fuera de escena / movimientos de facción
+- Calibración / Notas del DM
+- Cliffhangers y puntos de pausa
 
-Treat each bullet as one sentence with one job. If the only job is "restate a graph edge", drop it. If it carries content + edge, keep the content half. The graph is queried at `/dm:dnd load` step 5; the archive is queried for chronological narrative + mechanical state — they should not overlap.
+Tratá cada viñeta como una oración con un solo trabajo. Si el único trabajo es "reafirmar un edge del grafo", eliminala. Si lleva contenido + edge, quedate con la mitad de contenido. El grafo se consulta en el paso 5 de `/dm:dnd load`; el archivo se consulta para narrativa cronológica + estado mecánico — no deberían superponerse.
 
-The continuity summary is what stays hot in context. The full verbose log is in the archive, readable on `/dm:dnd recap` or explicit request. When a past detail surfaces mid-scene, check `## Continuity Archive` first, then `/dm:dnd graph scene-context` for relational context, then read session-log-archive.md if more depth is needed.
+El resumen de continuidad es lo que se mantiene presente en contexto. El log verboso completo está en el archivo, legible en `/dm:dnd recap` o bajo pedido explícito. Cuando un detalle pasado resurge a mitad de escena, chequeá primero `## Continuity Archive`, después `/dm:dnd graph scene-context` para contexto relacional, y después leé session-log-archive.md si hace falta más profundidad.
 
-**Campaign-graph relationship-shift sweep:** before completing the save, scan this session's narration for relationship shifts that weren't captured live via `/dm:dnd graph add-edge` / `close-edge`. Look for moments matching these patterns:
+**Barrido de cambios de relación del grafo de campaña:** antes de terminar el save, escaneá la narración de esta sesión buscando cambios de relación que no se capturaron en vivo vía `/dm:dnd graph add-edge` / `close-edge`. Buscá momentos que coincidan con estos patrones:
 
-- New alliance, betrayal, or rivalry between named NPCs / factions ("Velkyn now serves the Pale Court")
-- A shift in how the **party** stands toward an NPC or faction ("the Pale Court now reads the party as hostile", "Aldric came around and trusts them"). Draft these as `set-disposition --to <npc-or-faction> --level <allied/friendly/neutral/suspicious/hostile>` calls, matching the `standing` you push to the display and the NPC-disposition lines in `## Live State Flags`.
-- An NPC moving into / out of a location ("Mira fled the Citadel for the Lowmarket")
-- A faction taking control of (or losing) a place ("House Tarn lost the silver mine")
-- A character learning a secret ("the party now knows Velkyn was the spy")
-- A quest / thread ending or being blocked
+- Nueva alianza, traición, o rivalidad entre PNJ/facciones nombrados ("Velkyn ahora sirve a la Corte Pálida")
+- Un cambio en cómo el **grupo** se posiciona hacia un PNJ o facción ("la Corte Pálida ahora ve al grupo como hostil", "Aldric cambió de parecer y confía en ellos"). Redactá esto como llamadas `set-disposition --to <pnj-o-facción> --level <allied/friendly/neutral/suspicious/hostile>`, coincidiendo con el `standing` que enviás al display y las líneas de disposición de PNJ en `## Live State Flags`.
+- Un PNJ que se muda a / se va de una ubicación ("Mira huyó de la Ciudadela hacia el Bajomercado")
+- Una facción que toma control de (o pierde) un lugar ("La Casa Tarn perdió la mina de plata")
+- Un personaje que aprende un secreto ("el grupo ahora sabe que Velkyn era el espía")
+- Un hilo/misión que termina o queda bloqueado
 
-For each candidate, draft an `add-edge` or `close-edge` call. Then **present the batch to the DM as a numbered list** and ask: *"Apply all? [y / pick / skip]"*
+Para cada candidato, redactá una llamada `add-edge` o `close-edge`. Después **presentale el lote al DM como una lista numerada** y preguntá: *"¿Aplico todo? [s / elegir / omitir]"*
 
-- `y` → run all proposed calls via `python3 ${CLAUDE_SKILL_DIR}/scripts/campaign_graph.py ...`
-- `pick` → DM names the numbers to apply (e.g. `1, 3, 5`); skip the rest
-- `skip` → don't apply any
+- `s` → corré todas las llamadas propuestas vía `python3 ${CLAUDE_SKILL_DIR}/scripts/campaign_graph.py ...`
+- `elegir` → el DM nombra los números a aplicar (ej. `1, 3, 5`); salteá el resto
+- `omitir` → no apliques ninguna
 
-Always supply `--since <current-session-N>` from state.md. Never write proposed edges silently.
+Siempre proporcioná `--since <sesión-N-actual>` de state.md. Nunca escribas edges propuestos en silencio.
 
-If `graph.json` doesn't exist yet for this campaign, skip the sweep entirely (no proposal block) — graph isn't seeded.
+Si `graph.json` todavía no existe para esta campaña, salteá el barrido por completo (sin bloque de propuesta) — el grafo no está sembrado.
 
 ---
 
 ## `/dm:dnd end`
-1. Run `/dm:dnd save`, then:
-   a. Append **Session Recap** block to session-log.md with key events and open threads.
-   b. Ask: *"Quick calibration — what worked this session, and what would you adjust next time?"* Write answers to `### DM Calibration`. If skipped, leave blank.
-   c. Update `## World State` in state.md: check whether events advanced the threat arc stage, shifted faction states, or changed the in-world date. Update all three.
-   d. If the calibration response reveals a new pattern (or confirms/contradicts an existing one), update `## DM Style Notes` in state.md. Add new bullets; refine existing ones if the pattern has sharpened. Do not log every session — only update when something genuinely new or changed is observed.
-   e. **Arc check** (dynamic arcs only — skip for sandbox/structured): If `## Campaign Arc` has `type: dynamic`, do all of:
+1. Corré `/dm:dnd save`, después:
+   a. Agregá el bloque **Session Recap** a session-log.md con eventos clave e hilos abiertos.
+   b. Preguntá: *"Calibración rápida — ¿qué funcionó esta sesión, y qué ajustarías la próxima vez?"* Escribí las respuestas en `### DM Calibration`. Si se saltea, dejalo en blanco.
+   c. Actualizá `## World State` en state.md: chequeá si los eventos avanzaron la etapa del arco de amenaza, cambiaron estados de facción, o cambiaron la fecha en el mundo. Actualizá los tres.
+   d. Si la respuesta de calibración revela un patrón nuevo (o confirma/contradice uno existente), actualizá `## DM Style Notes` en state.md. Agregá viñetas nuevas; refiná las existentes si el patrón se afinó. No registres cada sesión — solo actualizá cuando se observa algo genuinamente nuevo o cambiado.
+   e. **Chequeo de arco** (solo arcos dinámicos — salteá para sandbox/estructurada): Si `## Campaign Arc` tiene `type: dynamic`, hacé todo esto:
 
-      i. Ask: *"Did any arc beats land this session? [beat id(s) like '1b 2a', or 'none']"*
-      ii. If beats landed: run `/dm:dnd arc advance <beat-id>` for each.
-      iii. **Pre-emption check (critical — added 2026-05-01):** for each remaining outstanding beat whose `world_pressure` was visibly delivered this session (the world event named in the beat actually appeared in narration or Faction Moves), evaluate whether the beat's `what_changes` consequence ALSO landed. Three possible states:
-        - **Landed cleanly** → mark beat complete (step ii).
-        - **Did not land — pressure absorbed without consequence** → the beat is overdue and its current shape no longer fits. **Run `/dm:dnd arc revise` immediately**; do not just update `steering_notes`. The beat's `what_changes` was event-shaped (something specific happens) when it should be consequence-shaped (something fundamentally different is true) — revise both `what_changes` and `world_pressure` to fit a path that DOES land. The committed shape bends; it does not break.
-        - **Pressure not yet delivered** → leave beat alone; expected to deliver next session.
-      iv. Update `steering_notes` for the next outstanding beat with the *consequence shape* expected, not the specific event.
-   f. **Tail verification (added 2026-05-01):** before killing the display, verify the campaign-side `session_tail.json` is healthy:
+      i. Preguntá: *"¿Aterrizó algún beat de arco esta sesión? [id(s) de beat como '1b 2a', o 'ninguno']"*
+      ii. Si aterrizaron beats: corré `/dm:dnd arc advance <beat-id>` para cada uno.
+      iii. **Chequeo de adelantamiento (crítico — agregado 2026-05-01):** para cada beat pendiente restante cuyo `world_pressure` se entregó visiblemente esta sesión (el evento del mundo nombrado en el beat efectivamente apareció en la narración o en Faction Moves), evaluá si la consecuencia `what_changes` del beat TAMBIÉN aterrizó. Tres estados posibles:
+        - **Aterrizó limpiamente** → marcá el beat completo (paso ii).
+        - **No aterrizó — la presión se absorbió sin consecuencia** → el beat está vencido y su forma actual ya no encaja. **Corré `/dm:dnd arc revise` de inmediato**; no te limites a actualizar `steering_notes`. El `what_changes` del beat tenía forma de evento (algo específico pasa) cuando debería tener forma de consecuencia (algo fundamentalmente distinto es verdad) — revisá tanto `what_changes` como `world_pressure` para que encajen en un camino que SÍ aterrice. La forma comprometida se dobla; no se rompe.
+        - **La presión todavía no se entregó** → dejá el beat en paz; se espera que se entregue la próxima sesión.
+      iv. Actualizá `steering_notes` para el próximo beat pendiente con la *forma de consecuencia* esperada, no el evento específico.
+   f. **Verificación de la cola (agregado 2026-05-01):** antes de matar el display, verificá que el `session_tail.json` del lado de la campaña esté sano:
       ```bash
-      bash ${CLAUDE_SKILL_DIR}/display/verify_tail.sh <campaign-name>
+      bash ${CLAUDE_SKILL_DIR}/display/verify_tail.sh <nombre-campaña>
       ```
-      Exit 0 = healthy. Exit 1 = missing/empty/corrupt → write a canonical replacement to `~/.claude/dnd/campaigns/<name>/session_tail.json` from session context (5–8 entries, each `{"text": "...", "_camp": "<name>"}`) BEFORE the display kill — once the display is dead, only the file matters. The display's own `_persist_tail` has skip-on-empty + atomic-write guards, but the backstop ensures a worst-case file state is impossible.
-2. Stop the display (always — even if `_display_running` was unclear):
+      Salida 0 = sano. Salida 1 = falta/vacío/corrupto → escribí un reemplazo canónico en `~/.claude/dnd/campaigns/<nombre>/session_tail.json` a partir del contexto de sesión (5–8 entradas, cada una `{"text": "...", "_camp": "<nombre>"}`) ANTES de matar el display — una vez que el display está muerto, solo importa el archivo. El propio `_persist_tail` del display tiene protecciones de vaciado + escritura atómica, pero el respaldo asegura que el peor caso de estado de archivo sea imposible.
+2. Detené el display (siempre — incluso si `_display_running` no estaba claro):
    ```bash
    kill $(cat ${CLAUDE_SKILL_DIR}/display/app.pid 2>/dev/null) 2>/dev/null
    rm -f ${CLAUDE_SKILL_DIR}/display/app.pid
    ```
-3. **Post-kill tail re-verification:** run `verify_tail.sh` once more after the kill. If it now reports unhealthy (file got truncated by a final write race), restore from the canonical version written in step 1f.
+3. **Re-verificación de la cola post-cierre:** corré `verify_tail.sh` una vez más después del kill. Si ahora reporta no-sano (el archivo se truncó por una condición de carrera en una escritura final), restaurá desde la versión canónica escrita en el paso 1f.
 
 ---
 
 ## `/dm:dnd abandon`
 
-Exit the current session **without saving any state changes**. Use this when an error occurred and you want to discard everything since the last `/dm:dnd save` (or since load, if the session was never saved).
+Salí de la sesión actual **sin guardar ningún cambio de estado**. Usalo cuando ocurrió un error y querés descartar todo desde el último `/dm:dnd save` (o desde la carga, si la sesión nunca se guardó).
 
-1. Confirm: *"Abandon session? All unsaved state changes will be lost. Type 'yes' to confirm."* — do not proceed until confirmed.
-2. Do **NOT** write to state.md, world.md, npcs.md, session-log.md, or any character files.
-3. Clear the autorun flag in memory (`autorun: false`) so the wait loop does not restart.
-4. If `_display_running = true`, stop the display:
+1. Confirmá: *"¿Abandonar la sesión? Se van a perder todos los cambios de estado sin guardar. Escribí 'sí' para confirmar."* — no continúes hasta confirmar.
+2. NO escribas en state.md, world.md, npcs.md, session-log.md, ni en ningún archivo de personaje.
+3. Limpiá el flag de autorun en memoria (`autorun: false`) para que el loop de espera no vuelva a arrancar.
+4. Si `_display_running = true`, detené el display:
    ```bash
    kill $(cat ${CLAUDE_SKILL_DIR}/display/app.pid 2>/dev/null) 2>/dev/null
    rm -f ${CLAUDE_SKILL_DIR}/display/app.pid
    ```
-5. Confirm: *"Session abandoned. No files were written. Run `/dm:dnd load <campaign>` to reload from the last saved state."*
+5. Confirmá: *"Sesión abandonada. No se escribió ningún archivo. Corré `/dm:dnd load <campaña>` para recargar desde el último estado guardado."*
 
 ---
 
 ## `/dm:dnd data [sync|status]`
-- `sync` → `python3 ${CLAUDE_SKILL_DIR}/scripts/sync_srd.py` — checks upstream SHAs (5e-bits + FoundryVTT) and rebuilds `dnd5e_srd.json` only if either source has new commits
-- `sync --force` → `python3 ${CLAUDE_SKILL_DIR}/scripts/sync_srd.py --force` — rebuild regardless
-- `sync --check` → check upstream without rebuilding
-- `status` → `python3 ${CLAUDE_SKILL_DIR}/scripts/build_srd.py --status` — show current dataset metadata
+- `sync` → `python3 ${CLAUDE_SKILL_DIR}/scripts/sync_srd.py` — chequea los SHA upstream (5e-bits + FoundryVTT) y reconstruye `dnd5e_srd.json` solo si alguna de las fuentes tiene commits nuevos
+- `sync --force` → `python3 ${CLAUDE_SKILL_DIR}/scripts/sync_srd.py --force` — reconstruye sin importar qué
+- `sync --check` → chequea el upstream sin reconstruir
+- `status` → `python3 ${CLAUDE_SKILL_DIR}/scripts/build_srd.py --status` — muestra los metadatos actuales del dataset
 
-Dataset is bundled at `${CLAUDE_SKILL_DIR}/data/dnd5e_srd.json` (1453 records: spells, equipment, magic items, conditions, monsters, class features). No download required at runtime. Run `sync` only when you want to pull new upstream content.
+El dataset viene incluido en `${CLAUDE_SKILL_DIR}/data/dnd5e_srd.json` (1453 registros: hechizos, equipo, objetos mágicos, condiciones, monstruos, rasgos de clase). No hace falta descarga en tiempo de ejecución. Corré `sync` solo cuando quieras traer contenido nuevo del upstream.
 
 ---
 
-## `/dm:dnd path [<new-path> | reset]`
+## `/dm:dnd path [<nueva-ruta> | reset]`
 
-View or configure where campaign and character data is stored. Wraps the
-`DND_CAMPAIGN_ROOT` env var.
+Ver o configurar dónde se guardan los datos de campaña y personaje. Envuelve la
+variable de entorno `DND_CAMPAIGN_ROOT`.
 
-- No args → `python3 ${CLAUDE_SKILL_DIR}/scripts/path_config.py` and show output.
-- New path → `python3 ${CLAUDE_SKILL_DIR}/scripts/path_config.py set <path>`. Confirm to user, then remind them the change only takes effect in new shells (or after they `source` their rc on macOS/Linux).
+- Sin argumentos → `python3 ${CLAUDE_SKILL_DIR}/scripts/path_config.py` y mostrar la salida.
+- Nueva ruta → `python3 ${CLAUDE_SKILL_DIR}/scripts/path_config.py set <ruta>`. Confirmale al usuario, después recordale que el cambio solo tiene efecto en shells nuevas (o después de que hagan `source` de su rc en macOS/Linux).
 - `reset` → `python3 ${CLAUDE_SKILL_DIR}/scripts/path_config.py reset`.
 
-Persistence is via shell rc on macOS/Linux and via `setx` on Windows. Existing campaigns are not auto-migrated; `paths.find_campaign()` handles legacy fallback + copy-on-access.
+La persistencia es vía rc de shell en macOS/Linux y vía `setx` en Windows. Las campañas existentes no se migran automáticamente; `paths.find_campaign()` maneja el fallback legado + copia-al-acceder.
 
 ---
 
 ## `/dm:dnd update [--check]`
 
-Pull the latest skill changes from `origin/main`.
+Trae los últimos cambios del skill desde `origin/main`.
 
-- No args → `python3 ${CLAUDE_SKILL_DIR}/scripts/update_skill.py` and stream output (script prompts before pulling).
-- `--check` → `python3 ${CLAUDE_SKILL_DIR}/scripts/update_skill.py --check` — report status without pulling.
-- The script refuses to update if the working tree is dirty and uses `--ff-only` so it never silently merges divergent history.
-- After a successful pull, remind the user to restart Claude Code so the new `SKILL.md` and `SKILL-commands.md` are reloaded.
+- Sin argumentos → `python3 ${CLAUDE_SKILL_DIR}/scripts/update_skill.py` y mostrar la salida en streaming (el script pregunta antes de hacer pull).
+- `--check` → `python3 ${CLAUDE_SKILL_DIR}/scripts/update_skill.py --check` — reporta el estado sin hacer pull.
+- El script se niega a actualizar si el árbol de trabajo está sucio y usa `--ff-only` para nunca fusionar historia divergente en silencio.
+- Después de un pull exitoso, recordale al usuario que reinicie Claude Code para que se recarguen el nuevo `SKILL.md` y `SKILL-commands.md`.
 
 ---
 
 ## `/dm:dnd display [start|stop|status]`
-- `start` → ask LAN mode [y/n]; run `bash ${CLAUDE_SKILL_DIR}/display/start-display.sh [--lan]`; print URL(s)
+- `start` → preguntá modo LAN [s/n]; corré `bash ${CLAUDE_SKILL_DIR}/display/start-display.sh [--lan]`; imprimí la(s) URL(s)
 - `stop` → `kill $(cat ${CLAUDE_SKILL_DIR}/display/app.pid) 2>/dev/null && rm -f ${CLAUDE_SKILL_DIR}/display/app.pid`
-- `status` → `curl -sk $(cat ${CLAUDE_SKILL_DIR}/display/.scheme 2>/dev/null || echo http)://localhost:5001/ping` — reachable or unreachable
-- No argument → print quick-start instructions
+- `status` → `curl -sk $(cat ${CLAUDE_SKILL_DIR}/display/.scheme 2>/dev/null || echo http)://localhost:5001/ping` — alcanzable o no alcanzable
+- Sin argumento → imprimí instrucciones rápidas de inicio
 
 ---
 
 ## `/dm:dnd list`
-Read `~/.claude/dnd/campaigns/*/state.md`, print summary table: campaign name | last session date | session count.
+Leé `~/.claude/dnd/campaigns/*/state.md`, imprimí una tabla resumen: nombre de campaña | fecha de última sesión | contador de sesiones.
 
 ---
 
-## `/dm:dnd character new [campaign-name]`
+## `/dm:dnd character new [nombre-campaña]`
 
-**Read the campaign's ruleset first** — `python3 ${CLAUDE_SKILL_DIR}/scripts/paths.py` is not a CLI; instead inline-read with:
+**Primero leé el reglamento de la campaña** — `python3 ${CLAUDE_SKILL_DIR}/scripts/paths.py` no es un CLI; en su lugar, leé inline con:
 
 ```bash
-python3 -c "import sys; sys.path.insert(0,'${CLAUDE_SKILL_DIR}/scripts'); from paths import campaign_ruleset; print(campaign_ruleset('<campaign>'))"
+python3 -c "import sys; sys.path.insert(0,'${CLAUDE_SKILL_DIR}/scripts'); from paths import campaign_ruleset; print(campaign_ruleset('<campaña>'))"
 ```
 
-The result drives branching at steps 1 (ASI source), 4 (origin feat), and 5 (subclass timing). The default `2014` applies for legacy campaigns predating the ruleset field.
+El resultado guía la ramificación en los pasos 1 (fuente de ASI), 4 (dote de origen), y 5 (momento de la subclase). El default `2014` aplica para campañas legadas anteriores al campo de reglamento.
 
-**First, offer the two build paths — call `AskUserQuestion`:** *"How do you want to build [or: your character]?"*
-- `Step by step` → the guided flow below (steps 1–10). Use this when the player wants to make each choice deliberately, or already knows the exact build.
-- `Describe it` → the prose path (step 0 below). Use this when the player would rather say who the character is in a sentence and let you assemble a legal sheet.
+**Primero, ofrecé los dos caminos de construcción — llamá a `AskUserQuestion`:** *"¿Cómo querés construir [o: tu personaje]?"*
+- `Paso a paso` → el flujo guiado de abajo (pasos 1–10). Usalo cuando el jugador quiere hacer cada elección deliberadamente, o ya sabe la construcción exacta.
+- `Describilo` → el camino de prosa (paso 0 abajo). Usalo cuando el jugador prefiere decir quién es el personaje en una oración y dejar que armes una hoja legal.
 
-Default to `Step by step` if the question is dismissed. Either path lands in the same sheet and runs the same validation, calc, and write steps — the only difference is how the choices are gathered.
+Default a `Paso a paso` si se descarta la pregunta. Los dos caminos terminan en la misma hoja y corren la misma validación, cálculo, y pasos de escritura — la única diferencia es cómo se recolectan las elecciones.
 
-0. **Describe-it path.** Ask one open question: *"In a sentence or two, describe your character — who they are, how they fight or solve problems, where they come from. I'll build a legal, level-appropriate 5e sheet from it and show you before anything's written."* Then:
+0. **Camino de descripción.** Hacé una pregunta abierta: *"En una o dos oraciones, describí tu personaje — quién es, cómo pelea o resuelve problemas, de dónde viene. Voy a construir una hoja de 5e legal y de nivel apropiado a partir de eso y te la muestro antes de escribir nada."* Después:
 
-   a. **Derive the build from the prose, model-side.** Map the description to a legal 5e chassis for this campaign's ruleset: **class** (and, if the level warrants it, subclass per the ruleset's timing — see step 5), **species/race**, **background**, ability-score priorities (which two or three scores the concept leans on), skill/tool proficiencies the class+background grant, a fighting style or starting spells if the class has them, and a one-line **Character Pillar** (Bond / Flaw / Ideal / Goal — the same field step 2 fills). Read the description for what the player actually cares about — a "disgraced temple guard who talks their way out of fights" is a Paladin or Cleric with a Soldier/Acolyte background and CHA/CON priority, not a generic pick. Never invent a detail the prose contradicts; where the prose is silent, choose the most concept-fitting legal option and note it as a choice, not a fact.
+   a. **Derivá la construcción de la prosa, del lado del modelo.** Mapeá la descripción a un chasis de 5e legal para el reglamento de esta campaña: **clase** (y, si el nivel lo justifica, subclase según el momento del reglamento — ver paso 5), **especie/raza**, **trasfondo**, prioridades de puntuación de característica (qué dos o tres puntuaciones favorece el concepto), competencias de habilidad/herramienta que otorgan la clase+trasfondo, un estilo de combate o conjuros iniciales si la clase los tiene, y un **Pilar de Personaje** de una línea (Vínculo / Defecto / Ideal / Objetivo — el mismo campo que completa el paso 2). Leé la descripción buscando lo que al jugador realmente le importa — un "guardia del templo deshonrado que habla para salir de las peleas" es un Paladín o Clérigo con trasfondo de Soldado/Acólito y prioridad CAR/CON, no una elección genérica. Nunca inventes un detalle que la prosa contradiga; donde la prosa no dice nada, elegí la opción legal que más encaje con el concepto y anotalo como una elección, no como un hecho.
 
-   b. **Validate against 5e legality before showing anything.** The derived sheet must be legal for the campaign's ruleset and the agreed starting level: class/species/background all exist in 5e (SRD or a source the table allows — look up anything you're unsure of via `lookup.py`), ability scores come from a legal method (roll or point buy — step 3), ASI source matches the ruleset (race in 2014, background + one origin feat in 2024 — step 1), proficiencies are actually granted by the chosen class+background (no double-dipping, no out-of-list picks), and any spells/features are available at this level. If the concept implies something illegal (a level-1 character with a capstone feature, a subclass earlier than the ruleset grants it), pick the closest legal equivalent and say so.
+   b. **Validá la legalidad en 5e antes de mostrar nada.** La hoja derivada debe ser legal para el reglamento de la campaña y el nivel inicial acordado: clase/especie/trasfondo existen en 5e (SRD o una fuente que la mesa permita — buscá cualquier cosa de la que no estés seguro vía `lookup.py`), las puntuaciones de característica vienen de un método legal (tirada o compra por puntos — paso 3), la fuente de ASI coincide con el reglamento (raza en 2014, trasfondo + una dote de origen en 2024 — paso 1), las competencias efectivamente las otorgan la clase+trasfondo elegidos (sin duplicados, sin elecciones fuera de lista), y cualquier hechizo/rasgo está disponible a este nivel. Si el concepto implica algo ilegal (un personaje de nivel 1 con un rasgo tope, una subclase antes de lo que el reglamento permite), elegí el equivalente legal más cercano y decilo.
 
-   c. **Present the derived sheet for one confirmation.** Show the full build — species/race, class (+ subclass if any), background, ability array with the concept's priorities assigned, proficiencies, starting kit, and the derived Pillar with its source sentence — and ask: *"This is what I read from your description. Change anything, or shall I roll it up?"* Let the player adjust any field in prose; re-validate after any change.
+   c. **Presentá la hoja derivada para una sola confirmación.** Mostrá la construcción completa — especie/raza, clase (+ subclase si aplica), trasfondo, arreglo de característica con las prioridades del concepto asignadas, competencias, kit inicial, y el Pilar derivado con su oración fuente — y preguntá: *"Esto es lo que leí de tu descripción. ¿Cambiás algo, o la armo?"* Dejá que el jugador ajuste cualquier campo en prosa; re-validá después de cualquier cambio.
 
-   d. **Converge into the shared flow.** On confirmation, run the name-uniqueness check (step 1's `name_registry.py check`), then continue at **step 3** (finalize ability scores — reuse the derived priorities), **step 4** (racial/background bonuses + `character.py calc`), and steps 6–10 (equipment, write, roster mirror, supplemental builder). Do not re-ask the step-by-step questions the description already answered; only fill genuine gaps.
+   d. **Converge en el flujo compartido.** Con la confirmación, corré el chequeo de unicidad de nombre (`name_registry.py check` del paso 1), después continuá en el **paso 3** (finalizar puntuaciones de característica — reusando las prioridades derivadas), **paso 4** (bonos raciales/de trasfondo + `character.py calc`), y pasos 6–10 (equipo, escritura, reflejo en roster, constructor suplementario). No re-preguntes lo que el paso a paso ya respondió con la descripción; completá solo los vacíos genuinos.
 
-1. Ask: name, **species** (2024) or **race** (2014), class, background.
+1. Preguntá: nombre, **especie** (2024) o **raza** (2014), clase, trasfondo.
 
-   **Name uniqueness check:** run `python3 ${CLAUDE_SKILL_DIR}/scripts/name_registry.py check "<name>"`. Exit 1 (duplicate) → surface prior use; player confirms or changes. Record after step 9.
+   **Chequeo de unicidad de nombre:** corré `python3 ${CLAUDE_SKILL_DIR}/scripts/name_registry.py check "<nombre>"`. Código de salida 1 (duplicado) → mostrá el uso previo; el jugador confirma o cambia. Registrá después del paso 9.
 
-   **2014 (race-as-ASI):** the species/race grants ability score increases (e.g. Wood Elf: +2 DEX, +1 WIS). Apply to abilities at step 4.
-   **2024 (background-as-ASI):** the **background** grants the +2/+1 ability score increase OR three +1s, AND a free **Origin Feat** (e.g. Magic Initiate, Lucky, Tough). Species grants traits but no ability scores. Players in 2024 must pick background BEFORE rolling abilities — the background's ASI pattern dictates which scores benefit.
-2. Ask: *"In a sentence, what should the DM know about [Name]?"*
-   - If answered: derive ONE pillar — **Bond**, **Flaw**, **Ideal**, or **Goal** (whichever fits best). Store both the raw sentence and derived pillar in `## Character Pillar`.
-   - If skipped: leave `## Character Pillar` blank. Do not invent one. Do not re-prompt.
-3. Ask: roll or point buy
-   - Roll → `ability-scores.py roll`, present 3 arrays, player assigns
-   - Point buy → `ability-scores.py pointbuy --check <scores>` to validate
-4. Apply racial bonuses. Run `character.py calc` to derive all secondary stats.
-5. Ask: Fighting Style (Fighter/Paladin/Ranger), spells (if caster)
-6. Assign starting equipment per class + background
-7. Write to `characters/<name>.md` using `templates/character-sheet.md`; set `## Campaign History → Origin campaign`
-8. Add to `state.md` party line
-9. Mirror to global roster: `cp characters/<name>.md ~/.claude/dnd/characters/<name>.md`
-10. Run supplemental builder to fetch any non-SRD spells/features the character uses:
+   **2014 (raza-como-ASI):** la especie/raza otorga los aumentos de puntuación de característica (ej. Elfo del Bosque: +2 DES, +1 SAB). Aplicá a las características en el paso 4.
+   **2024 (trasfondo-como-ASI):** el **trasfondo** otorga el aumento de puntuación de característica +2/+1 O tres +1, Y una **Dote de Origen** gratis (ej. Iniciado en Magia, Suerte, Resistente). La especie otorga rasgos pero no puntuaciones de característica. Los jugadores en 2024 deben elegir el trasfondo ANTES de tirar las características — el patrón de ASI del trasfondo determina qué puntuaciones se benefician.
+2. Preguntá: *"En una oración, ¿qué debería saber el DM sobre [Nombre]?"*
+   - Si se responde: derivá UN pilar — **Vínculo**, **Defecto**, **Ideal**, o **Objetivo** (el que mejor encaje). Guardá tanto la oración cruda como el pilar derivado en `## Character Pillar`.
+   - Si se saltea: dejá `## Character Pillar` en blanco. No inventes uno. No vuelvas a preguntar.
+3. Preguntá: tirada o compra por puntos
+   - Tirada → `ability-scores.py roll`, presentá 3 arreglos, el jugador asigna
+   - Compra por puntos → `ability-scores.py pointbuy --check <puntuaciones>` para validar
+4. Aplicá los bonos raciales. Corré `character.py calc` para derivar todas las estadísticas secundarias.
+5. Preguntá: Estilo de Combate (Guerrero/Paladín/Explorador), hechizos (si es lanzador)
+6. Asigná el equipo inicial según clase + trasfondo
+7. Escribí en `characters/<nombre>.md` usando `templates/character-sheet.md`; poné `## Campaign History → Origin campaign`
+8. Agregá a la línea de grupo en `state.md`
+9. Reflejá en el roster global: `cp characters/<nombre>.md ~/.claude/dnd/characters/<nombre>.md`
+10. Corré el constructor suplementario para traer cualquier hechizo/rasgo no-SRD que use el personaje:
     ```bash
-    python3 ${CLAUDE_SKILL_DIR}/scripts/build_supplemental.py --character ~/.claude/dnd/campaigns/<name>/characters/<charname>.md
+    python3 ${CLAUDE_SKILL_DIR}/scripts/build_supplemental.py --character ~/.claude/dnd/campaigns/<nombre>/characters/<nombrepj>.md
     ```
-    This scans the character file for spells and features not in the SRD and fetches descriptions from dnd5e.wikidot.com into `dnd5e_supplemental.json`. Skips any entries already present. Safe to re-run.
+    Esto escanea el archivo de personaje buscando hechizos y rasgos que no están en la SRD y trae descripciones de dnd5e.wikidot.com hacia `dnd5e_supplemental.json`. Se saltea cualquier entrada ya presente. Seguro de volver a correr.
 
 ---
 
-## `/dm:dnd character sheet [name]`
-Read `characters/<name>.md`, display cleanly. If name omitted and one character exists, show that one.
+## `/dm:dnd character sheet [nombre]`
+Leé `characters/<nombre>.md`, mostralo limpio. Si se omite el nombre y existe un solo personaje, mostrá ese.
 
 ---
 
-## `/dm:dnd character import <name> [from:<campaign>]`
-1. Find character sheet: `from:<campaign>` specified → that campaign's characters/; otherwise check global roster `~/.claude/dnd/characters/<name>.md`; if neither → search all campaigns, list matches, ask.
-2. Show summary (level, XP, HP, key inventory) and ask: *"Import at current level [X], or level up before starting?"*
-   - As-is → copy directly; Level up first → run `/dm:dnd level up` on source sheet
-3. Copy to current campaign's `characters/<name>.md`. Update: Campaign, Last Updated, Previous campaigns, Death Saves (reset).
-4. Optionally ask about equipment adjustment for new setting.
-5. Add to `state.md` party line. Update global roster.
-6. Run supplemental builder for any non-SRD entries:
+## `/dm:dnd character import <nombre> [from:<campaña>]`
+1. Encontrá la hoja de personaje: si se especifica `from:<campaña>` → los characters/ de esa campaña; si no, chequeá el roster global `~/.claude/dnd/characters/<nombre>.md`; si ninguno → buscá en todas las campañas, listá coincidencias, preguntá.
+2. Mostrá un resumen (nivel, PX, PG, inventario clave) y preguntá: *"¿Importar al nivel actual [X], o subir de nivel antes de empezar?"*
+   - Tal cual → copiá directamente; Subir de nivel primero → corré `/dm:dnd level up` en la hoja fuente
+3. Copiá a `characters/<nombre>.md` de la campaña actual. Actualizá: Campaign, Last Updated, Previous campaigns, Death Saves (reset).
+4. Opcionalmente preguntá sobre ajustes de equipo para la nueva ambientación.
+5. Agregá a la línea de grupo en `state.md`. Actualizá el roster global.
+6. Corré el constructor suplementario para cualquier entrada no-SRD:
     ```bash
-    python3 ${CLAUDE_SKILL_DIR}/scripts/build_supplemental.py --character ~/.claude/dnd/campaigns/<name>/characters/<charname>.md
+    python3 ${CLAUDE_SKILL_DIR}/scripts/build_supplemental.py --character ~/.claude/dnd/campaigns/<nombre>/characters/<nombrepj>.md
     ```
-7. Deliver one-paragraph in-character aside — how does it feel to step into a new world?
+7. Entregá un párrafo en personaje — ¿cómo se siente entrar a un mundo nuevo?
 
 ---
 
-## `/dm:dnd level up [name]`
-1. **XP gate — check first:**
+## `/dm:dnd level up [nombre]`
+1. **Chequeo de PX — primero:**
 
-   | Level | XP required | Level | XP required |
+   | Nivel | PX requeridos | Nivel | PX requeridos |
    |-------|-------------|-------|-------------|
    | 2 | 300 | 11 | 85,000 |
    | 3 | 900 | 12 | 100,000 |
@@ -611,339 +611,339 @@ Read `characters/<name>.md`, display cleanly. If name omitted and one character 
    | 10 | 64,000 | 19 | 305,000 |
    |    |         | 20 | 355,000 |
 
-   Insufficient XP → report deficit and stop. Only continue on explicit DM override.
-2. Read sheet. Run `character.py levelup`. Apply class features. Ask for HP roll or average. Update sheet + global roster. Narrate the growth.
+   PX insuficientes → reportá el déficit y parate. Continuá solo con anulación explícita del DM.
+2. Leé la hoja. Corré `character.py levelup`. Aplicá los rasgos de clase. Preguntá por tirada de PG o promedio. Actualizá la hoja + roster global. Narrá el crecimiento.
 
-   **Ruleset-aware subclass timing (added 2026-05-08):** read campaign ruleset via `paths.campaign_ruleset(<campaign>)`.
-   - **2014:** Subclass selection happens at the class's specified level (Cleric/Sorcerer/Warlock at 1; Druid/Wizard at 2; most others at 3).
-   - **2024:** Subclass selection unifies at **level 3** for ALL classes. If the player is hitting level 3 in a 2024 campaign and hasn't picked a subclass yet, prompt for it. Class features that 2014 placed at level 1 (e.g. Cleric Domain) shift to level 3 in 2024.
+   **Momento de subclase según reglamento (agregado 2026-05-08):** leé el reglamento de la campaña vía `paths.campaign_ruleset(<campaña>)`.
+   - **2014:** La selección de subclase pasa en el nivel especificado por la clase (Clérigo/Hechicero/Brujo en el 1; Druida/Mago en el 2; la mayoría del resto en el 3).
+   - **2024:** La selección de subclase se unifica en el **nivel 3** para TODAS las clases. Si el jugador está llegando al nivel 3 en una campaña 2024 y todavía no eligió subclase, preguntale. Los rasgos de clase que en 2014 iban en el nivel 1 (ej. Dominio del Clérigo) pasan al nivel 3 en 2024.
 
-   **Weapon Mastery (2024 only):** Fighter/Barbarian/Paladin/Ranger gain Weapon Mastery at level 1 (Fighter knows 3 mastery properties; others know 2). Track which properties the character knows on the sheet under `## Class Features → Weapon Mastery: <list>`. Properties are picked from the eight in `data/dnd5e_srd_2024.json → weapon_mastery_properties`. The character can use mastery only with weapons that have the matching property (look up on `data/dnd5e_srd_2024.json → equipment[…].mastery`).
+   **Maestría de Armas (solo 2024):** Guerrero/Bárbaro/Paladín/Explorador ganan Maestría de Armas en el nivel 1 (el Guerrero conoce 3 propiedades de maestría; los demás conocen 2). Registrá qué propiedades conoce el personaje en la hoja bajo `## Class Features → Weapon Mastery: <lista>`. Las propiedades se eligen entre las ocho de `data/dnd5e_srd_2024.json → weapon_mastery_properties`. El personaje solo puede usar la maestría con armas que tengan la propiedad correspondiente (buscá en `data/dnd5e_srd_2024.json → equipment[…].mastery`).
 
 ---
 
-## `/dm:dnd npc [name]`
-- Existing → read full entry from npcs-full.md (search by name), portray in character with voice/quirk
-- New → generate full entry: role, CR-appropriate stats, demeanor, motivation, secret, speech quirk, faction (or "independent"), current goal, schedule, all four personality axes, ≥2 relationships to existing NPCs. Default attitude neutral. Append full entry to npcs-full.md; add one-line summary row to npcs.md index.
+## `/dm:dnd npc [nombre]`
+- Existente → leé la entrada completa de npcs-full.md (buscá por nombre), interpretalo con voz/tic
+- Nuevo → generá la entrada completa: rol, estadísticas apropiadas al CR, actitud, motivación, secreto, tic de habla, facción (o "independiente"), objetivo actual, horario, los cuatro ejes de personalidad, ≥2 relaciones con PNJ existentes. Actitud por defecto neutral. Agregá la entrada completa a npcs-full.md; agregá una fila resumen de una línea al índice de npcs.md.
 
-  **Name uniqueness check (added 2026-05-07):** before generating, run `python3 ${CLAUDE_SKILL_DIR}/scripts/name_registry.py check "<proposed-name>"`. If duplicate (exit 1), surface the prior use to the DM and offer either: (a) proceed with the duplicate (some scenarios want recurring names — a Voss reference can be deliberate); or (b) regenerate with a different name. Whichever path is chosen, after the NPC is added to npcs.md / npcs-full.md, call `name_registry.py add --name "<name>" --type npc --campaign <name> --session <current>` to record the entry.
+  **Chequeo de unicidad de nombre (agregado 2026-05-07):** antes de generar, corré `python3 ${CLAUDE_SKILL_DIR}/scripts/name_registry.py check "<nombre-propuesto>"`. Si es duplicado (código de salida 1), mostrale al DM el uso previo y ofrecé: (a) continuar con el duplicado (algunos escenarios quieren nombres recurrentes — una referencia a Voss puede ser deliberada); o (b) regenerar con un nombre distinto. Cualquiera sea el camino elegido, después de que el PNJ se agregue a npcs.md / npcs-full.md, llamá a `name_registry.py add --name "<nombre>" --type npc --campaign <nombre> --session <actual>` para registrar la entrada.
 
-  When **/dm:dnd new** generates a batch of NPCs during world-gen, run the check on each generated name in the same loop: if duplicate, regenerate that name (re-prompt the LLM with the prior name added to a "do-not-pick" exclusion list). After world-gen completes, batch-call `name_registry.py add` for every accepted NPC.
+  Cuando **/dm:dnd new** genera un lote de PNJ durante la generación de mundo, corré el chequeo en cada nombre generado dentro del mismo loop: si es duplicado, regenerá ese nombre (volvé a pedirle al LLM con el nombre previo agregado a una lista de exclusión "no-elegir"). Después de que termine la generación de mundo, llamá a `name_registry.py add` en lote para cada PNJ aceptado.
 
-## `/dm:dnd npc attitude <name> <shift>`
-Find NPC in npcs.md, shift attitude one step (hostile → unfriendly → neutral → friendly → allied), log reason and date.
+## `/dm:dnd npc attitude <nombre> <cambio>`
+Encontrá al PNJ en npcs.md, cambiá la actitud un paso (hostile → unfriendly → neutral → friendly → allied), registrá motivo y fecha.
 
-## `/dm:dnd npc rename "Old Name" <"New Name" | random> [flags]`
-Rename a character across an entire campaign — `npcs.md`, `npcs-full.md`, `state.md` (every section), `session-log.md`, `graph.json` (node + edges preserved), and `characters/<slug>.md` if `--type pc`. Backs up the campaign first.
+## `/dm:dnd npc rename "Nombre Viejo" <"Nombre Nuevo" | random> [flags]`
+Renombrá a un personaje en toda una campaña — `npcs.md`, `npcs-full.md`, `state.md` (todas las secciones), `session-log.md`, `graph.json` (nodo + edges preservados), y `characters/<slug>.md` si `--type pc`. Respalda la campaña primero.
 
-Maps to: `python3 ${CLAUDE_SKILL_DIR}/scripts/npc_rename.py --campaign <current> --old "..." --new "..." [flags]`. Use the currently loaded campaign by default; for explicit-campaign use, pass `--campaign <name>` directly.
+Mapea a: `python3 ${CLAUDE_SKILL_DIR}/scripts/npc_rename.py --campaign <actual> --old "..." --new "..." [flags]`. Usa la campaña actualmente cargada por defecto; para uso con campaña explícita, pasá `--campaign <nombre>` directamente.
 
 Flags:
-- `--random` — pick a name from the bundled fantasy-name corpus (~4800 unique combinations) that isn't already in `~/.claude/dnd/.name_registry.json`. Mutually exclusive with explicit "New Name".
-- `--type npc | pc` (default `npc`) — `pc` also moves the character file and updates the global roster.
-- `--dry-run` — show all hits across files without writing. Always run first for sanity.
-- `--yes` — skip the confirmation prompt.
-- `--include-archive` — also rename in `session-log-archive.md`. **Default is to leave the archive untouched** for historical accuracy and add a one-line audit note at the top: *"`<old>` renamed to `<new>` at S<N>; historical entries below preserve the original name."*
+- `--random` — elige un nombre del corpus de nombres de fantasía incluido (~4800 combinaciones únicas) que no esté ya en `~/.claude/dnd/.name_registry.json`. Mutuamente excluyente con "Nombre Nuevo" explícito.
+- `--type npc | pc` (default `npc`) — `pc` también mueve el archivo de personaje y actualiza el roster global.
+- `--dry-run` — muestra todas las coincidencias en todos los archivos sin escribir. Correlo siempre primero como chequeo de cordura.
+- `--yes` — se salta el prompt de confirmación.
+- `--include-archive` — también renombra en `session-log-archive.md`. **El default es dejar el archivo intacto** por precisión histórica y agregar una nota de auditoría de una línea al principio: *"`<viejo>` renombrado a `<nuevo>` en S<N>; las entradas históricas de abajo preservan el nombre original."*
 
-The script always backs up the campaign to `<name>.backup-rename-<old-slug>-YYYYMMDD-HHMMSS/` before any writes. Revert command is printed at the end.
+El script siempre respalda la campaña en `<nombre>.backup-rename-<slug-viejo>-AAAAMMDD-HHMMSS/` antes de cualquier escritura. El comando para revertir se imprime al final.
 
-After rename, the name registry is updated: old name marked `retired_from` this campaign with `replaced_by` pointing at the new slug; new name added with this campaign's current session as `first_session`.
+Después del renombrado, se actualiza el registro de nombres: el nombre viejo se marca `retired_from` esta campaña con `replaced_by` apuntando al nuevo slug; el nombre nuevo se agrega con la sesión actual de esta campaña como `first_session`.
 
-## `/dm:dnd registry <subcommand>`
-View and manage the cross-campaign name registry at `~/.claude/dnd/.name_registry.json`. Used by `/dm:dnd npc rename --random` to never reuse a name and (in a follow-up) by `/dm:dnd new` / `/dm:dnd character new` / `/dm:dnd npc <new>` to flag duplicates at creation time.
+## `/dm:dnd registry <subcomando>`
+Ver y gestionar el registro de nombres cruzado entre campañas en `~/.claude/dnd/.name_registry.json`. Usado por `/dm:dnd npc rename --random` para nunca reusar un nombre y (en un desarrollo futuro) por `/dm:dnd new` / `/dm:dnd character new` / `/dm:dnd npc <nuevo>` para marcar duplicados en el momento de la creación.
 
-Maps to: `python3 ${CLAUDE_SKILL_DIR}/scripts/name_registry.py <subcommand> [args]`.
+Mapea a: `python3 ${CLAUDE_SKILL_DIR}/scripts/name_registry.py <subcomando> [args]`.
 
-- `/dm:dnd registry rebuild [--include-prose]` — scan every campaign's `npcs.md`, `npcs-full.md`, `characters/*.md`, and `graph.json` (node names); rebuild the registry from canonical sources. Preserves any existing `retired_from` history. Run once on install, then ad hoc when desired.
+- `/dm:dnd registry rebuild [--include-prose]` — escanea `npcs.md`, `npcs-full.md`, `characters/*.md`, y `graph.json` (nombres de nodo) de cada campaña; reconstruye el registro desde las fuentes canónicas. Preserva cualquier historial `retired_from` existente. Corré una vez al instalar, después ad hoc cuando quieras.
 
-  **`--include-prose` (added 2026-05-07, opt-in):** also scan `session-log.md` and `session-log-archive.md` for capitalized 2–3-word sequences (likely-name patterns). Filtered against a stopword list (places, factions, mechanic words like "Theo Stealth", sentence starts) but **regex-based extraction is inherently noisy** — typically 5–15× more entries than canonical, with maybe 10–20% real catches. Tagged `source: prose` to distinguish; query with `/dm:dnd registry list --source prose` to manually review and prune. For high-quality prose extraction, the future move is LLM-backed (similar to `/dm:dnd graph extract`).
+  **`--include-prose` (agregado 2026-05-07, opt-in):** también escanea session-log.md y session-log-archive.md buscando secuencias capitalizadas de 2-3 palabras (patrones de probable nombre). Se filtra contra una lista de palabras vacías (lugares, facciones, palabras de mecánica como "Theo Stealth", comienzos de oración) pero **la extracción basada en regex es inherentemente ruidosa** — típicamente 5-15x más entradas que las canónicas, con quizás 10-20% de aciertos reales. Etiquetado `source: prose` para distinguirlo; consultá con `/dm:dnd registry list --source prose` para revisar y podar manualmente. Para extracción de prosa de alta calidad, el paso futuro es con LLM (parecido a `/dm:dnd graph extract`).
 
-- `/dm:dnd registry list [--campaign C] [--type npc|pc] [--source canonical|prose]` — print all registry entries; filter by campaign-currently-active, type, or source.
-- `/dm:dnd registry lookup <name>` — case-insensitive lookup; prints the full entry as JSON.
-- `/dm:dnd registry check <name> [--json]` — check whether a proposed name collides with the registry. Exit 0 if unique, 1 if duplicate. Severity (`warn` default, `strict` opt-in via `<DND_CAMPAIGN_ROOT>/.name_registry_config.json`) controls whether duplicates are reported as warnings or hard refusals. Used by `/dm:dnd new`, `/dm:dnd character new`, `/dm:dnd npc <new>` procedures.
-- `/dm:dnd registry add --name N --type npc|pc --campaign C --session N` — record a new entry manually (auto-called by `/dm:dnd npc rename` and the creation-time uniqueness hooks).
-- `/dm:dnd registry retire --name N --campaign C [--replaced-by NEW]` — mark a name as no longer active in a campaign (auto-called by `/dm:dnd npc rename`).
+- `/dm:dnd registry list [--campaign C] [--type npc|pc] [--source canonical|prose]` — imprime todas las entradas del registro; filtra por campaña-actualmente-activa, tipo, o fuente.
+- `/dm:dnd registry lookup <nombre>` — búsqueda sin distinción de mayúsculas; imprime la entrada completa como JSON.
+- `/dm:dnd registry check <nombre> [--json]` — chequea si un nombre propuesto choca con el registro. Código de salida 0 si es único, 1 si es duplicado. La severidad (`warn` por default, `strict` opt-in vía `<DND_CAMPAIGN_ROOT>/.name_registry_config.json`) controla si los duplicados se reportan como advertencias o rechazos duros. Usado por los procedimientos de `/dm:dnd new`, `/dm:dnd character new`, `/dm:dnd npc <nuevo>`.
+- `/dm:dnd registry add --name N --type npc|pc --campaign C --session N` — registra una entrada nueva manualmente (se llama automáticamente desde `/dm:dnd npc rename` y los ganchos de unicidad al momento de creación).
+- `/dm:dnd registry retire --name N --campaign C [--replaced-by NUEVO]` — marca un nombre como ya no activo en una campaña (se llama automáticamente desde `/dm:dnd npc rename`).
 
-The registry by default captures **canonical** characters (those in `npcs.md` / `npcs-full.md` / `characters/` / graph.json node names). Names that appear only in session-log prose (one-off mentions, throwaway NPCs, skill-check labels) are NOT registered by default — that's deliberate, to avoid banning common names because of incidental use. The `--include-prose` flag is opt-in for users who want the broader (noisier) view.
+Por defecto, el registro captura personajes **canónicos** (los que están en `npcs.md` / `npcs-full.md` / `characters/` / nombres de nodo de graph.json). Los nombres que aparecen solo en prosa de session-log (menciones puntuales, PNJ desechables, etiquetas de chequeo de habilidad) NO se registran por defecto — es deliberado, para evitar prohibir nombres comunes por uso incidental. El flag `--include-prose` es opt-in para usuarios que quieran la vista más amplia (y más ruidosa).
 
-**Severity config:** create `~/.claude/dnd/.name_registry_config.json` with `{"severity": "strict"}` to make all duplicate detections refuse-by-default rather than warn-and-allow. Set to `"none"` to disable checks entirely (registry rebuild and rename still work).
+**Configuración de severidad:** creá `~/.claude/dnd/.name_registry_config.json` con `{"severity": "strict"}` para que todas las detecciones de duplicado rechacen por defecto en vez de advertir-y-permitir. Poné `"none"` para desactivar los chequeos por completo (el rebuild y el rename del registro siguen funcionando).
 
 ---
 
 ## `/dm:dnd characters`
-List all characters in global roster (`~/.claude/dnd/characters/`). Display: name, race/class/level, origin campaign, previous campaigns, last updated.
+Lista todos los personajes en el roster global (`~/.claude/dnd/characters/`). Muestra: nombre, raza/clase/nivel, campaña de origen, campañas previas, última actualización.
 
 ---
 
-## `/dm:dnd roll <notation>`
-Run `scripts/dice.py <notation>`. Display output verbatim. Examples: `d20`, `2d6+3`, `d20 adv`, `4d6kh3`.
+## `/dm:dnd roll <notación>`
+Corré `scripts/dice.py <notación>`. Mostrá la salida tal cual. Ejemplos: `d20`, `2d6+3`, `d20 adv`, `4d6kh3`.
 
 ---
 
 ## `/dm:dnd combat start`
-1. Identify combatants; collect name, DEX mod, HP, AC, type (pc/npc) for each.
-2. Run `combat.py init '<JSON>'` — auto-roll initiative for every combatant including PCs. Display tracker and per-combatant roll breakdown.
-3. Send initiative to display:
+1. Identificá a los combatientes; recolectá nombre, mod de DES, PG, CA, tipo (pc/npc) de cada uno.
+2. Corré `combat.py init '<JSON>'` — tira iniciativa automáticamente para cada combatiente incluidos los PJ. Mostrá el tracker y el desglose de tirada de cada combatiente.
+3. Enviá la iniciativa al display:
    ```bash
    python3 ${CLAUDE_SKILL_DIR}/display/send.py << 'DNDEND'
-   ⚔️ Initiative — Round 1
-   [Name]: d20(N) + DEX = total
-   Turn order: [Name] → [Name] → ...
+   ⚔️ Iniciativa — Ronda 1
+   [Nombre]: d20(N) + DES = total
+   Orden de turno: [Nombre] → [Nombre] → ...
    DNDEND
    ```
-4. Push turn order to stats sidebar:
+4. Enviá el orden de turno a la barra lateral de stats:
    ```bash
-   python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --turn-order '{"order":[...],"current":"FirstName","round":1}'
+   python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --turn-order '{"order":[...],"current":"PrimerNombre","round":1}'
    ```
-5. Save STATE_JSON to `state.md` under `## Active Combat`.
-6. Step through turns using the per-turn sequence (in SKILL.md Active DM Mode).
-7. On combat end: update HP in character sheets, clear `## Active Combat`, `push_stats.py --turn-clear`, narrate aftermath, send XP summary, run `tracker.py -c <campaign> clear`.
+5. Guardá STATE_JSON en `state.md` bajo `## Active Combat`.
+6. Andá turno por turno usando la secuencia por turno (en SKILL.md, Modo DM Activo).
+7. Al terminar el combate: actualizá PG en las hojas de personaje, limpiá `## Active Combat`, `push_stats.py --turn-clear`, narrá las secuelas, enviá el resumen de PX, corré `tracker.py -c <campaña> clear`.
 
-**XP awards** go in the final display send:
+**Los PX otorgados** van en el envío final al display:
 ```bash
 python3 ${CLAUDE_SKILL_DIR}/display/send.py << 'DNDEND'
-[combat aftermath narration]
+[narración de las secuelas del combate]
 
-⭐ XP Awarded
-- [Enemy] defeated: N XP
-- [Objective] completed: N XP
-- Total: N XP ÷ [players] = N XP each
-- [Name]: N / 300 XP | [Name]: N / 300 XP
+⭐ PX Otorgados
+- [Enemigo] derrotado: N PX
+- [Objetivo] completado: N PX
+- Total: N PX ÷ [jugadores] = N PX cada uno
+- [Nombre]: N / 300 PX | [Nombre]: N / 300 PX
 DNDEND
 ```
 
 ---
 
 ## `/dm:dnd rest <short|long>`
-**Short (1 hour):**
-1. Ask how many Hit Dice the player spends. Roll `d[hit-die] + CON mod` per die via `dice.py`. Update HP, push `push_stats.py --player NAME --hp`.
-2. Note class features that recharge (e.g. Second Wind → `push_stats.py --player NAME --second-wind true`).
-3. Advance time: `calendar.py -c <campaign> rest short`
-4. Clear encounter conditions: `tracker.py -c <campaign> clear` (concentration may persist — ask)
+**Corto (1 hora):**
+1. Preguntá cuántos Dados de Golpe gasta el jugador. Tirá `d[dado-de-golpe] + mod CON` por dado vía `dice.py`. Actualizá PG, enviá `push_stats.py --player NOMBRE --hp`.
+2. Anotá los rasgos de clase que se recargan (ej. Segundo Aliento → `push_stats.py --player NOMBRE --second-wind true`).
+3. Avanzá el tiempo: `calendar.py -c <campaña> rest short`
+4. Limpiá condiciones de encuentro: `tracker.py -c <campaña> clear` (la concentración puede persistir — preguntá)
 
-**Long (8 hours):**
-1. Restore all HP, half max Hit Dice (round up), all spell slots, most class features. Update sheet.
-2. Push: `push_stats.py --player NAME --hp <max> <max>` and `--second-wind true`.
-3. Advance time: `calendar.py -c <campaign> rest long`
-4. Clear all tracker state: `tracker.py -c <campaign> clear --all`
-5. Update `state.md` in-world date to match calendar output.
+**Largo (8 horas):**
+1. Restaurá todo el PG, la mitad de los Dados de Golpe máximos (redondeado hacia arriba), todos los espacios de conjuro, la mayoría de los rasgos de clase. Actualizá la hoja.
+2. Enviá: `push_stats.py --player NOMBRE --hp <max> <max>` y `--second-wind true`.
+3. Avanzá el tiempo: `calendar.py -c <campaña> rest long`
+4. Limpiá todo el estado del tracker: `tracker.py -c <campaña> clear --all`
+5. Actualizá la fecha en el mundo de `state.md` para que coincida con la salida del calendario.
 
 ---
 
 ## `/dm:dnd recap`
-Read session-log.md. Deliver 3–5 sentence in-character narrator recap of the most recent session entry.
+Leé session-log.md. Entregá un resumen en personaje de 3-5 oraciones de la entrada de sesión más reciente.
 
-## `/dm:dnd pin [<fact> | list | remove <fact-or-number>]`
+## `/dm:dnd pin [<hecho> | list | remove <hecho-o-número>]`
 
-Manage the campaign's **Pinned Facts** — the soft, stable canon the table never wants forgotten. Pinned facts live in `state.md → ## Pinned Facts` and are read at every `/dm:dnd load` alongside `## DM Style Notes`, then kept hot for the whole session. They are the DM's long-term memory: things that don't fit Live State Flags (which track shifting state) because they don't change — a promise made, a dead sibling's name, an in-joke, a house rule, a detail the player has said matters.
+Gestioná los **Hechos Fijados** de la campaña — el canon blando y estable que la mesa nunca quiere olvidar. Los hechos fijados viven en `state.md → ## Pinned Facts` y se leen en cada `/dm:dnd load` junto con `## DM Style Notes`, y después se mantienen presentes durante toda la sesión. Son la memoria a largo plazo del DM: cosas que no encajan en Live State Flags (que sigue estado cambiante) porque no cambian — una promesa hecha, el nombre de un hermano muerto, un chiste interno, una regla casera, un detalle que el jugador dijo que importaba.
 
-- **`/dm:dnd pin <fact>`** — append `<fact>` as a new bullet under `## Pinned Facts` (replacing the *(none pinned yet)* placeholder if present). Confirm what was pinned. Keep each fact to one line; pin the fact, not a paragraph.
-- **`/dm:dnd pin`** *(no args, mid-scene)* — when the player says "remember this" / "don't forget X" / "pin that", capture the fact they mean in one line and pin it as above, then acknowledge briefly in the fiction and move on.
-- **`/dm:dnd pin list`** — read and print the current `## Pinned Facts` bullets.
-- **`/dm:dnd pin remove <fact-or-number>`** — remove the matching bullet (by its text or its position in the list). If it leaves the section empty, restore the *(none pinned yet)* placeholder. Confirm the removal.
+- **`/dm:dnd pin <hecho>`** — agrega `<hecho>` como una viñeta nueva bajo `## Pinned Facts` (reemplazando el placeholder *(none pinned yet)* si está presente). Confirmá qué se fijó. Mantené cada hecho a una línea; fijá el hecho, no un párrafo.
+- **`/dm:dnd pin`** *(sin argumentos, a mitad de escena)* — cuando el jugador dice "acordate de esto" / "no te olvides de X" / "fijá eso", capturá el hecho al que se refiere en una línea y fijalo como arriba, después reconocelo brevemente en la ficción y seguí.
+- **`/dm:dnd pin list`** — lee e imprime las viñetas actuales de `## Pinned Facts`.
+- **`/dm:dnd pin remove <hecho-o-número>`** — elimina la viñeta coincidente (por su texto o su posición en la lista). Si deja la sección vacía, restaurá el placeholder *(none pinned yet)*. Confirmá la eliminación.
 
-Pinned facts are never rewritten wholesale at `/dm:dnd save` the way Live State Flags are — they only change when the player pins or unpins one, or when one is corrected because it became wrong. A running account of *what happened* already lives in `session-log.md`, `## Recent Events`, and `## Continuity Archive` (queried via `/dm:dnd recap`); Pinned Facts is the separate, deliberately small set of things to always carry, not a second event log.
+Los hechos fijados nunca se reescriben por completo en `/dm:dnd save` como sí pasa con Live State Flags — solo cambian cuando el jugador fija o desfija uno, o cuando uno se corrige porque quedó mal. Un registro continuo de *qué pasó* ya vive en `session-log.md`, `## Recent Events`, y `## Continuity Archive` (consultado vía `/dm:dnd recap`); Pinned Facts es el conjunto separado, deliberadamente chico, de cosas para llevar siempre, no un segundo registro de eventos.
 
 ## `/dm:dnd world`
-Read and display world.md.
+Leé y mostrá world.md.
 
 ## `/dm:dnd quests`
-Read `state.md` → display Active Quests and Open Threads sections.
+Leé `state.md` → mostrá las secciones de Misiones Activas e Hilos Abiertos.
 
 ---
 
 ## `/dm:dnd arc [status|advance|revise|view]`
 
-Manage the dynamic campaign arc. The `advance`/`revise`/`new` subcommands are active only when `state.md → ## Campaign Arc` has `type: dynamic` — no-op for sandbox campaigns. For **structured (imported)** campaigns, `status` and `view` read from `arc.md` (chapter advancement happens at `/dm:dnd save`, not here); `advance`/`revise`/`new` are no-ops.
+Gestioná el arco de campaña dinámico. Los subcomandos `advance`/`revise`/`new` solo están activos cuando `state.md → ## Campaign Arc` tiene `type: dynamic` — no hacen nada en campañas sandbox. Para campañas **estructuradas (importadas)**, `status` y `view` leen de `arc.md` (el avance de capítulo pasa en `/dm:dnd save`, no acá); `advance`/`revise`/`new` no hacen nada.
 
-- **`/dm:dnd arc`** or **`/dm:dnd arc status`** — print current act, current beat label, `what_changes` for the current beat, and `steering_notes`. Quick reference, one screen. (Structured: print `current_act`, `current_chapter`, current chapter's `key_beats`, and `outstanding_beats` from `state.md`; read `arc.md` only if more detail is asked for.)
-- **`/dm:dnd arc advance [beat-id]`** — mark the named beat complete (current beat if omitted). Remove from `outstanding_beats`. Advance `current_beat` to the next pending beat. If all beats in an act are complete, advance `current_act`. Update `steering_notes` to describe how to reach the newly current beat without forcing it.
+- **`/dm:dnd arc`** o **`/dm:dnd arc status`** — imprime el acto actual, la etiqueta del beat actual, `what_changes` del beat actual, y `steering_notes`. Referencia rápida, una sola pantalla. (Estructurada: imprime `current_act`, `current_chapter`, los `key_beats` del capítulo actual, y `outstanding_beats` de `state.md`; lee `arc.md` solo si se pide más detalle.)
+- **`/dm:dnd arc advance [beat-id]`** — marca el beat nombrado como completo (el beat actual si se omite). Lo elimina de `outstanding_beats`. Avanza `current_beat` al siguiente beat pendiente. Si todos los beats de un acto están completos, avanza `current_act`. Actualizá `steering_notes` para describir cómo llegar al beat recién actual sin forzarlo.
 
-  **When the final beat (3b) is marked complete — arc continuation:**
-  `outstanding_beats` is now empty. Ask: *"The arc is complete. Continue the campaign with a new arc? [y/n]"*
-  - **Yes** → run `/dm:dnd arc new` (see below).
-  - **No** → set `type: sandbox` and clear `outstanding_beats`. The campaign continues open-ended from the resolution state.
+  **Cuando el beat final (3b) se marca completo — continuación del arco:**
+  `outstanding_beats` ahora está vacío. Preguntá: *"El arco está completo. ¿Continuar la campaña con un arco nuevo? [s/n]"*
+  - **Sí** → corré `/dm:dnd arc new` (ver abajo).
+  - **No** → poné `type: sandbox` y limpiá `outstanding_beats`. La campaña continúa abierta desde el estado de resolución.
 
-- **`/dm:dnd arc new`** — generate a new arc for a campaign that has completed its previous arc. Use Opus for this step.
+- **`/dm:dnd arc new`** — genera un arco nuevo para una campaña que completó su arco anterior. Usá Opus para este paso.
 
-  The new arc must be **intentionally distinct** — not a continuation of the same conflict, but a new chapter that grows from the changed world. The resolution of arc N is the status quo of arc N+1.
+  El arco nuevo debe ser **intencionalmente distinto** — no una continuación del mismo conflicto, sino un capítulo nuevo que crece del mundo cambiado. La resolución del arco N es el statu quo del arco N+1.
 
-  Procedure:
-  1. Read the completed arc's `resolution` field — this is now the world's baseline.
-  2. Read `## DM Notes`, `## World State`, `## Faction Moves`, and any `## Continuity Archive` entries to understand what the world looks like post-resolution.
-  3. Derive the new arc from **the consequences** of what just resolved. Ask: *what problem did solving the last arc create? What power vacuum formed? What did the party's victory cost that now has to be reckoned with? What was ignored because the last arc demanded all attention?*
-  4. Generate a new full arc (theme, resolution, acts 1–3, 6 beats) using the same format as the initial arc. The new theme must be meaningfully different from the previous one — same world, new lens.
-  5. Archive the completed arc: move the current `acts` block, `theme`, and `resolution` into a new `## Arc History` section in state.md under `arc_N` (numbered), with a one-line summary of how it resolved.
-  6. Write the new arc to `## Campaign Arc`, incrementing `arc_number`. Set `current_act: 1`, `current_beat: "1a"`, `outstanding_beats` to all 6 beat ids.
-  7. Append to `revision_log`: `"<date>: Arc N complete. New arc N+1 generated. [one-line premise of the new arc]"`
-  8. Deliver a one-paragraph summary of the new arc's premise and how it differs from the previous one.
+  Procedimiento:
+  1. Leé el campo `resolution` del arco completado — esa es ahora la línea base del mundo.
+  2. Leé `## DM Notes`, `## World State`, `## Faction Moves`, y cualquier entrada de `## Continuity Archive` para entender cómo se ve el mundo post-resolución.
+  3. Derivá el arco nuevo a partir de **las consecuencias** de lo que se acaba de resolver. Preguntá: *¿qué problema creó resolver el último arco? ¿Qué vacío de poder se formó? ¿Qué le costó a la victoria del grupo que ahora hay que enfrentar? ¿Qué se ignoró porque el último arco demandaba toda la atención?*
+  4. Generá un arco nuevo y completo (tema, resolución, actos 1-3, 6 beats) usando el mismo formato que el arco inicial. El tema nuevo debe ser significativamente distinto del anterior — mismo mundo, lente nueva.
+  5. Archivá el arco completado: movés el bloque `acts` actual, `theme`, y `resolution` a una nueva sección `## Arc History` en state.md bajo `arc_N` (numerado), con un resumen de una línea de cómo se resolvió.
+  6. Escribí el arco nuevo en `## Campaign Arc`, incrementando `arc_number`. Poné `current_act: 1`, `current_beat: "1a"`, `outstanding_beats` con los 6 ids de beat.
+  7. Agregá a `revision_log`: `"<fecha>: Arco N completo. Arco N+1 nuevo generado. [premisa en una línea del arco nuevo]"`
+  8. Entregá un resumen de un párrafo de la premisa del arco nuevo y en qué se diferencia del anterior.
 
-- **`/dm:dnd arc view`** — show full arc: theme, resolution, all acts and beats with completion status (current / complete / pending). If `## Arc History` exists, show a one-line summary of each completed arc above the current one.
-- **`/dm:dnd arc revise`** — open revision flow for when the story has taken a major unexpected turn OR when the auto-trigger from /dm:dnd end's pre-emption check fires (most common case):
-  1. Show all outstanding beats with their current `what_changes` and `world_pressure`.
-  2. Ask: *"What's changed in the story that the arc doesn't reflect?"* — or, when auto-triggered by pre-emption, name the pre-empted beat directly: *"Beat 2b's pressure delivered but the consequence didn't land. Picking a revision path…"*
-  3. **Apply one of three landing-path templates** (per SKILL.md rule 8) to the affected outstanding beat:
-     - **Cost path** — `what_changes` becomes "the party paid a concrete cost for moving fast"; `world_pressure` becomes the specific cost (cover blown, ally compromised, position lost). Best when the party pre-empted cleanly.
-     - **Secondary consequence path** — `what_changes` becomes "the world responded to being pre-empted in a way the party didn't anticipate"; `world_pressure` becomes the new escalation (the antagonist reads the disruption as a signal and does something WORSE). Best when the antagonist is intelligent and adaptive.
-     - **Deferred path** — keep the original `what_changes` shape; rewrite `world_pressure` to a NEW pressure pointing at the same consequence, scheduled for the next 1–2 sessions. Best when the original consequence is still narratively essential and only the timing slipped.
-  4. Rewrite `what_changes` (consequence-shaped per the rule in /dm:dnd new step 12) and `world_pressure` (event-shaped is fine) for the affected beat. Do NOT modify completed beats.
-  5. Append to `revision_log`: `"<date>: <beat-id> — <path: cost/secondary/deferred> — <what changed and why — one sentence>"`
-  6. Update `steering_notes` to describe the next session's expected delivery.
-  7. Confirm what was revised. Show before/after for `what_changes` and `world_pressure`.
+- **`/dm:dnd arc view`** — muestra el arco completo: tema, resolución, todos los actos y beats con estado de finalización (actual / completo / pendiente). Si existe `## Arc History`, muestra un resumen de una línea de cada arco completado antes del actual.
+- **`/dm:dnd arc revise`** — abre el flujo de revisión para cuando la historia tomó un giro mayor inesperado O cuando se dispara el auto-trigger del chequeo de adelantamiento de /dm:dnd end (el caso más común):
+  1. Mostrá todos los beats pendientes con su `what_changes` y `world_pressure` actuales.
+  2. Preguntá: *"¿Qué cambió en la historia que el arco no refleja?"* — o, cuando se auto-dispara por adelantamiento, nombrá el beat adelantado directamente: *"La presión del beat 2b se entregó pero la consecuencia no aterrizó. Eligiendo un camino de revisión…"*
+  3. **Aplicá una de tres plantillas de camino de aterrizaje** (según la regla 8 de SKILL.md) al beat pendiente afectado:
+     - **Camino de costo** — `what_changes` se convierte en "el grupo pagó un costo concreto por moverse rápido"; `world_pressure` se convierte en el costo específico (tapadera descubierta, aliado comprometido, posición perdida). Mejor cuando el grupo se adelantó limpiamente.
+     - **Camino de consecuencia secundaria** — `what_changes` se convierte en "el mundo respondió a haber sido adelantado de una forma que el grupo no anticipó"; `world_pressure` se convierte en la nueva escalada (el antagonista lee la disrupción como una señal y hace algo PEOR). Mejor cuando el antagonista es inteligente y adaptativo.
+     - **Camino diferido** — mantené la forma original de `what_changes`; reescribí `world_pressure` con una presión NUEVA que apunta a la misma consecuencia, programada para las próximas 1-2 sesiones. Mejor cuando la consecuencia original todavía es narrativamente esencial y solo se atrasó el momento.
+  4. Reescribí `what_changes` (con forma de consecuencia según la regla en /dm:dnd new paso 12) y `world_pressure` (forma de evento está bien) para el beat afectado. NO modifiques beats completados.
+  5. Agregá a `revision_log`: `"<fecha>: <beat-id> — <camino: cost/secondary/deferred> — <qué cambió y por qué — una oración>"`
+  6. Actualizá `steering_notes` para describir la entrega esperada de la próxima sesión.
+  7. Confirmá qué se revisó. Mostrá antes/después de `what_changes` y `world_pressure`.
 
 ---
 
-## `/dm:dnd graph <subcommand>` — campaign relationship graph
+## `/dm:dnd graph <subcomando>` — grafo de relaciones de campaña
 
-Local-only typed-edge relationship graph supplementing markdown. Stored at `~/.claude/dnd/campaigns/<name>/graph.json`. Supplements `npcs-full.md` / `session-log.md` — does not replace them. Edges are time-stamped (`since_session` / `until_session`), so historical state is recoverable.
+Grafo de relaciones tipadas, local, que complementa el markdown. Se guarda en `~/.claude/dnd/campaigns/<nombre>/graph.json`. Complementa a `npcs-full.md` / `session-log.md` — no los reemplaza. Los edges tienen timestamp (`since_session` / `until_session`), así que el estado histórico es recuperable.
 
-**Auto-pulled at `/dm:dnd load` step 5** (scene-context) and **swept at `/dm:dnd save`** (relationship-shift extraction). The DM also uses `/dm:dnd graph scene-context` on demand mid-session, especially before heavy social or political scenes.
+**Se trae automáticamente en el paso 5 de `/dm:dnd load`** (scene-context) y **se barre en `/dm:dnd save`** (extracción de cambios de relación). El DM también usa `/dm:dnd graph scene-context` bajo demanda a mitad de sesión, especialmente antes de escenas sociales o políticas pesadas.
 
-For background reading on the design and the A/B replay study that motivated it, see `docs/research/graph/`.
+Para lectura de fondo sobre el diseño y el estudio de replay A/B que lo motivó, ver `docs/research/graph/`.
 
-All subcommands invoke `python3 ${CLAUDE_SKILL_DIR}/scripts/campaign_graph.py <subcommand> --campaign <name> [args]`.
+Todos los subcomandos invocan `python3 ${CLAUDE_SKILL_DIR}/scripts/campaign_graph.py <subcomando> --campaign <nombre> [args]`.
 
-### `/dm:dnd graph init [campaign-name]`
-First-time bootstrap. Read existing `npcs.md` / `world.md` / `state.md` for the campaign. Propose a node list (NPCs as `npc_*`, factions as `faction_*`, key locations as `place_*`) and a starter edge list (faction membership from npcs.md tables, NPC location from "Lives in / Based at" fields, faction relationships from world.md). Display the proposed list to the DM and **ask for approval** before writing — do not silently extract. After approval, run `add-node` and `add-edge` for each. Use `--since` matching state.md's current session count.
+### `/dm:dnd graph init [nombre-campaña]`
+Inicialización de primera vez. Leé el `npcs.md` / `world.md` / `state.md` existentes de la campaña. Proponé una lista de nodos (PNJ como `npc_*`, facciones como `faction_*`, ubicaciones clave como `place_*`) y una lista de edges iniciales (membresía de facción de las tablas de npcs.md, ubicación de PNJ de campos "Vive en / Basado en", relaciones de facción de world.md). Mostrale la lista propuesta al DM y **pedí aprobación** antes de escribir — no extraigas en silencio. Con la aprobación, corré `add-node` y `add-edge` para cada uno. Usá `--since` coincidiendo con el contador de sesión actual de state.md.
 
-For existing campaigns being initialized for the first time, the `/dm:dnd load` flow offers to back the campaign directory up first; honour that flow rather than running init from a cold prompt.
+Para campañas existentes que se inicializan por primera vez, el flujo de `/dm:dnd load` ofrece respaldar el directorio de campaña primero; respetá ese flujo en vez de correr init desde un prompt frío.
 
 ### `/dm:dnd graph add-node --type T --name N [--tags ...] [--summary ...]`
-Add a single node. Type is open vocab; suggested: `npc`, `faction`, `place`, `item`, `thread`. Default id is `<type>_<name-slug>`.
+Agrega un solo nodo. El tipo es vocabulario abierto; sugeridos: `npc`, `faction`, `place`, `item`, `thread`. El id por defecto es `<type>_<slug-nombre>`.
 
 ### `/dm:dnd graph add-edge --from <id> --to <id> --type T [--since N] [--note ...]`
-Add a typed edge between two existing nodes. Edge type is open vocab; common: `loyal_to`, `opposes`, `allied_with`, `member_of`, `lives_in`, `controls`, `knows_about`, `friends_with`, `lover_of`, `owes`, `rules`, `related_by_blood`, `advances_thread`, `blocks_thread`. Always supply `--since` (the current session number from state.md) so historical replay works.
+Agrega un edge tipado entre dos nodos existentes. El tipo de edge es vocabulario abierto; comunes: `loyal_to`, `opposes`, `allied_with`, `member_of`, `lives_in`, `controls`, `knows_about`, `friends_with`, `lover_of`, `owes`, `rules`, `related_by_blood`, `advances_thread`, `blocks_thread`. Proporcioná siempre `--since` (el número de sesión actual de state.md) para que el replay histórico funcione.
 
-### `/dm:dnd graph set-disposition --to <npc-or-faction> --level <L> [--since N] [--note ...]`
-Type how the **party** stands toward an NPC or faction on the normalized scale `allied | friendly | neutral | suspicious | hostile` — the same five values the display's faction panel uses, so the graph and the sidebar speak one language. The edge runs from the shared `party` node (auto-created on first use) to the target; its type is inferred from the target — `disposition` for an NPC, `standing` for a faction — and it carries the `level`.
+### `/dm:dnd graph set-disposition --to <pnj-o-facción> --level <L> [--since N] [--note ...]`
+Tipeá cómo se posiciona el **grupo** hacia un PNJ o facción en la escala normalizada `allied | friendly | neutral | suspicious | hostile` — los mismos cinco valores que usa el panel de facciones del display, así que el grafo y la barra lateral hablan el mismo idioma. El edge va del nodo compartido `party` (auto-creado en el primer uso) al objetivo; su tipo se infiere del objetivo — `disposition` para un PNJ, `standing` para una facción — y lleva el `level`.
 
-Single-valued and current: setting a new stance **closes** any prior active party→target stance edge at `--since` (its arc stays queryable with `--at-session <old N>`) and adds the new level, so `scene-context` only ever surfaces the party's *current* stance. `scene-context` renders it as `The Party --[disposition:suspicious]--> Aldric` so the stance reads at a glance. Always pass `--since <current-session-N>`.
+De un solo valor y actual: fijar una postura nueva **cierra** cualquier edge previo activo de postura party→objetivo en `--since` (su arco sigue consultable con `--at-session <N vieja>`) y agrega el nivel nuevo, así que `scene-context` solo muestra la postura *actual* del grupo. `scene-context` la renderiza como `The Party --[disposition:suspicious]--> Aldric` para que la postura se lea de un vistazo. Siempre pasá `--since <sesión-N-actual>`.
 
-Use it whenever the fiction shifts the party's standing — an NPC turns on them, a faction they wronged goes hostile, an alliance is earned. It is the graph-side counterpart to the `standing` values pushed to the display via `push_stats.py --factions` and to the NPC-disposition lines in `state.md → ## Live State Flags`; keep the three consistent when a stance changes.
+Usalo cuando la ficción cambia la postura del grupo — un PNJ se vuelve contra ellos, una facción a la que agraviaron se vuelve hostil, se gana una alianza. Es la contraparte del lado del grafo de los valores `standing` que se envían al display vía `push_stats.py --factions` y de las líneas de disposición de PNJ en `state.md → ## Live State Flags`; mantené los tres consistentes cuando cambia una postura.
 
 ### `/dm:dnd graph close-edge --id <edge-id> --at-session N`
-Mark an edge as ended at session N (e.g. when an alliance breaks). Original edge is preserved with `until_session` set; it remains visible in historical queries but is excluded from "active at session ≥ N" results.
+Marca un edge como terminado en la sesión N (ej. cuando se rompe una alianza). El edge original se preserva con `until_session` fijado; sigue visible en consultas históricas pero se excluye de resultados "activo en sesión ≥ N".
 
 ### `/dm:dnd graph list [--type T] [--at-session N]`
-Print a compact node table grouped by type. With `--at-session`, also reports active edge count at that session.
+Imprime una tabla compacta de nodos agrupados por tipo. Con `--at-session`, también reporta el conteo de edges activos en esa sesión.
 
 ### `/dm:dnd graph show --id <node-id>`
-Print one node with all incoming and outgoing edges.
+Imprime un nodo con todos sus edges entrantes y salientes.
 
 ### `/dm:dnd graph scene-context --place <id> [--present id1,id2] [--threads id1,id2] [--hops H] [--at-session N]`
-**Primary query for in-session use.** Returns a focused subgraph from the current scene (place + present NPCs + active threads) bounded by hop count, optionally filtered to edges active at a given session. Output is grouped: nodes by type, then a relationships block. Default `--hops 2`. Use this when you need to recall who-relates-to-whom in the current scene without re-reading `npcs-full.md` or session-log archives.
+**Consulta principal para uso en sesión.** Devuelve un subgrafo enfocado de la escena actual (lugar + PNJ presentes + hilos activos) acotado por número de saltos, opcionalmente filtrado a edges activos en una sesión dada. La salida está agrupada: nodos por tipo, después un bloque de relaciones. Default `--hops 2`. Usalo cuando necesités recordar quién-se-relaciona-con-quién en la escena actual sin releer `npcs-full.md` o los archivos de session-log.
 
 ### `/dm:dnd graph subgraph --seed <id> [--seed <id>] [--hops H] [--at-session N]`
-Lower-level traversal — same as `scene-context` but with arbitrary seed nodes. Use when the scene framing doesn't fit (e.g. tracing faction politics independent of any specific place).
+Recorrido de nivel más bajo — igual que `scene-context` pero con nodos semilla arbitrarios. Usalo cuando el encuadre de la escena no encaja (ej. rastreando política de facción independiente de cualquier lugar específico).
 
-### `/dm:dnd graph extract [campaign-name] [--last-session-only]`
-Run a Haiku pass over the campaign's session-log to propose new edges with verbatim source-anchors. Outputs a proposal JSON to `~/.claude/dnd/campaigns/<name>/graph-proposals-<date>.json` for human review. Does **not** write to graph.json — that's the apply step.
+### `/dm:dnd graph extract [nombre-campaña] [--last-session-only]`
+Corre un paso de Haiku sobre el session-log de la campaña para proponer edges nuevos con anclas de fuente literales. Escribe un JSON de propuesta en `~/.claude/dnd/campaigns/<nombre>/graph-proposals-<fecha>.json` para revisión humana. NO escribe en graph.json — eso es el paso de aplicación.
 
 ### `/dm:dnd graph extract --deterministic [--last-session-only] [--write FILE]`
-**Zero-LLM alternative.** Pattern-matches session-log sentences against the bundled verb-table seed (`data/graph/verb_table_seed.yaml`) and emits the same proposal shape as the Haiku pass — no Claude API call, no cost, fully portable. Trades recall (~50%, clean subject-verb-object only) for precision (~95%) and determinism. Prints proposals to stdout, or writes them with `--write`.
+**Alternativa sin LLM.** Compara por patrones las oraciones del session-log contra la tabla de verbos semilla incluida (`data/graph/verb_table_seed.yaml`) y emite la misma forma de propuesta que el paso de Haiku — sin llamada a la API de Claude, sin costo, totalmente portable. Cambia recall (~50%, solo sujeto-verbo-objeto limpio) por precisión (~95%) y determinismo. Imprime las propuestas a stdout, o las escribe con `--write`.
 
 ### `/dm:dnd graph extract --deterministic --apply [--min-confidence low|medium|high] [--no-auto-nodes]`
-One-shot auto-apply: run deterministic extraction and write proposals at/above `--min-confidence` (default `high`) straight into `graph.json` — deduped against existing edges and **idempotent** (re-running adds nothing new). Missing nodes are auto-created as `npc_*` placeholders unless `--no-auto-nodes` is set. Use this for a hands-off relationship sweep at `/dm:dnd save`; use the review path below when you want a human in the loop.
+Auto-aplicación de un solo paso: corre la extracción determinística y escribe las propuestas con confianza igual o mayor a `--min-confidence` (default `high`) directamente en graph.json — deduplicado contra edges existentes e **idempotente** (volver a correr no agrega nada nuevo). Los nodos faltantes se auto-crean como placeholders `npc_*` a menos que se ponga `--no-auto-nodes`. Usalo para un barrido de relaciones sin intervención en `/dm:dnd save`; usá el camino de revisión de abajo cuando quieras un humano en el loop.
 
 ### `/dm:dnd graph extract-apply --proposals <file> [--pick N1,N2,...] [--review]`
-Apply previously-extracted proposals (from either the Haiku or deterministic pass). Without `--pick`/`--review`, applies all. With `--pick`, applies only the listed proposal indices. With `--review`, walks proposals one at a time with y/n/q prompts.
+Aplica propuestas previamente extraídas (del paso de Haiku o del determinístico). Sin `--pick`/`--review`, aplica todas. Con `--pick`, aplica solo los índices de propuesta listados. Con `--review`, recorre las propuestas una por una con prompts s/n/q.
 
-### Suggested DM workflow
+### Flujo de trabajo sugerido para el DM
 
-1. **First session after install:** `/dm:dnd load` will offer to initialize the graph (with a backup-first prompt). Accept; review the proposed seed; approve.
-2. **During session:** when a relationship shifts in narration, run `/dm:dnd graph add-edge` (or `close-edge`) with `--since` set to the current session number. Don't batch this — record at the moment of the narrative change so you don't forget.
-3. **Before a heavy social/political scene:** run `/dm:dnd graph scene-context --place <current-place> --present <key-NPCs>` to refresh which relationships matter right now.
-4. **At `/dm:dnd save`:** review the session log and add any edges you missed during play (the save flow runs an automatic sweep and presents proposals for approval).
+1. **Primera sesión después de instalar:** `/dm:dnd load` va a ofrecer inicializar el grafo (con un prompt de respaldo primero). Aceptá; revisá la semilla propuesta; aprobá.
+2. **Durante la sesión:** cuando una relación cambia en la narración, corré `/dm:dnd graph add-edge` (o `close-edge`) con `--since` fijado en el número de sesión actual. No lo hagas en lote — registralo en el momento del cambio narrativo para no olvidarte.
+3. **Antes de una escena social/política pesada:** corré `/dm:dnd graph scene-context --place <lugar-actual> --present <pnj-clave>` para refrescar qué relaciones importan ahora mismo.
+4. **En `/dm:dnd save`:** revisá el session log y agregá cualquier edge que te hayas perdido durante la partida (el flujo de save corre un barrido automático y presenta propuestas para aprobación).
 
 ---
 
-## `/dm:dnd oracle <subcommand>` — solo/improv oracle tools
+## `/dm:dnd oracle <subcomando>` — herramientas de oráculo solo/improvisado
 
-Dice-driven oracles for improvised play — they keep pacing transparent and rollable instead of letting the DM invent every beat. All subcommands invoke `python3 ${CLAUDE_SKILL_DIR}/scripts/oracle.py <subcommand>`. Rolls are stdlib-random and seedable (`--seed N`) for reproducibility. Zero LLM calls.
+Oráculos guiados por dados para juego improvisado — mantienen el ritmo transparente y tirable en vez de dejar que el DM invente cada beat. Todos los subcomandos invocan `python3 ${CLAUDE_SKILL_DIR}/scripts/oracle.py <subcomando>`. Las tiradas son de random estándar y sembrables (`--seed N`) para reproducibilidad. Cero llamadas a LLM.
 
 ### `/dm:dnd oracle chaos [--campaign N]`
-Show the campaign's current **chaos factor** (Mythic-style, 1–9). 1 = the PCs are firmly in control; 9 = the world is spinning out from under them. Stored in `state.md → ## Session Flags` as `chaos_factor: N` (default 5).
+Muestra el **factor de caos** actual de la campaña (estilo Mythic, 1-9). 1 = los PJ tienen el control firme; 9 = el mundo se les está yendo de las manos. Se guarda en `state.md → ## Session Flags` como `chaos_factor: N` (default 5).
 
 ### `/dm:dnd oracle chaos set --campaign N --value V`
-Set the chaos factor to V (clamped 1–9) and persist it to `state.md`.
+Fija el factor de caos en V (acotado 1-9) y lo persiste en `state.md`.
 
 ### `/dm:dnd oracle chaos adjust --campaign N (--pc-won | --pc-lost)`
-Move the factor one step the standard Mythic direction: `--pc-won` (PC achieved the scene goal) → −1; `--pc-lost` (PC was reactive or failed) → +1. Adjust once per scene.
+Mueve el factor un paso en la dirección estándar Mythic: `--pc-won` (el PJ logró el objetivo de la escena) → −1; `--pc-lost` (el PJ fue reactivo o falló) → +1. Ajustá una vez por escena.
 
 ### `/dm:dnd oracle ask [--likelihood L] [--campaign N | --chaos C] [--seed S]`
-Ironsworn-shaped **yes/no** oracle. Likelihood ∈ {`sure-thing`, `likely`, `50/50`, `unlikely`, `no-way`} (default `50/50`); the chaos factor (read from the campaign, or `--chaos`) shifts the odds. Returns a verdict — `yes`/`no` optionally suffixed `-and` (extreme, on doubles) or `-but` (qualified, near the threshold) — plus the d100. Use when the fiction poses a question the prep doesn't answer.
+Oráculo de **sí/no** con forma Ironsworn. Likelihood ∈ {`sure-thing`, `likely`, `50/50`, `unlikely`, `no-way`} (default `50/50`); el factor de caos (leído de la campaña, o `--chaos`) cambia las probabilidades. Devuelve un veredicto — `yes`/`no` opcionalmente sufijado `-and` (extremo, en dobles) o `-but` (calificado, cerca del umbral) — más el d100. Usalo cuando la ficción plantea una pregunta que la preparación no responde.
 
 ### `/dm:dnd oracle event [--seed S]`
-Mythic **Random Event Focus** (d100). Returns a direction label (`new NPC`, `NPC action`, `move toward thread`, `PC negative`, etc.) — interpret it against the campaign's current threads, NPCs, and locations. Use when a scene needs an unexpected turn.
+**Foco de Evento Aleatorio** Mythic (d100). Devuelve una etiqueta de dirección en inglés — literal, tal como la imprime el script (`new NPC`, `NPC action`, `move toward thread`, `PC negative`, etc.) — interpretala en español contra los hilos, PNJ, y ubicaciones actuales de la campaña. Usalo cuando una escena necesita un giro inesperado.
 
 ### `/dm:dnd oracle scene [--seed S]`
-Two-word **scene-meaning** generator (action verb + subject noun, One Page Solo Engine). Use as a spark when narration runs dry or an event focus rolls. Interpret loosely.
+Generador de **significado de escena** de dos palabras (verbo de acción + sustantivo sujeto, One Page Solo Engine). Usalo como chispa cuando la narración se seca o rueda un foco de evento. Interpretalo con libertad.
 
 ---
 
-## `/dm:dnd recap` — precomputed party state-diff
+## `/dm:dnd recap` — diferencia de estado del grupo precalculada
 
-Deterministic state-diff between two character snapshots — `python3 ${CLAUDE_SKILL_DIR}/scripts/session_recap.py`. Recaps are the #1 thing an LLM hallucinates (wrong HP, dropped facts); this computes the change set from data so narration never has to. Reads the character sheets at `~/.claude/dnd/campaigns/<name>/characters/*.md` and merges live `tracker.json` conditions/concentration. Zero LLM calls.
+Diferencia determinística de estado entre dos instantáneas de personaje — `python3 ${CLAUDE_SKILL_DIR}/scripts/session_recap.py`. Los resúmenes son lo #1 que un LLM alucina (PG mal, hechos perdidos); esto calcula el conjunto de cambios a partir de datos para que la narración nunca tenga que hacerlo. Lee las hojas de personaje en `~/.claude/dnd/campaigns/<nombre>/characters/*.md` y fusiona condiciones/concentración en vivo de `tracker.json`. Cero llamadas a LLM.
 
 ### `/dm:dnd recap snapshot --campaign N`
-Snapshot the party's current state (HP/temp/level/hit dice/death saves/conditions/concentration/exhaustion/inspiration/spell slots) to `~/.claude/dnd/campaigns/<name>/.recap/`. Rolls the previous `last.json` to `prev.json` so the next diff has a baseline. **Take a snapshot at `/dm:dnd end`** so the next session's load can diff against it.
+Toma una instantánea del estado actual del grupo (PG/temp/nivel/dados de golpe/tiradas de muerte/condiciones/concentración/cansancio/inspiración/espacios de conjuro) en `~/.claude/dnd/campaigns/<nombre>/.recap/`. Mueve el `last.json` anterior a `prev.json` para que la próxima diferencia tenga una línea base. **Tomá una instantánea en `/dm:dnd end`** para que la carga de la próxima sesión pueda diferenciar contra ella.
 
 ### `/dm:dnd recap diff --campaign N [--before FILE] [--after FILE]`
-Diff the prior snapshot against the current state and print a one-paragraph plain-English summary (e.g. *"Aldric: took 18 damage (30→12 HP); gained Poisoned; spent 2 level 1 slots."*). With no `--before`, uses the stored `prev`/`last` snapshot; with no `--after`, snapshots live state on the fly. **Inject this line at `/dm:dnd load`** as the mechanical half of the recap. `--json` emits the structured change list.
+Diferencia la instantánea previa contra el estado actual e imprime un resumen en inglés llano de un párrafo (ej. *"Aldric: tomó 18 de daño (30→12 PG); ganó Envenenado; gastó 2 espacios de nivel 1."*). Sin `--before`, usa la instantánea guardada `prev`/`last`; sin `--after`, toma una instantánea del estado en vivo al vuelo. **Inyectá esta línea en `/dm:dnd load`** como la mitad mecánica del resumen. `--json` emite la lista de cambios estructurada.
 
 ---
 
 ## `/dm:dnd tutor on` / `/dm:dnd tutor off`
-Toggle tutor/learning mode. Write `tutor_mode: true/false` to `state.md` under `## Session Flags`. Session-scoped — does not persist to next `/dm:dnd load` unless explicitly set again. (Full tutor mode behavior is in SKILL.md.)
+Alterná el modo tutor/aprendizaje. Escribí `tutor_mode: true/false` en `state.md` bajo `## Session Flags`. Con alcance de sesión — no persiste a la próxima `/dm:dnd load` a menos que se fije explícitamente de nuevo. (El comportamiento completo del modo tutor está en SKILL.md.)
 
 ---
 
 ## `/dm:dnd autorun on` / `/dm:dnd autorun off`
 
-Toggle autorun (taxi) mode — Claude drives the turn loop automatically when players submit via the display companion. No PTY wrapper required.
+Alterná el modo autorun (taxi) — Claude lleva el loop de turnos automáticamente cuando los jugadores envían vía el display companion. No hace falta wrapper de PTY.
 
-**On:**
-1. Write `autorun: true` to `state.md → ## Session Flags`.
-2. **Check Bash permissions** — read `~/.claude/settings.json`. If `permissions.allow` does not include `"Bash"` (or `"Bash(*)"` or similar), add it automatically:
-   - Read the file, merge `"Bash"` into `permissions.allow`, write it back.
-   - Tell the DM: *"Added Bash to permissions.allow in ~/.claude/settings.json — autorun won't prompt for each wait. Restart this session for it to take effect if it doesn't immediately."*
-   - If it was already present, skip silently.
-3. Confirm to the DM: *"Autorun enabled. Players submit via the display; I'll pick up each action automatically. Send me a message at any time to take control of a turn."*
-4. If the user specified an interval (e.g. `/dm:dnd autorun on 45`), write `autorun_interval: 45` to `state.md → ## Session Flags`. Default is 60 if omitted.
-5. Immediately enter the autorun wait (see SKILL.md for the Bash block). If there's already something in `.input_queue`, pick it up as the current turn's player action.
+**Activar:**
+1. Escribí `autorun: true` en `state.md → ## Session Flags`.
+2. **Chequeá los permisos de Bash** — leé `~/.claude/settings.json`. Si `permissions.allow` no incluye `"Bash"` (o `"Bash(*)"` o similar), agregalo automáticamente:
+   - Leé el archivo, fusioná `"Bash"` en `permissions.allow`, escribilo de vuelta.
+   - Decile al DM: *"Agregué Bash a permissions.allow en ~/.claude/settings.json — autorun no va a preguntar en cada espera. Reiniciá esta sesión para que tenga efecto si no lo hace de inmediato."*
+   - Si ya estaba presente, salteá en silencio.
+3. Confirmale al DM: *"Autorun activado. Los jugadores envían vía el display; voy a recoger cada acción automáticamente. Mandame un mensaje en cualquier momento para tomar control de un turno."*
+4. Si el usuario especificó un intervalo (ej. `/dm:dnd autorun on 45`), escribí `autorun_interval: 45` en `state.md → ## Session Flags`. El default es 60 si se omite.
+5. Entrá de inmediato a la espera de autorun (ver SKILL.md para el bloque de Bash). Si ya hay algo en `.input_queue`, recogelo como la acción del turno actual.
 
-The display shows a pie-clock countdown draining from full to empty over the interval. Green pulse = actively waiting. Configurable via `autorun_interval: N` in state.md (default 60 seconds).
+El display muestra una cuenta regresiva de reloj de torta drenándose de lleno a vacío en el intervalo. Pulso verde = esperando activamente. Configurable vía `autorun_interval: N` en state.md (default 60 segundos).
 
-**Off:**
-1. Write `autorun: false` (or remove the line) to `state.md → ## Session Flags`.
-2. Confirm: *"Autorun disabled. Back to manual mode — press Enter or tell me to submit when players are ready."*
-3. Do NOT start the autorun wait after this response.
+**Desactivar:**
+1. Escribí `autorun: false` (o eliminá la línea) en `state.md → ## Session Flags`.
+2. Confirmá: *"Autorun desactivado. Volvemos a modo manual — presioná Enter o decime cuando los jugadores estén listos para enviar."*
+3. NO inicies la espera de autorun después de esta respuesta.
 
-**Check on `/dm:dnd load`:** If `autorun: true` is present in state.md, tell the DM autorun is active and begin the wait loop after the recap paragraph.
+**Chequeo en `/dm:dnd load`:** Si `autorun: true` está presente en state.md, decile al DM que autorun está activo y empezá el loop de espera después del párrafo de resumen.
 
-**When NOT to run the autorun wait (even if flag is set):**
-- Mid-combat, resolving a specific combatant's turn
-- Waiting on a player dice roll result
-- The DM just sent a message (they're driving this turn)
-- During `/dm:dnd save`, `/dm:dnd end`, or any command response
+**Cuándo NO correr la espera de autorun (incluso si el flag está activo):**
+- A mitad de combate, resolviendo el turno de un combatiente específico
+- Esperando el resultado de una tirada de un jugador
+- El DM acaba de mandar un mensaje (está llevando este turno)
+- Durante `/dm:dnd save`, `/dm:dnd end`, o cualquier respuesta de comando
 
 ---
 
 ## `/dm:dnd autosave on` / `/dm:dnd autosave off`
 
-Toggle the behind-the-scenes continuity checkpoint. Writes `autosave: on|off` to `state.md → ## Session Flags`. **Default is on.** Applies to every campaign type (structured, dynamic, sandbox) — it only ever writes the same continuity anchors a normal save writes, just more often, and never changes narration.
+Alterná el checkpoint de continuidad detrás de escena. Escribe `autosave: on|off` en `state.md → ## Session Flags`. **El default es activado.** Aplica a cada tipo de campaña (estructurada, dinámica, sandbox) — solo escribe siempre las mismas anclas de continuidad que un save normal escribe, solo que más seguido, y nunca cambia la narración.
 
-**What autosave does when on:**
-1. **In-model micro-saves** (always available, no setup): the DM silently flushes continuity at scene boundaries and on a turn cadence — see the *Continuity micro-save* rule in SKILL.md. This keeps unsaved state near zero so a context compaction costs nothing.
-2. **Deterministic Stop-hook checkpoint** (optional, opt-in): if the user has installed the hook, `autosave_checkpoint.py` snapshots `state.md` every turn and prompts a micro-save every N turns. Install once with:
+**Qué hace el autosave cuando está activo:**
+1. **Micro-saves en el modelo** (siempre disponibles, sin configuración): el DM vacía la continuidad en silencio en los límites de escena y en un ritmo de turnos — ver la regla de *Continuity micro-save* en SKILL.md. Esto mantiene el estado sin guardar cerca de cero para que una compactación de contexto no cueste nada.
+2. **Checkpoint determinístico por Stop-hook** (opcional, opt-in): si el usuario instaló el hook, `autosave_checkpoint.py` toma una instantánea de `state.md` en cada turno y sugiere un micro-save cada N turnos. Instalalo una vez con:
    ```bash
-   python3 ${CLAUDE_SKILL_DIR}/scripts/install_autosave_hook.py        # enable
+   python3 ${CLAUDE_SKILL_DIR}/scripts/install_autosave_hook.py        # activar
    python3 ${CLAUDE_SKILL_DIR}/scripts/install_autosave_hook.py --uninstall
    ```
-   The hook reads this same `autosave` flag, so `/dm:dnd autosave off` silences it without uninstalling.
+   El hook lee este mismo flag `autosave`, así que `/dm:dnd autosave off` lo silencia sin desinstalarlo.
 
-**On:** write `autosave: on`. Confirm: *"Autosave on — I'll checkpoint continuity behind the scenes so a context compaction never loses your place."*
+**Activar:** escribí `autosave: on`. Confirmá: *"Autosave activado — voy a checkpointear la continuidad detrás de escena para que una compactación de contexto nunca pierda tu lugar."*
 
-**Off:** write `autosave: off`. Confirm: *"Autosave off — I'll only persist on /dm:dnd save and /dm:dnd end."*
+**Desactivar:** escribí `autosave: off`. Confirmá: *"Autosave desactivado — solo voy a persistir en /dm:dnd save y /dm:dnd end."*
 
-**Why turn-count, not a context percentage:** the model cannot see its own context-usage level, so there is no reliable "save at 80% full" trigger from inside the skill. The cadence is keyed on turns instead, tuned to fire well before auto-compaction.
+**Por qué contador de turnos, no un porcentaje de contexto:** el modelo no puede ver su propio nivel de uso de contexto, así que no hay un disparador confiable de "guardar al 80% lleno" desde dentro del skill. El ritmo se basa en turnos en cambio, calibrado para dispararse bastante antes de la auto-compactación.

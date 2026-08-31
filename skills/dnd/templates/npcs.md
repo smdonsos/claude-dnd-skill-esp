@@ -1,33 +1,33 @@
-# NPCs — <campaign-name>
+# NPCs — <nombre-de-campaña>
 
-| Name | Role | Faction | Location | Attitude | Notes |
+| Nombre | Rol | Facción | Ubicación | Actitud | Notas |
 |------|------|---------|----------|----------|-------|
 | | | | | | |
 
 ---
 
 ### <Name>
-- **Role:** | **CR/Level:** | **Location:**
-- **HP:** | **AC:** | **Attack:** | **Notable abilities:**
-- **Demeanor:** | **Motivation:** | **Secret:**
-- **Speech quirk:**
-- **Attitude toward party:** neutral (scale: hostile → unfriendly → neutral → friendly → allied)
-- **Faction:** <faction name or "independent">
-- **Current goal:** <what this NPC is actively doing or trying to achieve right now — update each session>
-- **Schedule:** <when and where they can typically be found>
+- **Rol:** | **CR/Level:** | **Ubicación:**
+- **HP:** | **AC:** | **Ataque:** | **Habilidades notables:**
+- **Comportamiento:** | **Motivación:** | **Secreto:**
+- **Tic de habla:**
+- **Actitud hacia el grupo:** neutral (escala: hostil → poco amigable → neutral → amigable → aliado)
+- **Facción:** <nombre de facción o "independiente">
+- **Meta actual:** <qué está haciendo o intentando lograr activamente este NPC ahora — actualizar cada sesión>
+- **Horario:** <cuándo y dónde se lo puede encontrar habitualmente>
 
 ### Personality
-- **Trustworthy ↔ Deceptive:** <e.g. "Mostly trustworthy — lies only to protect family">
-- **Ambitious ↔ Content:** <e.g. "Deeply ambitious — wants the guild master's seat">
-- **Loyal ↔ Opportunistic:** <e.g. "Situationally loyal — will defect if the cost is high enough">
-- **Brave ↔ Cowardly:** <e.g. "Brave in defence of others, cowardly about personal risk">
+- **Confiable ↔ Engañoso:** <ej. "Mayormente confiable — miente solo para proteger a su familia">
+- **Ambicioso ↔ Conforme:** <ej. "Profundamente ambicioso — quiere el asiento del maestro del gremio">
+- **Leal ↔ Oportunista:** <ej. "Leal según la situación — desertaría si el costo es suficientemente alto">
+- **Valiente ↔ Cobarde:** <ej. "Valiente en defensa de otros, cobarde ante el riesgo personal">
 
 ### Relationships
-- **Knows:** <NPC name> — <context: how they know them and what they know>
-- **Owes:** <NPC name> — <what the debt is and whether they've acknowledged it>
-- **Hates:** <NPC name or entity> — <reason — is it personal, ideological, or inherited?>
-- **Fears:** <NPC name or entity> — <reason>
-- **Allied with:** <NPC name> — <nature of alliance — mutual benefit, loyalty, blackmail?>
-*(fill only applicable entries — minimum 2 defined relationships per NPC)*
+- **Conoce a:** <nombre del NPC> — <contexto: cómo lo conoce y qué sabe>
+- **Le debe a:** <nombre del NPC> — <cuál es la deuda y si la reconoció>
+- **Odia a:** <nombre del NPC o entidad> — <razón — es personal, ideológica, o heredada?>
+- **Le teme a:** <nombre del NPC o entidad> — <razón>
+- **Aliado con:** <nombre del NPC> — <naturaleza de la alianza — beneficio mutuo, lealtad, chantaje?>
+*(completar solo las entradas que apliquen — mínimo 2 relaciones definidas por NPC)*
 
 ### Notes
