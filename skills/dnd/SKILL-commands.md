@@ -15,6 +15,8 @@ Procedimientos completos, paso a paso, para todos los comandos slash `/dm:dnd`. 
    - `Pantalla (LAN)` → `bash ${CLAUDE_SKILL_DIR}/display/start-display.sh --lan`, imprimir ambas URLs, poner `_display_running = true`, luego `--clear` como arriba.
    - `Pantalla + autorun (LAN)` → igual que **Pantalla (LAN)**, y además escribir `autorun: true` en `state.md → ## Session Flags`.
 
+   Si se activa alguna pantalla: la plantilla de campaña ya trae `sfx_languages: es` en `## Session Flags`, así que los efectos de sonido usan el paquete en español por defecto. Para cambiarlo (ej. `en` o `es,en` con fallback), editá esa línea directamente — ver "Sound Effects" en README.md.
+
    **P2 *"¿Tiradas de dados?"*** — define cómo se manejan los d20 de los PJ (ver "Convención de tiradas" en SKILL.md):
    - `Los jugadores tiran los suyos` (default) → escribir `roll_mode: players` en `state.md → ## Session Flags`. Vas a pedir cada tirada de PJ y esperar — nunca tirar por un PJ.
    - `El DM tira todo abiertamente` → escribir `roll_mode: auto`. Vos resolvés las tiradas de PJ mostrando toda la matemática.

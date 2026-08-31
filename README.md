@@ -534,6 +534,8 @@ SFX synthesis uses numpy — if numpy is not installed the feature degrades sile
 
 The browser caches each WAV after first fetch. SFX trigger naturally alongside the typewriter animation since both are driven by the same narration chunks.
 
+Trigger detection is language-specific — a Spanish-language pack (`es`) ships alongside the English one (`en`). New campaigns default to `sfx_languages: es` in `state.md → ## Session Flags` (this fork narrates in Spanish by default; see `CLAUDE.md`). Override with a comma-separated list, e.g. `sfx_languages: en` or `sfx_languages: es,en` (checked in order, first match wins), or set `DND_SFX_LANGUAGES` as an environment-level default.
+
 ### Live Character Sidebar
 
 ![NPC dialogue block and character sidebar with faction panel](screenshots/screenshot-npc-dialogue.png)
