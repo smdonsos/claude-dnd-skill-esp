@@ -32,7 +32,6 @@ import threading
 from collections import deque
 from typing import Optional
 from flask import Flask, Response, request, render_template, jsonify, send_from_directory
-from flask_cors import CORS
 
 # This file lives at <code-root>/display/ — resolve dirs from its location so
 # paths work in any install mode (plugin, standalone skill, or dev clone).
@@ -414,7 +413,11 @@ def _token_ok() -> bool:
 app = Flask(__name__)
 
 app.config['TEMPLATES_AUTO_RELOAD'] = True
-CORS(app)
+# No CORS: every documented access path (README.md) loads index.html and calls
+# the API from the exact same origin (http(s)://<host>:5001/). Enabling CORS
+# here let any page open in a LAN browser fetch() this origin cross-site and
+# read the LAN token embedded in index.html (see docs/architecture-review.md,
+# hallazgo S1) — with the token, full control over every write endpoint.
 
 # Wire audio broadcast after _broadcast is defined (see bottom of file)
 # — done lazily via set_broadcast() called after app is created.

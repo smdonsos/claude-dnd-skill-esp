@@ -165,6 +165,8 @@ def find_campaign(name: str) -> pathlib.Path:
 
 import re as _re
 
+from utf8io import read_text, TextDecodeError
+
 VALID_RULESETS = ("2014", "2024")
 DEFAULT_RULESET = "2014"
 
@@ -182,8 +184,8 @@ def campaign_ruleset(name: str) -> str:
     if not state.exists():
         return DEFAULT_RULESET
     try:
-        text = state.read_text(encoding="utf-8", errors="replace")
-    except OSError:
+        text = read_text(state)
+    except (OSError, TextDecodeError):
         return DEFAULT_RULESET
     m = _RULESET_PAT.search(text)
     if not m:
