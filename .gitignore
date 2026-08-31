@@ -42,3 +42,9 @@ venv/
 
 # macOS
 .DS_Store
+
+# Copyrighted reference material (official rulebooks, etc.) kept locally for
+# terminology consultation during translation work — never redistributed via
+# this repo. See docs/i18n/ (Fase 0) for the extracted, freely-redistributable
+# glossary derived from these sources.
+/*.pdf
