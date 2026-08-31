@@ -146,43 +146,43 @@ def _generate_cert_openssl(lan_ip: Optional[str]) -> None:
 def main() -> None:
     lan_ip = _lan_ip()
 
-    print("DnD Display — TLS cert setup")
-    print(f"  Output dir : {DISPLAY_DIR}")
-    print(f"  LAN IP     : {lan_ip or '(not detected — localhost only)'}")
+    print("DnD Display — configuración de certificado TLS")
+    print(f"  Directorio de salida : {DISPLAY_DIR}")
+    print(f"  IP de LAN            : {lan_ip or '(no detectada — solo localhost)'}")
     print()
 
     if os.path.exists(CERT_FILE) and os.path.exists(KEY_FILE):
-        ans = input("cert.pem + key.pem already exist. Regenerate? [y/N] ").strip().lower()
+        ans = input("cert.pem + key.pem ya existen. ¿Regenerar? [y/N] ").strip().lower()
         if ans != "y":
-            print("Keeping existing certs.")
+            print("Se mantienen los certificados existentes.")
             _print_urls(lan_ip)
             return
 
-    print("Generating 4096-bit RSA cert (may take a few seconds)…")
+    print("Generando certificado RSA de 4096 bits (puede tardar unos segundos)…")
     try:
         _generate_cert(lan_ip)
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
 
-    print("Done.")
+    print("Listo.")
     print(f"  cert.pem → {CERT_FILE}")
     print(f"  key.pem  → {KEY_FILE}")
     print()
     _print_urls(lan_ip)
     print()
-    print("Restart the display to apply:")
+    print("Reiniciá el display para aplicar los cambios:")
     print(f"  pkill -f dnd-display-app.py ; bash {DISPLAY_DIR}/start-display.sh")
 
 
 def _print_urls(lan_ip: Optional[str]) -> None:
-    print("Access URLs (after restart):")
+    print("URLs de acceso (después de reiniciar):")
     print("  Localhost : https://localhost:5001")
     if lan_ip:
         print(f"  LAN       : https://{lan_ip}:5001")
     print()
-    print("Phone/tablet: open the LAN URL, accept the browser security warning")
-    print("(one-time — tap Advanced → Proceed).")
+    print("Teléfono/tablet: abrí la URL de LAN y aceptá la advertencia de seguridad")
+    print("del navegador (una sola vez — tocá Avanzado → Continuar).")
 
 
 if __name__ == "__main__":

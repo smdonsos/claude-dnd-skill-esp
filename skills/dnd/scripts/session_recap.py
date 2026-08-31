@@ -301,7 +301,7 @@ def diff_character(before: dict, after: dict) -> list:
         b = bslots.get(lvl, 0)
         a = aslots.get(lvl, 0)
         if b != a:
-            add("spell_slot", b, a, detail=f"level {lvl}")
+            add("spell_slot", b, a, detail=f"nivel {lvl}")
 
     bhd = before.get("hit_dice_remaining") or {}
     ahd = after.get("hit_dice_remaining") or {}
@@ -342,47 +342,47 @@ def _phrase(c: dict) -> str:
     b, a, detail = c["before"], c["after"], c.get("detail", "")
     if kind == "hp":
         if b is None or a is None:
-            return f"HP now {a}"
+            return f"PG ahora en {a}"
         delta = int(a) - int(b)
         if delta < 0:
-            return f"took {abs(delta)} damage ({b}→{a} HP)"
+            return f"recibió {abs(delta)} de daño ({b}→{a} PG)"
         if delta > 0:
-            return f"healed {delta} HP ({b}→{a})"
+            return f"curó {delta} PG ({b}→{a})"
     if kind == "max_hp":
-        return f"max HP {b}→{a}"
+        return f"PG máximos {b}→{a}"
     if kind == "temp_hp":
-        return f"temp HP {b}→{a}"
+        return f"PG temporales {b}→{a}"
     if kind == "level":
-        return f"levelled up to {a}"
+        return f"subió a nivel {a}"
     if kind == "exhaustion":
         delta = int(a) - int(b)
         if delta > 0:
-            return f"gained {delta} exhaustion (now {a})"
-        return f"recovered exhaustion (now {a})"
+            return f"ganó {delta} de cansancio (ahora {a})"
+        return f"se recuperó de cansancio (ahora {a})"
     if kind == "inspiration":
-        return "gained Inspiration" if a else "spent Inspiration"
+        return "ganó Inspiración" if a else "gastó Inspiración"
     if kind == "concentration":
         if a:
-            return f"concentrating on {a}"
-        return f"dropped concentration on {b}"
+            return f"concentrándose en {a}"
+        return f"perdió la concentración en {b}"
     if kind == "condition_added":
-        return f"gained {a.capitalize()}"
+        return f"ganó {a.capitalize()}"
     if kind == "condition_removed":
-        return f"no longer {b.capitalize()}"
+        return f"ya no está {b.capitalize()}"
     if kind == "spell_slot":
         delta = int(a) - int(b)
         if delta > 0:
-            return f"spent {delta} {detail} slot{'s' if delta != 1 else ''}"
-        return f"recovered {abs(delta)} {detail} slot{'s' if abs(delta) != 1 else ''}"
+            return f"gastó {delta} espacio{'s' if delta != 1 else ''} de {detail}"
+        return f"recuperó {abs(delta)} espacio{'s' if abs(delta) != 1 else ''} de {detail}"
     if kind == "hit_die":
         delta = int(a) - int(b)
         if delta < 0:
-            return f"spent {abs(delta)} {detail} hit die"
-        return f"recovered {delta} {detail} hit die"
+            return f"gastó {abs(delta)} dado de golpe de {detail}"
+        return f"recuperó {delta} dado de golpe de {detail}"
     if kind == "death_save_success":
-        return f"death-save successes {b}→{a}"
+        return f"éxitos de salvación contra la muerte {b}→{a}"
     if kind == "death_save_failure":
-        return f"death-save failures {b}→{a}"
+        return f"fallos de salvación contra la muerte {b}→{a}"
     return ""
 
 

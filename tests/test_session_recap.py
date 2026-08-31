@@ -83,8 +83,8 @@ class DiffTests(unittest.TestCase):
         a = sr.parse_character_sheet("# Aldric\n## Combat Stats\n- **HP:** 18 / 30\n")
         changes = self._diff(b, a)
         summary = sr.render_summary(changes)
-        self.assertIn("took 12 damage", summary)
-        self.assertIn("30→18 HP", summary)
+        self.assertIn("recibió 12 de daño", summary)
+        self.assertIn("30→18 PG", summary)
 
     def test_condition_and_slot_and_level(self):
         b = sr.parse_character_sheet(
@@ -98,9 +98,9 @@ class DiffTests(unittest.TestCase):
             "## Spell Slots\n| Level | Total | Used |\n| 1st | 4 | 2 |\n"
         )
         summary = sr.render_summary(self._diff(b, a))
-        self.assertIn("gained Poisoned", summary)
-        self.assertIn("spent 2 level 1 slots", summary)
-        self.assertIn("levelled up to 4", summary)
+        self.assertIn("ganó Poisoned", summary)
+        self.assertIn("gastó 2 espacios de nivel 1", summary)
+        self.assertIn("subió a nivel 4", summary)
 
     def test_no_change_is_empty(self):
         b = sr.parse_character_sheet(SHEET)
