@@ -85,9 +85,12 @@ _active_ruleset: str = "2014"     # which dataset _data/_index point at
 
 
 def _srd_path_for(ruleset: str) -> str:
-    if ruleset == "2024":
-        return DATA_FILE_2024
-    return DATA_FILE_2014
+    # Resolve through paths.srd_path() — the single source of truth for the
+    # ruleset→filename mapping (CLA-25). Falls back to the local constants
+    # only if paths.py itself failed to import.
+    if _paths is not None:
+        return str(_paths.srd_path(ruleset))
+    return DATA_FILE_2024 if ruleset == "2024" else DATA_FILE_2014
 
 
 def _supp_path_for(ruleset: str) -> str:

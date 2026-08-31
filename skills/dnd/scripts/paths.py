@@ -194,17 +194,28 @@ def campaign_ruleset(name: str) -> str:
     return val if val in VALID_RULESETS else DEFAULT_RULESET
 
 
-def srd_path(ruleset=None):
-    """Return path to the SRD JSON for the given ruleset.
+def srd_path(ruleset=None, lang=None):
+    """Return path to the SRD JSON for the given ruleset (and language).
 
     `ruleset=None` returns the default (2014) path. The 2024 path is
     `dnd5e_srd_2024.json`. Caller is responsible for handling missing
     files (e.g. a campaign declares 2024 but the dataset hasn't been
     built yet — in that case, suggest `/dnd data sync --ruleset 2024`).
+
+    `lang` is reserved for Fase 3 (CLA-8, translation project): the
+    Spanish dataset's file-naming scheme hasn't been decided yet, so any
+    value other than None/"en" currently raises. This is the single
+    place that should grow a lang-aware filename scheme when CLA-8
+    lands — callers (lookup.py, build_srd.py) resolve through this
+    function rather than reimplementing the ruleset→filename mapping.
     """
     rs = ruleset or DEFAULT_RULESET
     if rs not in VALID_RULESETS:
         rs = DEFAULT_RULESET
+    if lang not in (None, "en"):
+        raise NotImplementedError(
+            f"srd_path: lang={lang!r} not supported yet (CLA-8 adds this)"
+        )
     fname = "dnd5e_srd_2024.json" if rs == "2024" else "dnd5e_srd.json"
     return data_dir() / fname
 

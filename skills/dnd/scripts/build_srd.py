@@ -32,7 +32,7 @@ except ImportError:
     print("Run with --no-fvtt to skip class features and build spells/items only.")
     yaml = None  # type: ignore
 
-from paths import data_dir as _data_dir
+from paths import data_dir as _data_dir, srd_path as _srd_path
 DATA_DIR  = str(_data_dir())
 
 # Ruleset configuration. 2014 is the historical default; 2024 is partial
@@ -100,9 +100,12 @@ def _bits_url(ruleset: str) -> str:
 
 
 def _out_file(ruleset: str) -> str:
-    """Return output path for the given ruleset's compiled SRD."""
-    name = "dnd5e_srd_2024.json" if ruleset == RULESET_2024 else "dnd5e_srd.json"
-    return os.path.join(DATA_DIR, name)
+    """Return output path for the given ruleset's compiled SRD.
+
+    Resolves through paths.srd_path() — the single source of truth for
+    the ruleset→filename mapping (CLA-25) — rather than reimplementing it.
+    """
+    return str(_srd_path(ruleset))
 
 
 # Module-level handles kept for backwards compatibility with existing
