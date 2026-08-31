@@ -534,8 +534,15 @@ def suggest(query: str, category=None, ruleset=None, n: int = 3, cutoff: float =
     for ck in _suggest_categories(category):
         for r in data.get(ck, []):
             nm = r.get("name", "")
+            idx = r.get("index", "")
             if nm:
                 candidates.setdefault(_norm(nm), (nm, ck))
+            # `index` is the stable English slug (never translated — see
+            # CLAUDE.md). Keying it too keeps English typos ("poisonned")
+            # suggesting a hit even once `name` is translated (Fase 3/CLA-8),
+            # surfaced under the (possibly Spanish) display name.
+            if idx and idx != nm:
+                candidates.setdefault(_norm(idx), (nm or idx, ck))
 
     keys = list(candidates.keys())
     ranked: list = []

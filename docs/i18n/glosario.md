@@ -70,18 +70,18 @@ Fuente primaria: **Manual del Jugador 2024 (ESP)**, edición oficial licenciada.
 | Deafened | Ensordecido |
 | Exhaustion | Cansancio |
 | Frightened | Asustado |
-| Grappled | Apresado |
+| Grappled | Agarrado |
 | Incapacitated | Incapacitado |
 | Invisible | Invisible |
 | Paralyzed | Paralizado |
 | Petrified | Petrificado |
 | Poisoned | Envenenado |
 | Prone | Derribado |
-| Restrained | Apresado (mismo término que Grappled en 2024 — distinguir por contexto/efecto mecánico, no por nombre) |
+| Restrained | Apresado |
 | Stunned | Aturdido |
 | Unconscious | Inconsciente |
 
-> **Nota de verificación:** en la SRD 2024, "Grappled" y "Restrained" comparten la traducción "Apresado" en el manual oficial — a diferencia de ediciones anteriores donde "Restrained" era "Retenido". Confirmado por búsqueda directa (0 apariciones de "Retenido", 4 de "Apresado" en contextos distintos). Al traducir `dnd5e_srd.json` en Fase 3, verificar cuál de las dos aplica por el efecto mecánico de la entrada, no asumir.
+> **Nota de verificación (corregida 2026-08-31):** las 15 entradas de este apartado fueron re-verificadas contra el Apéndice C ("Glosario de reglas") del Manual del Jugador 2024 (ESP), que define cada estado como entrada alfabética independiente con el sufijo `[ESTADO]` (ej. `AGARRADO [ESTADO]`, `APRESADO [ESTADO]`). La versión anterior de esta tabla tenía un error: afirmaba que "Grappled" y "Restrained" compartían la traducción "Apresado". El manual los trata como estados **distintos**: "Grappled" → **Agarrado** (efecto: velocidad 0, desventaja en ataques contra quien no te agarra) y "Restrained" → **Apresado** (efecto: velocidad 0, desventaja/ventaja de ataque, desventaja en salvación de Destreza) — confirmado leyendo el texto completo de ambas entradas del glosario oficial (líneas ~21016 y ~21103 del volcado de texto), no solo por conteo de frecuencia. El nombre de esta sección del manual es "Estado" (`APÉNDICE C | GLOSARIO DE REGLAS`, encabezados `[ESTADO]`) — se mantiene "Condiciones" como título de esta tabla por continuidad con el resto del glosario y porque el dataset SRD usa `conditions` como clave de categoría, pero la prosa de `SKILL*.md`/narración debe preferir "estado" sobre "condición" al referirse a estos efectos, siguiendo la terminología oficial 2024.
 
 ## Tipos de daño
 
