@@ -27,6 +27,7 @@ import json
 import os
 import re
 import sys
+import unicodedata
 
 # paths.py lives alongside this script — import for ruleset resolution
 _HERE = os.path.dirname(os.path.abspath(__file__))
@@ -171,7 +172,17 @@ def _load() -> None:
 
 
 def _norm(s: str) -> str:
-    return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
+    """Normalize a name into a matching/slug key.
+
+    NFKD-decomposes and strips combining diacritics before collapsing to
+    [a-z0-9]+, so accented Spanish names (á/é/í/ó/ú, ñ→n, ü) fold onto the
+    same key as their unaccented form instead of losing the letter entirely
+    (the old plain `[^a-z0-9]+` regex treated "salvación" as "salvaci-n",
+    silently dropping the accented vowel rather than folding it).
+    """
+    s = unicodedata.normalize("NFKD", s.lower())
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    return re.sub(r"[^a-z0-9]+", "-", s).strip("-")
 
 
 # ─── Matching ─────────────────────────────────────────────────────────────────
@@ -330,7 +341,7 @@ def wikidot_url(name: str, category: str = None, record: dict = None) -> str:
     if record and record.get("wikidot_url"):
         return record["wikidot_url"]
 
-    slug = re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
+    slug = _norm(name)
     # Map internal category keys back to wikidot path prefixes
     _PREFIXES = {
         "spells":     "spell",
