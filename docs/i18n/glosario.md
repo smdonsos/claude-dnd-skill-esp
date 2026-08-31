@@ -158,6 +158,7 @@ Fuente primaria: **Manual del Jugador 2024 (ESP)**, edición oficial licenciada.
 | Roll | Tirada / tirar |
 | Attack Roll | Tirada de ataque |
 | Death Save | Tirada de salvación contra la muerte |
+| Challenge Rating (CR) | Valor de desafío |
 
 ---
 

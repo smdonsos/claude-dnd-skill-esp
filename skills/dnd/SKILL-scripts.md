@@ -1,131 +1,131 @@
-# D&D Skill — Scripts Reference
+# D&D Skill — Referencia de Scripts
 
-Full syntax for all Python helper scripts. Load this file once at `/dm:dnd load`, then it stays in context for the session.
+Sintaxis completa de todos los scripts Python auxiliares. Cargá este archivo una vez en `/dm:dnd load`, y queda en contexto durante toda la sesión.
 
-> **Path note:** commands below use `${CLAUDE_SKILL_DIR}` for the skill directory. This file is read verbatim, so that token is **not** auto-expanded here — substitute the absolute skill-dir path (from `SKILL.md`) before running any command, or it will fail with a broken `/scripts/…` path.
+> **Nota de rutas:** los comandos de abajo usan `${CLAUDE_SKILL_DIR}` como directorio del skill. Este archivo se lee verbatim, así que ese token **no** se auto-expande acá — sustituí la ruta absoluta del skill dir (desde `SKILL.md`) antes de ejecutar cualquier comando, o va a fallar con una ruta `/scripts/…` rota.
 
 ---
 
-## Dice Script — `scripts/dice.py`
+## Script de Dados — `scripts/dice.py`
 
-**MANDATORY.** Every die roll in play — player checks, NPC attacks, saves, damage, ability score gen, anything — must be produced by invoking this script via Bash. **Never sample dice mentally or with inline `random` calls.** The script routes rolls through a local physical-dice server that may surface them on the player's phone for them to cast; rolling in your head bypasses that and breaks the ritual. If the server isn't running the script falls back to local random — so there is no scenario where the script should be skipped.
+**OBLIGATORIO.** Toda tirada de dados en la partida — chequeos de jugador, ataques de PNJ, salvaciones, daño, generación de puntuaciones de característica, cualquier cosa — debe producirse invocando este script vía Bash. **Nunca muestrees dados mentalmente ni con llamadas `random` inline.** El script enruta las tiradas a través de un servidor local de dados físicos que puede mostrarlas en el teléfono del jugador para que las tire; tirar en tu cabeza evita eso y rompe el ritual. Si el servidor no está corriendo, el script recurre a random local — así que no hay ningún escenario donde el script se deba omitir.
 
 ```bash
 python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+5
 python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py 2d6+3
-python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py 4d6kh3        # ability score roll
-python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20 adv       # advantage
-python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+3 dis     # disadvantage + modifier
-python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20 --silent  # returns integer only
+python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py 4d6kh3        # tirada de puntuación de característica
+python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20 adv       # ventaja
+python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+3 dis     # desventaja + modificador
+python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20 --silent  # devuelve solo el entero
 
-# Always pass --label so the phone HUD shows what the roll is for:
-python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+4 --label "Perception check"
-python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+6 adv --label "Attack — Goblin Boss vs Piper"
-python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py 2d8+3 --label "Greataxe damage"
+# Siempre pasá --label para que el HUD del teléfono muestre para qué es la tirada:
+python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+4 --label "Chequeo de Percepción"
+python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+6 adv --label "Ataque — Jefe Goblin vs Piper"
+python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py 2d8+3 --label "Daño de Hacha Grande"
 
-# Player rolls — pass --player <pc-name> to route to that player's phone tab:
-python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+4 --label "Perception" --player piper
-python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+6 adv --label "Attack" --player piper
-# NPC / monster / DM-side rolls — omit --player (routes to the DM channel,
-# which auto-rolls server-side if the DM has no tab open).
-python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+5 --label "Goblin attack"
+# Tiradas de jugador — pasá --player <nombre-pj> para enrutar al teléfono de ese jugador:
+python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+4 --label "Percepción" --player piper
+python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+6 adv --label "Ataque" --player piper
+# Tiradas de PNJ / monstruo / lado del DM — omití --player (enruta al canal del DM,
+# que auto-tira del lado del servidor si el DM no tiene una pestaña abierta).
+python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+5 --label "Ataque de goblin"
 ```
 
-**Routing rule:** if the roll is **for a player character**, pass `--player <pc-name>` (lowercase, matches whatever name the player used in the URL). If the roll is for an NPC/monster/anything the DM resolves, omit `--player` so it doesn't ring the players' phones.
+**Regla de enrutamiento:** si la tirada es **para un personaje jugador**, pasá `--player <nombre-pj>` (minúsculas, coincidiendo con el nombre que el jugador usó en la URL). Si la tirada es para un PNJ/monstruo/algo que resuelve el DM, omití `--player` para que no le suene el teléfono a los jugadores.
 
-**Etiquette rule (important):** when invoking with `--player`, the player is not staring at their phone — they're listening to you narrate. **Always prompt them out loud before invoking**, so they pick up the phone. Pattern:
+**Regla de etiqueta (importante):** cuando invoques con `--player`, el jugador no está mirando su teléfono — está escuchando tu narración. **Siempre avisale en voz alta antes de invocar**, para que agarre el teléfono. Patrón:
 
-> *"Piper — make a Perception check. Cast it."*
+> *"Piper — hacé un chequeo de Percepción. Tiralo."*
 
-Then run the command. The Bash call will block while the player picks up the phone, sees the prompt, and casts; the result returns to you afterward. Without the verbal prompt the player won't know to look, and the call will sit waiting for ~3 minutes before timing out into an auto-roll.
+Después corré el comando. La llamada de Bash va a bloquear mientras el jugador agarra el teléfono, ve el prompt, y tira; el resultado te vuelve después. Sin el aviso verbal el jugador no va a saber que tiene que mirar, y la llamada va a esperar unos 3 minutos antes de expirar hacia una auto-tirada.
 
-Flags nat 20 (CRITICAL HIT) and nat 1 (FUMBLE) automatically. If output contains `[auto]` the target's phone wasn't connected and the server rolled itself — no action needed, just narrate the result.
+Marca 20 natural (CRITICAL HIT) y 1 natural (FUMBLE) automáticamente. Si el output contiene `[auto]`, el teléfono del objetivo no estaba conectado y el servidor tiró por su cuenta — no hace falta ninguna acción, solo narrá el resultado.
 
-To force-skip the physical roller (e.g. high-volume NPC rolls you don't want to surface): `--auto` flag, or `DND_DICE_PHYSICAL=0 python3 ...`.
+Para forzar que se salte el tirador físico (ej. tiradas de PNJ de alto volumen que no querés mostrar): flag `--auto`, o `DND_DICE_PHYSICAL=0 python3 ...`.
 
 ---
 
-## Ability Scores Script — `scripts/ability-scores.py`
+## Script de Puntuaciones de Característica — `scripts/ability-scores.py`
 ```bash
 python3 ${CLAUDE_SKILL_DIR}/scripts/ability-scores.py roll
 python3 ${CLAUDE_SKILL_DIR}/scripts/ability-scores.py pointbuy
 python3 ${CLAUDE_SKILL_DIR}/scripts/ability-scores.py pointbuy --check STR=15 DEX=10 CON=15 INT=8 WIS=11 CHA=12
 python3 ${CLAUDE_SKILL_DIR}/scripts/ability-scores.py modifiers STR=15 DEX=10 CON=15 INT=8 WIS=11 CHA=12
 ```
-Roll mode: generates 3 arrays (4d6kh3 × 6 each). Point buy mode: prints cost table; `--check` validates against the 27-point budget.
+Modo tirada: genera 3 arreglos (4d6kh3 × 6 cada uno). Modo compra por puntos: imprime la tabla de costos; `--check` valida contra el presupuesto de 27 puntos.
 
 ---
 
-## XP Script — `scripts/xp.py`
-Awards XP for combat and qualifying non-combat encounters. Reads character files from the campaign directory, updates XP, and pushes to the display sidebar. All tables (difficulty thresholds, CR→XP, monster multipliers, level advancement) are codified in the script — the DM only decides the difficulty tier or provides a monster list.
+## Script de XP — `scripts/xp.py`
+Otorga XP por combate y encuentros no-combate que califican. Lee los archivos de personaje del directorio de la campaña, actualiza la XP, y empuja a la barra lateral del display. Todas las tablas (umbrales de dificultad, valor de desafío→XP, multiplicadores de monstruo, avance de nivel) están codificadas en el script — el DM solo decide el nivel de dificultad o provee una lista de monstruos.
 
 ```bash
-# Preview — no files modified:
+# Vista previa — no modifica archivos:
 python3 ${CLAUDE_SKILL_DIR}/scripts/xp.py calc --level 3 --players 2 --difficulty hard --type combat
 python3 ${CLAUDE_SKILL_DIR}/scripts/xp.py calc --level 3 --players 2 --monsters "goblin:1/4:3,hobgoblin:1:1"
 
-# Award after a combat encounter — difficulty-rated (use when full monster list is unavailable):
+# Otorgar después de un encuentro de combate — por nivel de dificultad (usar cuando no se dispone de la lista completa de monstruos):
 python3 ${CLAUDE_SKILL_DIR}/scripts/xp.py award \
-  --campaign <name> --characters "Max of Thraxx,Ethros the 19th" --difficulty hard --type combat
+  --campaign <nombre> --characters "Max of Thraxx,Ethros the 19th" --difficulty hard --type combat
 
-# Award after a combat encounter — exact CR calculation (preferred for standard combats):
+# Otorgar después de un encuentro de combate — cálculo exacto por valor de desafío (preferido para combates estándar):
 python3 ${CLAUDE_SKILL_DIR}/scripts/xp.py award \
-  --campaign <name> --characters "Max of Thraxx,Ethros the 19th" \
-  --monsters "goblin:1/4:3,hobgoblin:1:1" --note "Ambush in the alley"
+  --campaign <nombre> --characters "Max of Thraxx,Ethros the 19th" \
+  --monsters "goblin:1/4:3,hobgoblin:1:1" --note "Emboscada en el callejón"
 
-# Award for a qualifying non-combat encounter:
+# Otorgar por un encuentro no-combate que califica:
 python3 ${CLAUDE_SKILL_DIR}/scripts/xp.py award \
-  --campaign <name> --characters "Max of Thraxx,Ethros the 19th" --difficulty medium --type noncombat \
-  --note "guild informant interrogation"
+  --campaign <nombre> --characters "Max of Thraxx,Ethros the 19th" --difficulty medium --type noncombat \
+  --note "interrogatorio a informante del gremio"
 ```
 
-**Difficulty tiers:** `easy` `medium` `hard` `deadly`
-**Encounter types:** `combat` `noncombat` (both use the same difficulty threshold table)
-**Monster CR formats:** `1/4`, `0.25`, `1/2`, `0.5`, `1/8`, `0.125`, or integer (`1`, `5`, `10`)
-**Monster count:** omit for 1 (e.g. `"dragon:10"`); explicit for groups (e.g. `"goblin:1/4:3"`)
-**Monster multiplier** (applied automatically): ×1 (1), ×1.5 (2), ×2 (3–6), ×2.5 (7–10), ×3 (11–14), ×4 (15+)
+**Niveles de dificultad:** `easy` `medium` `hard` `deadly`
+**Tipos de encuentro:** `combat` `noncombat` (ambos usan la misma tabla de umbrales de dificultad)
+**Formatos de valor de desafío de monstruo:** `1/4`, `0.25`, `1/2`, `0.5`, `1/8`, `0.125`, o entero (`1`, `5`, `10`)
+**Cantidad de monstruos:** omitir para 1 (ej. `"dragon:10"`); explícito para grupos (ej. `"goblin:1/4:3"`)
+**Multiplicador de monstruo** (aplicado automáticamente): ×1 (1), ×1.5 (2), ×2 (3–6), ×2.5 (7–10), ×3 (11–14), ×4 (15+)
 
-`award` updates the character file XP field, flags LEVEL UP PENDING if a threshold is crossed, and pushes XP to the display via `push_stats.py`. The `--note` label prints to terminal only — not stored.
+`award` actualiza el campo de XP del archivo de personaje, marca SUBIDA DE NIVEL PENDIENTE si se cruza un umbral, y empuja la XP al display vía `push_stats.py`. La etiqueta `--note` se imprime solo en terminal — no se guarda.
 
 ---
 
-## Combat Script — `scripts/combat.py`
+## Script de Combate — `scripts/combat.py`
 ```bash
-# Roll initiative and print tracker
+# Tirar iniciativa e imprimir el tracker
 python3 ${CLAUDE_SKILL_DIR}/scripts/combat.py init '<JSON>'
 # JSON: [{"name":"Flerb","dex_mod":0,"hp":12,"ac":16,"type":"pc"}, ...]
 
-# Reprint tracker from saved state
+# Reimprimir el tracker desde el estado guardado
 python3 ${CLAUDE_SKILL_DIR}/scripts/combat.py tracker '<JSON>' <round_num>
 
-# Resolve a single attack
+# Resolver un solo ataque
 python3 ${CLAUDE_SKILL_DIR}/scripts/combat.py attack --atk 4 --ac 15 --dmg 2d6+2
 ```
-`init` outputs `STATE_JSON:` line — store in `state.md` under `## Active Combat` between turns.
+`init` produce una línea `STATE_JSON:` — guardala en `state.md` bajo `## Active Combat` entre turnos.
 
 ---
 
-## Character Script — `scripts/character.py`
+## Script de Personaje — `scripts/character.py`
 ```bash
-# Full stat block from raw scores
+# Ficha completa a partir de puntuaciones crudas
 python3 ${CLAUDE_SKILL_DIR}/scripts/character.py calc --class fighter --level 1 \
     STR=15 DEX=10 CON=15 INT=9 WIS=11 CHA=14 \
     --proficient STR CON Athletics Intimidation Perception Survival
 
-# Level-up HP and bonus calculation
+# Cálculo de PG y bonificadores al subir de nivel
 python3 ${CLAUDE_SKILL_DIR}/scripts/character.py levelup --class fighter --from 1 --hp-roll 7 --con-mod 2
 
-# XP tracking
+# Seguimiento de XP
 python3 ${CLAUDE_SKILL_DIR}/scripts/character.py xp --level 1 --gained 150
 ```
 
 ---
 
-## Stats Display Script — `display/push_stats.py`
-Pushes character and combat stats to the sidebar. Players merged by name; partial updates work.
+## Script de Display de Estadísticas — `display/push_stats.py`
+Empuja estadísticas de personaje y combate a la barra lateral. Los jugadores se combinan por nombre; las actualizaciones parciales funcionan.
 
 ```bash
-# Full stats push (on /dm:dnd load — use --replace-players to clear stale characters):
+# Push completo de estadísticas (en /dm:dnd load — usar --replace-players para limpiar personajes obsoletos):
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --replace-players --json '{
   "players": [{
     "name": "Flerb", "race": "Tiefling", "class": "Fighter", "level": 1, "background": "Soldier",
@@ -154,162 +154,162 @@ python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --replace-players --json '{
   }]
 }'
 
-# sheet sub-keys: attacks, spells ({slots, save_dc, attack_bonus, cantrips, prepared} or null),
+# subclaves de sheet: attacks, spells ({slots, save_dc, attack_bonus, cantrips, prepared} o null),
 # features ([{name, text}]), inventory ([strings])
-# sheet is optional — omit if you only need the stats sidebar without the full sheet modal
+# sheet es opcional — omitir si solo necesitás la barra lateral de estadísticas sin el modal de ficha completa
 
-# Partial updates (use whenever values change mid-session):
+# Actualizaciones parciales (usar cada vez que cambien valores durante la sesión):
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --hp 7 12
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --xp 220 300
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --second-wind false
 
-# Temp HP (Symbiotic Entity, Aid, etc.):
-python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --temp-hp 8   # set
-python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --temp-hp 0   # clear
+# PG temporales (Symbiotic Entity, Aid, etc.):
+python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --temp-hp 8   # fijar
+python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --temp-hp 0   # limpiar
 
-# Hit dice (short rest):
-python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --hit-dice-use          # spend one
-python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --hit-dice-restore 2    # restore N
+# Dados de golpe (descanso corto):
+python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --hit-dice-use          # gastar uno
+python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --hit-dice-restore 2    # restaurar N
 
-# Conditions — full replace:
+# Condiciones — reemplazo completo:
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --conditions "Poisoned,Frightened"
-python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --conditions ""          # clear all
+python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --conditions ""          # limpiar todas
 
-# Conditions — granular (preferred mid-session):
+# Condiciones — granular (preferido durante la sesión):
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --conditions-add "Poisoned"
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --conditions-remove "Poisoned"
 
-# Concentration:
+# Concentración:
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --concentrate "Bless"
-python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --concentrate ""        # clear
+python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --concentrate ""        # limpiar
 
-# Spell slots — full replace (on /dm:dnd load):
+# Espacios de conjuro — reemplazo completo (en /dm:dnd load):
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb \
   --spell-slots '{"1":{"used":1,"max":4},"2":{"used":0,"max":2}}'
 
-# Spell slots — granular (preferred mid-session):
-python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --slot-use 1      # expend one 1st-level slot
-python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --slot-restore 2  # restore one 2nd-level slot
+# Espacios de conjuro — granular (preferido durante la sesión):
+python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --slot-use 1      # gastar un espacio de nivel 1
+python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --slot-restore 2  # restaurar un espacio de nivel 2
 
-# Inventory — granular (preferred to full --sheet rewrite):
+# Inventario — granular (preferido a una reescritura completa de --sheet):
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --inventory-add "Iron key"
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --inventory-remove "Folded paper"
 
-# Faction standings (party-wide — REQUIRED at /dm:dnd load to show faction panel):
+# Posturas de facción (para todo el grupo — REQUERIDO en /dm:dnd load para mostrar el panel de facciones):
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py \
   --factions '[{"name":"Pale Court","standing":"Allied"},{"name":"Watch","standing":"Neutral"}]'
-python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --factions '[]'   # clear all
+python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --factions '[]'   # limpiar todas
 
-# Combat turn order (on /dm:dnd combat start):
+# Orden de turno de combate (en /dm:dnd combat start):
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --turn-order \
   '{"order":["Goblin 1","Flerb","Goblin 2"],"current":"Goblin 1","round":1}'
 
-# Advance turn pointer:
+# Avanzar el puntero de turno:
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --turn-current "Flerb"
 
-# New round:
+# Nueva ronda:
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --turn-current "Goblin 1" --turn-round 2
 
-# Combat ended:
+# Combate terminado:
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --turn-clear
 
-# World time clock:
+# Reloj del mundo:
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --world-time \
   '{"date":"19 Ashveil 1312 AR","day_name":"Moonday","time":"morning","season":"Long Hollow","weather":"calm"}'
 
-# Clear display (use push_stats.py, NOT curl — raw curl lacks the auth token in LAN mode):
+# Limpiar el display (usar push_stats.py, NO curl — curl crudo no tiene el token de auth en modo LAN):
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --clear
 
-# Autorun cycle countdown (shown in party input panel):
+# Cuenta regresiva del ciclo de autorun (mostrada en el panel de input del grupo):
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --autorun-waiting true --autorun-cycle 60
-python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --autorun-waiting false   # hide after turn resolves
+python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --autorun-waiting false   # ocultar después de que se resuelva el turno
 
-# N-player threshold — auto-fire when N players (not all) are ready:
-python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --autorun-threshold 2   # fire when 2 ready
-python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --autorun-threshold 0   # reset to player count
+# Umbral de N jugadores — dispara automáticamente cuando N jugadores (no todos) están listos:
+python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --autorun-threshold 2   # dispara cuando 2 están listos
+python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --autorun-threshold 0   # resetear a la cantidad de jugadores
 ```
 
-**Player input queue — `display/check_input.py`:**
+**Cola de input de jugador — `display/check_input.py`:**
 ```bash
-# Called at the start of each turn BEFORE processing the player's message.
-# Drains any actions queued from the display companion (e.g. iPad) and prints them.
-# Output: "[Max of Thraxx]: I draw my rapier" — empty if nothing queued. Clears the display indicator.
+# Se llama al inicio de cada turno ANTES de procesar el mensaje del jugador.
+# Drena cualquier acción encolada desde el companion del display (ej. un iPad) y la imprime.
+# Output: "[Max of Thraxx]: I draw my rapier" — vacío si no hay nada encolado. Limpia el indicador del display.
 python3 ${CLAUDE_SKILL_DIR}/display/check_input.py
 ```
 
-If `check_input.py` returns output, prepend it to the player's terminal input when forming the turn:
-- Only queued input: treat as the full player action this turn
-- Queued input + terminal input: merge as `[Character]: <queued>\n[Character]: <terminal>`
-- Empty queue: proceed as normal (use only terminal input)
+Si `check_input.py` devuelve output, anteponelo al input de terminal del jugador al armar el turno:
+- Solo input encolado: tratarlo como la acción completa del jugador este turno
+- Input encolado + input de terminal: combinar como `[Personaje]: <encolado>\n[Personaje]: <terminal>`
+- Cola vacía: proceder normalmente (usar solo el input de terminal)
 
 ---
 
-**When to push stats:**
-- `/dm:dnd load` → `--replace-players --json` (full stats) + `--spell-slots` + `--world-time` + `--factions`
-- HP change → `--player NAME --hp <current> <max>`
-- Temp HP gained/lost → `--player NAME --temp-hp N` (0 to clear)
-- XP awarded → `--player NAME --xp <current> <next>`
-- Second Wind used/recovered → `--player NAME --second-wind false/true`
-- Hit die spent → `--player NAME --hit-dice-use`; restored → `--hit-dice-restore N`
-- Spell slot used → `--player NAME --slot-use <level>`; restored → `--slot-restore <level>`
-- Condition gained → `--player NAME --conditions-add "Name"`; removed → `--conditions-remove "Name"`
-- Concentration started → `--player NAME --concentrate "Spell"`; ended → `--concentrate ""`
-- Item picked up → `--player NAME --inventory-add "Item"`; dropped/used → `--inventory-remove "Item"`
-- Timed effect starts → `--effect-start "NAME:SPELL:DURATION[:conc]"` bundled with narration send
-- Timed effect ends → `--effect-end "NAME:SPELL"` bundled with narration send
-- Faction standing changes → `--factions '[...]'` (full replace)
-- Combat start → `--turn-order`; each turn → `--turn-current`; end → `--turn-clear`
-- Level up → push updated full stats
-- Long rest → restore HP, hit dice, spell slots, second wind; push `--world-time` with updated time
-- Any rest or time advance → push `--world-time`
+**Cuándo empujar estadísticas:**
+- `/dm:dnd load` → `--replace-players --json` (estadísticas completas) + `--spell-slots` + `--world-time` + `--factions`
+- Cambio de PG → `--player NOMBRE --hp <actual> <máximo>`
+- PG temporales ganados/perdidos → `--player NOMBRE --temp-hp N` (0 para limpiar)
+- XP otorgada → `--player NOMBRE --xp <actual> <siguiente>`
+- Segundo Aliento usado/recuperado → `--player NOMBRE --second-wind false/true`
+- Dado de golpe gastado → `--player NOMBRE --hit-dice-use`; restaurado → `--hit-dice-restore N`
+- Espacio de conjuro usado → `--player NOMBRE --slot-use <nivel>`; restaurado → `--slot-restore <nivel>`
+- Condición ganada → `--player NOMBRE --conditions-add "Nombre"`; removida → `--conditions-remove "Nombre"`
+- Concentración iniciada → `--player NOMBRE --concentrate "Conjuro"`; terminada → `--concentrate ""`
+- Objeto recogido → `--player NOMBRE --inventory-add "Objeto"`; soltado/usado → `--inventory-remove "Objeto"`
+- Efecto temporizado inicia → `--effect-start "NOMBRE:CONJURO:DURACIÓN[:conc]"` incluido con el send de narración
+- Efecto temporizado termina → `--effect-end "NOMBRE:CONJURO"` incluido con el send de narración
+- Cambio de postura de facción → `--factions '[...]'` (reemplazo completo)
+- Inicio de combate → `--turn-order`; cada turno → `--turn-current`; fin → `--turn-clear`
+- Subida de nivel → empujar estadísticas completas actualizadas
+- Descanso largo → restaurar PG, dados de golpe, espacios de conjuro, segundo aliento; empujar `--world-time` con la hora actualizada
+- Cualquier descanso o avance de tiempo → empujar `--world-time`
 
-**Keep the clock honest.** The world clock is continuity, not decoration. Narrate consistently with the time you last pushed, and advance it *deliberately* when an action costs time — a brief exchange is a few minutes, a search or a shopping trip is longer, a rest or a journey longer still. Never let the time of day drift on its own or silently reset between scenes. If the clock and the fiction ever disagree, reconcile it to the truth with a fresh `--world-time` push rather than compounding the error; setting it *backward* to the correct time is fine and undoes nothing, since timed effects run on their own round/minute/hour durations in `tracker.py`, independent of the wall clock.
+**Mantené el reloj honesto.** El reloj del mundo es continuidad, no decoración. Narrá de forma consistente con la hora que empujaste por última vez, y avanzalo *deliberadamente* cuando una acción cueste tiempo — un intercambio breve son unos minutos, una búsqueda o una compra es más largo, un descanso o un viaje todavía más. Nunca dejes que la hora del día derive sola o se resetee silenciosamente entre escenas. Si el reloj y la ficción alguna vez no coinciden, reconcilialo con la verdad con un push `--world-time` fresco en vez de acumular el error; ponerlo *hacia atrás* a la hora correcta está bien y no deshace nada, ya que los efectos temporizados corren en sus propias duraciones de ronda/minuto/hora en `tracker.py`, independientes del reloj de pared.
 
 ---
 
-## Tracker Script — `scripts/tracker.py`
-Tracks conditions, concentration, timed effects, and death saves. State persists at `~/.claude/dnd/campaigns/<name>/tracker.json`.
+## Script de Tracker — `scripts/tracker.py`
+Rastrea condiciones, concentración, efectos temporizados, y tiradas de salvación contra la muerte. El estado persiste en `~/.claude/dnd/campaigns/<nombre>/tracker.json`.
 
 ```bash
 CAMP=my-campaign
 
-# Timed effects — duration: 10r (rounds), 60m (minutes), 8h (hours), indef
-# Append 'conc' to mark as concentration (auto-sets concentration field)
+# Efectos temporizados — duración: 10r (rondas), 60m (minutos), 8h (horas), indef
+# Agregá 'conc' para marcar como concentración (fija el campo de concentración automáticamente)
 python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP effect start "Max of Thraxx" "Web" 10r conc
 python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP effect start "Ethros the 19th" "Disguise Self" 1h
 python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP effect start "Ethros the 19th" "Hunter's Mark" indef
-python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP effect end   "Max of Thraxx" "Web"   # narrative end (broken/dispelled)
-python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP effect tick  "Max of Thraxx"         # call on actor's turn — decrements rounds, prints expiry
+python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP effect end   "Max of Thraxx" "Web"   # fin narrativo (roto/disipado)
+python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP effect tick  "Max of Thraxx"         # llamar en el turno del actor — decrementa rondas, imprime expiración
 
-# Conditions
+# Condiciones
 python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP condition add "Ethros the 19th" poisoned
 python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP condition remove "Ethros the 19th" poisoned
 python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP condition clear "Ethros the 19th"
 
-# Concentration (auto-clears previous if switching spells)
+# Concentración (limpia automáticamente la anterior si se cambia de conjuro)
 python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP concentrate "Max of Thraxx" "Bless"
 python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP concentrate "Max of Thraxx" break
 
-# Death saves
+# Tiradas de salvación contra la muerte
 python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP saves "Ethros the 19th" success
 python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP saves "Ethros the 19th" failure
 python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP saves "Ethros the 19th" stable
 python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP saves "Ethros the 19th" reset
 
-# Status / clear
+# Estado / limpiar
 python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP status
 python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP status "Ethros the 19th"
-python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP clear           # conditions + concentration + effects
-python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP clear --all     # also clears death saves
+python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP clear           # condiciones + concentración + efectos
+python3 ${CLAUDE_SKILL_DIR}/scripts/tracker.py -c $CAMP clear --all     # también limpia tiradas de salvación contra la muerte
 ```
 
-**When to run:** condition applied/removed; caster begins/loses concentration (immediately, not end of turn); PC drops to 0 HP; each death save rolled; end of encounter → `clear`.
+**Cuándo correrlo:** condición aplicada/removida; el lanzador inicia/pierde concentración (inmediatamente, no al final del turno); un PJ cae a 0 PG; cada tirada de salvación contra la muerte; fin del encuentro → `clear`.
 
 ---
 
-## Calendar Script — `scripts/calendar.py`
+## Script de Calendario — `scripts/calendar.py`
 ```bash
-# One-time setup (run during /dm:dnd new):
+# Configuración única (correr durante /dm:dnd new):
 python3 ${CLAUDE_SKILL_DIR}/scripts/calendar.py -c $CAMP init \
     --date "15 Harvestmoon 1247" \
     --time "morning" \
@@ -317,157 +317,160 @@ python3 ${CLAUDE_SKILL_DIR}/scripts/calendar.py -c $CAMP init \
     --month-length 30 \
     --day-names "Sunday,Moonday,Ironday,Windday,Earthday,Fireday,Starday"
 
-# Time advancement
+# Avance de tiempo
 python3 ${CLAUDE_SKILL_DIR}/scripts/calendar.py -c $CAMP advance 8 hours
 python3 ${CLAUDE_SKILL_DIR}/scripts/calendar.py -c $CAMP advance 2 days
-python3 ${CLAUDE_SKILL_DIR}/scripts/calendar.py -c $CAMP rest short   # +1 hour
-python3 ${CLAUDE_SKILL_DIR}/scripts/calendar.py -c $CAMP rest long    # +8 hours
+python3 ${CLAUDE_SKILL_DIR}/scripts/calendar.py -c $CAMP rest short   # +1 hora
+python3 ${CLAUDE_SKILL_DIR}/scripts/calendar.py -c $CAMP rest long    # +8 horas
 
-# Query / manual set
+# Consulta / fijar manualmente
 python3 ${CLAUDE_SKILL_DIR}/scripts/calendar.py -c $CAMP now
 python3 ${CLAUDE_SKILL_DIR}/scripts/calendar.py -c $CAMP set "22 Harvestmoon 1247" evening
 python3 ${CLAUDE_SKILL_DIR}/scripts/calendar.py -c $CAMP time night
 python3 ${CLAUDE_SKILL_DIR}/scripts/calendar.py -c $CAMP events
 ```
 
-**When to run:** after every rest; after significant travel or time skip; when manually updating `state.md` date — use `calendar.py set` to keep them in sync.
+**Cuándo correrlo:** después de cada descanso; después de un viaje significativo o un salto de tiempo; al actualizar manualmente la fecha en `state.md` — usá `calendar.py set` para mantenerlos sincronizados.
+
+**Nota:** `--time`/`calendar.py time` solo acepta estos seis tokens literales en inglés (`midnight`, `early morning`, `morning`, `afternoon`, `evening`, `night`, más `midday`) — son vocabulario de CLI que el script matchea exactamente, no traducir aunque la documentación esté en español. El campo `time` de `push_stats.py --world-time` es distinto: es un string libre que se muestra tal cual en la barra lateral, y ahí sí se puede poner "mañana", "tarde", etc.
 
 ---
 
-## Campaign Search — `scripts/campaign_search.py`
-Keyword search across campaign files. Use this **before** loading full files into context when looking up a specific past event, NPC detail, or plot thread.
+## Búsqueda de Campaña — `scripts/campaign_search.py`
+Búsqueda por palabra clave a través de los archivos de campaña. Usá esto **antes** de cargar archivos completos al contexto cuando busques un evento pasado específico, un detalle de PNJ, o un hilo argumental.
 
 ```bash
 CAMP=my-campaign
 
-# Search all default files (state, log, archive, world, npcs):
+# Buscar en todos los archivos por defecto (state, log, archive, world, npcs):
 python3 ${CLAUDE_SKILL_DIR}/scripts/campaign_search.py -c $CAMP Lasswater
 
-# Narrow to specific files:
+# Acotar a archivos específicos:
 python3 ${CLAUDE_SKILL_DIR}/scripts/campaign_search.py -c $CAMP "merchant letter" --files log,archive
 
-# Multi-keyword AND search:
+# Búsqueda AND multi-palabra clave:
 python3 ${CLAUDE_SKILL_DIR}/scripts/campaign_search.py -c $CAMP VARETH Kel
 
-# More context lines around each match:
+# Más líneas de contexto alrededor de cada coincidencia:
 python3 ${CLAUDE_SKILL_DIR}/scripts/campaign_search.py -c $CAMP Harwick -C 6
 ```
 
-File keys: `state`, `log`, `archive`, `world`, `seeds`, `npcs`, `npcsfull`
-Default files searched: state, log, archive, world, npcs
+Claves de archivo: `state`, `log`, `archive`, `world`, `seeds`, `npcs`, `npcsfull`
+Archivos buscados por defecto: state, log, archive, world, npcs
 
-**When to use:** Any time a player asks about a past event, NPC detail, location, or plot thread that may not be in active context. Run this first — only escalate to a full `Read` if the search returns insufficient context.
+**Cuándo usarlo:** cada vez que un jugador pregunte sobre un evento pasado, un detalle de PNJ, una ubicación, o un hilo argumental que podría no estar en el contexto activo. Corré esto primero — escalá a un `Read` completo solo si la búsqueda devuelve contexto insuficiente.
 
 ---
 
-## Session Recap — `scripts/session_recap.py`
+## Resumen de Sesión — `scripts/session_recap.py`
 
-Deterministic state-diff between two character snapshots. Computes the mechanical change set (HP/temp/level/hit dice/death saves/conditions/concentration/exhaustion/inspiration/spell slots) from data so narration never recomputes it — recaps are the single thing an LLM is most likely to hallucinate. Reads `<campaign>/characters/*.md` and merges live `tracker.json` conditions/concentration. Zero LLM calls.
+Diferencia de estado determinística entre dos snapshots de personaje. Calcula el conjunto de cambios mecánicos (PG/temporales/nivel/dados de golpe/tiradas de salvación contra la muerte/condiciones/concentración/cansancio/inspiración/espacios de conjuro) a partir de datos, así la narración nunca lo recalcula — los resúmenes son lo que un LLM tiene más probabilidad de alucinar. Lee `<campaña>/characters/*.md` y combina las condiciones/concentración en vivo de `tracker.json`. Cero llamadas al LLM.
 
 ```bash
 CAMP=my-campaign
 
-# Snapshot the party now — sets the baseline (writes to <campaign>/.recap/,
-# rolling last → prev). Run this at session START (e.g. /dm:dnd load) so there
-# is a baseline to diff against later.
+# Sacar una foto del grupo ahora — fija la línea base (escribe en <campaña>/.recap/,
+# rotando last → prev). Correr esto al INICIO de la sesión (ej. /dm:dnd load) para que
+# haya una línea base contra la cual comparar después.
 python3 ${CLAUDE_SKILL_DIR}/scripts/session_recap.py snapshot --campaign $CAMP
 
-# Diff the baseline against current state → one-paragraph summary, then ADVANCE
-# the baseline to "now" so the next diff chains from here. Run at /dm:dnd save
-# (end of session) for a since-start recap, or each turn for a since-last-turn
-# recap — either way it advances, so consecutive diffs never re-report old deltas.
+# Comparar la línea base contra el estado actual → resumen de un párrafo, después AVANZA
+# la línea base a "ahora" para que la próxima comparación encadene desde acá. Correr en
+# /dm:dnd save (fin de sesión) para un resumen desde-el-inicio, o cada turno para un
+# resumen desde-el-último-turno — de cualquier forma avanza, así comparaciones
+# consecutivas nunca re-reportan cambios viejos.
 python3 ${CLAUDE_SKILL_DIR}/scripts/session_recap.py diff --campaign $CAMP
 # → "Aldric: took 18 damage (30→12 HP); gained Poisoned; spent 2 level 1 slots."
 
-# Same comparison without moving the baseline (ad-hoc "what changed so far?"):
+# Misma comparación sin mover la línea base (ad-hoc "¿qué cambió hasta ahora?"):
 python3 ${CLAUDE_SKILL_DIR}/scripts/session_recap.py diff --campaign $CAMP --no-roll
 
-# Structured change list instead of prose:
+# Lista de cambios estructurada en vez de prosa:
 python3 ${CLAUDE_SKILL_DIR}/scripts/session_recap.py diff --campaign $CAMP --json
 
-# Diff two snapshot files directly (no campaign lookup):
+# Comparar dos archivos de snapshot directamente (sin buscar la campaña):
 python3 ${CLAUDE_SKILL_DIR}/scripts/session_recap.py diff-files before.json after.json
 ```
 
 ---
 
-## Oracle — `scripts/oracle.py`
+## Oráculo — `scripts/oracle.py`
 
-Dice-driven solo/improv oracles (Mythic chaos factor, Ironsworn yes/no, Random Event Focus, scene-meaning word pairs). Keeps pacing transparent and rollable instead of invented. Rolls are stdlib-random and seedable (`--seed N`). The chaos factor persists in `state.md → ## Session Flags` as `chaos_factor: N`. Zero LLM calls.
+Oráculos en solitario/improvisación guiados por dados (factor de caos Mythic, sí/no Ironsworn, Foco de Evento Aleatorio, pares de palabras de significado de escena). Mantiene el ritmo transparente y sujeto a tirada en vez de inventado. Las tiradas son random de la librería estándar y admiten semilla (`--seed N`). El factor de caos persiste en `state.md → ## Session Flags` como `chaos_factor: N`. Cero llamadas al LLM.
 
 ```bash
 CAMP=my-campaign
 
-# Chaos factor (1-9): show / set / adjust (persisted to state.md)
+# Factor de caos (1-9): mostrar / fijar / ajustar (persiste en state.md)
 python3 ${CLAUDE_SKILL_DIR}/scripts/oracle.py chaos --campaign $CAMP
 python3 ${CLAUDE_SKILL_DIR}/scripts/oracle.py chaos set --campaign $CAMP --value 7
 python3 ${CLAUDE_SKILL_DIR}/scripts/oracle.py chaos adjust --campaign $CAMP --pc-lost
 
-# Yes/no oracle — likelihood + chaos modifier → verdict + d100
+# Oráculo sí/no — probabilidad + modificador de caos → veredicto + d100
 python3 ${CLAUDE_SKILL_DIR}/scripts/oracle.py ask --likelihood likely --campaign $CAMP
 # → "NO-BUT  (d100=82, likelihood=likely, chaos=8)"
 
-# Random Event Focus (d100 → direction label)
+# Foco de Evento Aleatorio (d100 → etiqueta de dirección)
 python3 ${CLAUDE_SKILL_DIR}/scripts/oracle.py event
 
-# Scene-meaning word pair (action / subject)
+# Par de palabras de significado de escena (acción / sujeto)
 python3 ${CLAUDE_SKILL_DIR}/scripts/oracle.py scene
 ```
 
-Likelihoods: `sure-thing`, `likely`, `50/50`, `unlikely`, `no-way`. Verdict suffixes: `-and` (extreme, on doubles), `-but` (qualified, near threshold).
+Probabilidades: `sure-thing`, `likely`, `50/50`, `unlikely`, `no-way`. Sufijos de veredicto: `-and` (extremo, en dobles), `-but` (calificado, cerca del umbral).
 
 ---
 
-## Deterministic Graph Extraction — `scripts/graph_extract_deterministic.py`
+## Extracción Determinística de Grafo — `scripts/graph_extract_deterministic.py`
 
-Zero-LLM relationship extractor. Pattern-matches session-log sentences against the bundled verb-table seed (`data/graph/verb_table_seed.yaml`) and emits typed edge proposals in the exact shape `campaign_graph.py` consumes. ~50% recall (clean subject-verb-object only), ~95% precision, no Claude API call. Usually driven through `campaign_graph.py extract --deterministic` rather than directly:
+Extractor de relaciones cero-LLM. Compara por patrones las oraciones del log de sesión contra la semilla del léxico de verbos incluida (`data/graph/verb_table_seed.yaml`) y emite propuestas de arista tipada en la forma exacta que consume `campaign_graph.py`. ~50% de recall (solo sujeto-verbo-objeto limpio), ~95% de precisión, sin llamada a la API de Claude. Normalmente se invoca a través de `campaign_graph.py extract --deterministic` en vez de directamente:
 
 ```bash
 CAMP=my-campaign
 
-# Propose edges (stdout), no writes:
+# Proponer aristas (stdout), sin escribir:
 python3 ${CLAUDE_SKILL_DIR}/scripts/campaign_graph.py extract --campaign $CAMP --deterministic
 
-# One-shot auto-apply high-confidence proposals into graph.json (idempotent):
+# Auto-aplicar de una vez las propuestas de alta confianza a graph.json (idempotente):
 python3 ${CLAUDE_SKILL_DIR}/scripts/campaign_graph.py extract --campaign $CAMP \
     --deterministic --apply --min-confidence high
 ```
 
 ---
 
-## Data Commands — `scripts/sync_srd.py`, `scripts/build_srd.py`, and `scripts/lookup.py`
+## Comandos de Datos — `scripts/sync_srd.py`, `scripts/build_srd.py`, y `scripts/lookup.py`
 
-Dataset is bundled at `${CLAUDE_SKILL_DIR}/data/dnd5e_srd.json`. No runtime download required.
+El dataset viene incluido en `${CLAUDE_SKILL_DIR}/data/dnd5e_srd.json`. No requiere descarga en tiempo de ejecución.
 
 ```bash
-# Check / rebuild dataset (only needed when upstream sources update):
-python3 ${CLAUDE_SKILL_DIR}/scripts/sync_srd.py             # rebuild if 5e-bits or FoundryVTT has new commits
-python3 ${CLAUDE_SKILL_DIR}/scripts/sync_srd.py --check     # check upstream SHAs, don't rebuild
-python3 ${CLAUDE_SKILL_DIR}/scripts/sync_srd.py --force     # always rebuild
-python3 ${CLAUDE_SKILL_DIR}/scripts/build_srd.py --status   # show current dataset metadata
+# Chequear / reconstruir el dataset (solo hace falta cuando las fuentes originales se actualizan):
+python3 ${CLAUDE_SKILL_DIR}/scripts/sync_srd.py             # reconstruye si 5e-bits o FoundryVTT tienen commits nuevos
+python3 ${CLAUDE_SKILL_DIR}/scripts/sync_srd.py --check     # chequea los SHA originales, no reconstruye
+python3 ${CLAUDE_SKILL_DIR}/scripts/sync_srd.py --force     # siempre reconstruye
+python3 ${CLAUDE_SKILL_DIR}/scripts/build_srd.py --status   # muestra los metadatos actuales del dataset
 
-# Lookup during play (CLI):
+# Búsqueda durante la partida (CLI):
 python3 ${CLAUDE_SKILL_DIR}/scripts/lookup.py spell "fireball"
 python3 ${CLAUDE_SKILL_DIR}/scripts/lookup.py item "cloak of protection"
 python3 ${CLAUDE_SKILL_DIR}/scripts/lookup.py feature "sneak attack"
 python3 ${CLAUDE_SKILL_DIR}/scripts/lookup.py condition "poisoned"
 python3 ${CLAUDE_SKILL_DIR}/scripts/lookup.py monster "goblin"
-python3 ${CLAUDE_SKILL_DIR}/scripts/lookup.py monster "dragon" --all   # all fuzzy matches
+python3 ${CLAUDE_SKILL_DIR}/scripts/lookup.py monster "dragon" --all   # todas las coincidencias aproximadas
 
-# Programmatic (used by display companion /srd-lookup endpoint):
+# Programático (usado por el endpoint /srd-lookup del companion del display):
 from lookup import lookup, lookup_record, lookup_with_level, suggest
-lookup("fireball", category="spell")                  # → formatted string
-lookup_with_level("sneak attack", category="feature", level=3)  # → level-resolved string
+lookup("fireball", category="spell")                  # → string formateado
+lookup_with_level("sneak attack", category="feature", level=3)  # → string resuelto por nivel
 suggest("poisonned", category="condition")            # → [("Poisoned", "conditions"), ...]
 ```
 
-**Did-you-mean recovery.** A mistyped name doesn't dead-end. When a lookup misses, the CLI prints a `Did you mean: …?` line and the display's SRD modal offers tappable near-miss chips — both powered by `suggest()`, which fuzzy-matches the query against real names (`poisonned` → Poisoned, `fireballl` → Fireball, `gobblin` → Goblin). Suggestions respect the category when one is given, and search all categories otherwise. Use the suggested name rather than guessing at a spelling.
+**Recuperación de "quisiste decir".** Un nombre mal tipeado no es un callejón sin salida. Cuando una búsqueda falla, el CLI imprime una línea `Did you mean: …?` y el modal SRD del display ofrece chips tocables de coincidencias cercanas — ambos con `suggest()`, que hace fuzzy-match de la consulta contra nombres reales (`poisonned` → Poisoned, `fireballl` → Fireball, `gobblin` → Goblin). Las sugerencias respetan la categoría cuando se da una, y buscan en todas las categorías si no. Usá el nombre sugerido en vez de adivinar la ortografía.
 
-**When to use:** combat (monster stat blocks before using them); spellcasting (range, components, duration, at-higher-levels); conditions (rule text before applying); loot and equipment; NPC generation (monster stat block as mechanical base). The display companion's character sheet modal handles lookups automatically during play — these CLI calls are for DM reference outside the UI.
+**Cuándo usarlo:** combate (fichas de monstruo antes de usarlas); lanzamiento de conjuros (alcance, componentes, duración, a niveles superiores); condiciones (texto de regla antes de aplicarla); botín y equipo; generación de PNJ (ficha de monstruo como base mecánica). El modal de ficha de personaje del companion del display maneja las búsquedas automáticamente durante la partida — estas llamadas de CLI son para referencia del DM fuera de la UI.
 
 ---
 
-## Display Companion Setup (one-time)
+## Configuración del Companion del Display (única vez)
 
 ```bash
 cd ${CLAUDE_SKILL_DIR}/display
@@ -475,71 +478,71 @@ pip3 install -r requirements.txt
 ```
 
 ```
-Terminal (run claude directly — no wrapper needed)
-    ↓ send.py calls per narration block / dice roll / stat change
-Flask on https://localhost:5001 (dnd-display-app.py — HTTPS, self-signed cert)
+Terminal (correr claude directamente — no hace falta wrapper)
+    ↓ llamadas a send.py por bloque de narración / tirada de dados / cambio de estadística
+Flask en https://localhost:5001 (dnd-display-app.py — HTTPS, certificado autofirmado)
     ↓ Server-Sent Events
-Browser tab → Chromecast → TV
+Pestaña de navegador → Chromecast → TV
 ```
 
-**Start the display:**
+**Iniciar el display:**
 ```bash
 bash ${CLAUDE_SKILL_DIR}/display/start-display.sh          # localhost
-bash ${CLAUDE_SKILL_DIR}/display/start-display.sh --lan    # LAN mode (phones, tablets)
-open https://localhost:5001                                  # open browser before /dm:dnd load
+bash ${CLAUDE_SKILL_DIR}/display/start-display.sh --lan    # modo LAN (teléfonos, tablets)
+open https://localhost:5001                                  # abrir el navegador antes de /dm:dnd load
 ```
 
-`start-display.sh` always force-kills any previous instance before starting — no manual pre-kill needed.
+`start-display.sh` siempre mata a la fuerza cualquier instancia previa antes de iniciar — no hace falta matarla manualmente de antemano.
 
-**Load a campaign:**
+**Cargar una campaña:**
 ```
-/dm:dnd load <campaign-name>   # skill auto-detects running display, pushes party stats
+/dm:dnd load <nombre-campaña>   # el skill auto-detecta el display en ejecución, empuja las estadísticas del grupo
 ```
 
-The DM skill sends each narration block, dice result, and stat update via `send.py` calls (see Active DM Mode in SKILL.md for full send sequence and stat flag reference).
+El skill de DM envía cada bloque de narración, resultado de dados, y actualización de estadística vía llamadas a `send.py` (ver Modo DM Activo en SKILL.md para la secuencia completa de sends y la referencia de flags de estadísticas).
 
-Open the browser tab and Chromecast it *before* running `/dm:dnd load` so the browser is connected when the opening narration streams in. The display buffers the last 60 chunks and replays them to reconnecting browsers.
+Abrí la pestaña del navegador y hacé Chromecast *antes* de correr `/dm:dnd load` para que el navegador esté conectado cuando llegue la narración de apertura. El display guarda un buffer de los últimos 60 fragmentos y los reproduce a los navegadores que se reconectan.
 
-**Scene detection:** server scans narration for keywords and shifts background gradient + particle type (17 scenes: tavern, dungeon, forest, crypt, arcane, ocean, etc.). Crossfades over ~2.5 s.
+**Detección de escena:** el servidor escanea la narración en busca de palabras clave y cambia el degradado de fondo + tipo de partícula (17 escenas: taberna, mazmorra, bosque, cripta, arcano, océano, etc.). Transición con fundido en ~2.5 s.
 
-**Audio (Python-side):** `audio.py` auto-imported by `dnd-display-app.py`. Two toggles: Ambient (looping soundscape) and Effects (one-shot SFX). Both default off. Scene changes crossfade the ambient loop. All synthesis via numpy — no audio files needed.
+**Audio (del lado de Python):** `audio.py`, auto-importado por `dnd-display-app.py`. Dos interruptores: Ambiente (paisaje sonoro en loop) y Efectos (SFX de un solo disparo). Ambos apagados por defecto. Los cambios de escena hacen fundido cruzado del loop ambiente. Toda la síntesis es vía numpy — no hacen falta archivos de audio.
 
 ---
 
-## Continuity Autosave — `scripts/autosave_checkpoint.py`, `scripts/install_autosave_hook.py`
+## Autoguardado de Continuidad — `scripts/autosave_checkpoint.py`, `scripts/install_autosave_hook.py`
 
-Behind-the-scenes continuity checkpoint for long sessions, so a context compaction never loses the player's place. Two layers; see the *Continuity micro-save* rule in SKILL.md and the `/dm:dnd autosave` command.
+Checkpoint de continuidad detrás de escena para sesiones largas, así una compactación de contexto nunca pierde el lugar del jugador. Dos capas; ver la regla de *Guardado automático de continuidad* en SKILL.md y el comando `/dm:dnd autosave`.
 
 ```bash
-# Opt-in: register the Stop hook (writes ~/.claude/settings.json, idempotent)
+# Opcional: registrar el Stop hook (escribe ~/.claude/settings.json, idempotente)
 python3 ${CLAUDE_SKILL_DIR}/scripts/install_autosave_hook.py
 python3 ${CLAUDE_SKILL_DIR}/scripts/install_autosave_hook.py --uninstall
 python3 ${CLAUDE_SKILL_DIR}/scripts/install_autosave_hook.py --status
 
-# The hook target (also runnable by hand to force a snapshot or inspect state)
+# El objetivo del hook (también se puede correr a mano para forzar un snapshot o inspeccionar el estado)
 python3 ${CLAUDE_SKILL_DIR}/scripts/autosave_checkpoint.py --status
-python3 ${CLAUDE_SKILL_DIR}/scripts/autosave_checkpoint.py --campaign <name> --snapshot-only
+python3 ${CLAUDE_SKILL_DIR}/scripts/autosave_checkpoint.py --campaign <nombre> --snapshot-only
 ```
 
-`autosave_checkpoint.py` runs as a Claude Code **Stop hook** (after each turn). It reads the active campaign from `<runtime-dir>/active-campaign.json` (written at `/dm:dnd load`) and the `autosave` flag from that campaign's `state.md`. It **no-ops** when no campaign is active (e.g. a non-D&D session), when `autosave: off`, or when already inside a hook-driven continuation. Every turn it snapshots `state.md` to the runtime dir; every N turns (default 10, `DND_AUTOSAVE_EVERY` to override) it emits a Stop-hook `block` decision that prompts the DM to flush continuity before yielding. The hook is **opt-in** — the in-model micro-save cadence works without it.
+`autosave_checkpoint.py` corre como un **Stop hook** de Claude Code (después de cada turno). Lee la campaña activa desde `<runtime-dir>/active-campaign.json` (escrito en `/dm:dnd load`) y el flag `autosave` del `state.md` de esa campaña. **No hace nada** cuando no hay campaña activa (ej. una sesión que no es de D&D), cuando `autosave: off`, o cuando ya está dentro de una continuación manejada por hook. Cada turno saca una foto de `state.md` al directorio runtime; cada N turnos (10 por defecto, `DND_AUTOSAVE_EVERY` para cambiarlo) emite una decisión `block` de Stop-hook que le pide al DM que vuelque la continuidad antes de ceder el control. El hook es **opcional** — el ritmo de guardado automático en el modelo funciona sin él.
 
-**When to use:** offer `install_autosave_hook.py` to players running long imported modules who hit compaction mid-session. The flag toggle (`/dm:dnd autosave on|off`) is the in-session control.
+**Cuándo usarlo:** ofrecele `install_autosave_hook.py` a jugadores que corren módulos importados largos y se topan con compactación a mitad de sesión. El interruptor del flag (`/dm:dnd autosave on|off`) es el control dentro de la sesión.
 
-## Lazy Corpus — `scripts/corpus_check.py`
+## Corpus Perezoso — `scripts/corpus_check.py`
 
-Imported (structured) campaigns keep the full module text as a lazily-loaded reference layer instead of inlining it. Layout:
+Las campañas importadas (estructuradas) mantienen el texto completo del módulo como una capa de referencia de carga perezosa en vez de incluirlo inline. Estructura:
 
 ```
-<campaign>/
-  world.md           # load-time core (Foundations, Three Truths, factions)
-  world-nodes.md     # lazy: full Quest Seed Bank + Adventure Nodes (per-act read)
-  arc.md             # lazy: full act/chapter tree (state.md holds current+next only)
-  source-index.md    # chapter-id -> source file -> one-line scope
-  source/<id>.md     # lazy: one file per chapter, the module's source text
+<campaña>/
+  world.md           # núcleo de tiempo de carga (Fundamentos, Tres Verdades, facciones)
+  world-nodes.md     # perezoso: banco completo de Semillas de Misión + Nodos de Aventura (lectura por acto)
+  arc.md             # perezoso: árbol completo de actos/capítulos (state.md solo guarda actual+siguiente)
+  source-index.md    # id-de-capítulo -> archivo fuente -> alcance en una línea
+  source/<id>.md     # perezoso: un archivo por capítulo, el texto fuente del módulo
 ```
 
 ```bash
-python3 ${CLAUDE_SKILL_DIR}/scripts/corpus_check.py --campaign <name>
+python3 ${CLAUDE_SKILL_DIR}/scripts/corpus_check.py --campaign <nombre>
 ```
 
-Validates that every chapter id in `source-index.md` has a matching `source/<id>.md` (and vice-versa) and that `arc.md` exists. Run it at the end of `/dm:dnd import`. A campaign with no `source/` layer (dynamic, sandbox, or a pre-v2.2.0 import) is reported as a clean no-op — nothing to validate, and its load path is unchanged.
+Valida que cada id de capítulo en `source-index.md` tenga un `source/<id>.md` correspondiente (y viceversa) y que `arc.md` exista. Correrlo al final de `/dm:dnd import`. Una campaña sin capa `source/` (dinámica, sandbox, o una importación anterior a v2.2.0) se reporta como un no-op limpio — nada que validar, y su ruta de carga no cambia.

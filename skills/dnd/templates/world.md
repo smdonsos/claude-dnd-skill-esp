@@ -1,104 +1,104 @@
-# World: <campaign-name>
-**Generated:** <date>
+# Mundo: <nombre-de-campaña>
+**Generado:** <fecha>
 
 ## Campaign Tone & Genre
-- **Tone:** <grimdark / dark fantasy / heroic / horror / political / swashbuckling / cosmic>
-- **Magic level:** <none / low / medium / high>
-- **Setting type:** <medieval / renaissance / ancient / nautical / underground>
-- **Danger level:** <lethal / gritty / standard / heroic>
-- **Premise:** <the campaign in one sentence — what it's fundamentally about>
+- **Tono:** <grimdark / dark fantasy / heroico / terror / político / de capa y espada / cósmico>
+- **Nivel de magia:** <ninguno / bajo / medio / alto>
+- **Tipo de ambientación:** <medieval / renacentista / antigua / náutica / subterránea>
+- **Nivel de peligro:** <letal / crudo / estándar / heroico>
+- **Premisa:** <la campaña en una frase — de qué se trata en el fondo>
 
 ---
 
 ## World Foundations
 
 ### Geography & Climate
-- **Biome:** <primary terrain — e.g. temperate forest, arid steppe, coastal lowland, arctic tundra>
-- **Climate:** <general weather patterns and extremes>
-- **Notable features:** <landmarks, rivers, mountains, ruins that define the region>
-- **Generation note:** <if randomised, record: "d6=N → [result]">
+- **Bioma:** <terreno principal — ej. bosque templado, estepa árida, tierras bajas costeras, tundra ártica>
+- **Clima:** <patrones climáticos generales y extremos>
+- **Rasgos notables:** <hitos, ríos, montañas, ruinas que definen la región>
+- **Nota de generación:** <si fue aleatorio, registrar: "d6=N → [resultado]">
 
 ### Magic System
-- **Availability:** <how common is magic in daily life>
-- **Source:** <arcane study / divine gift / wild-innate / pact-bargain / forbidden-corrupting>
-- **Rules & constraints:** <what limits magic — cost, rarity, visibility, taboos>
-- **Wild magic / aberrations:** <yes/no and brief description if yes>
-- **Generation note:** <if randomised, record roll>
+- **Disponibilidad:** <qué tan común es la magia en la vida cotidiana>
+- **Fuente:** <estudio arcano / don divino / innata-salvaje / pacto-negociado / prohibida-corruptora>
+- **Reglas y límites:** <qué limita la magia — costo, rareza, visibilidad, tabúes>
+- **Magia salvaje / aberraciones:** <sí/no y breve descripción si aplica>
+- **Nota de generación:** <si fue aleatorio, registrar la tirada>
 
 ### Pantheon
-- **Type:** <monotheistic / dualistic / polytheistic / dead gods / no gods / unknown>
-- **Generation note:** <if randomised, record roll>
-- **Active deities:**
-  - <Name> — Domain: | Symbol: | Disposition toward mortals:
-  - <Name> — Domain: | Symbol: | Disposition:
+- **Tipo:** <monoteísta / dualista / politeísta / dioses muertos / sin dioses / desconocido>
+- **Nota de generación:** <si fue aleatorio, registrar la tirada>
+- **Deidades activas:**
+  - <Nombre> — Dominio: | Símbolo: | Disposición hacia los mortales:
+  - <Nombre> — Dominio: | Símbolo: | Disposición:
 
 ### Calendar
-- **Year length:** <days>  **Current in-world date:** <Day, Month, Year>
-- **Seasons:** <list with approximate date ranges>
-- **Moons:** <name(s), cycle length(s), current phase>
-- **Upcoming observances:** <festivals, eclipses, holy days within the near future>
+- **Duración del año:** <días>  **Fecha actual en el mundo:** <Día, Mes, Año>
+- **Estaciones:** <listar con rangos de fecha aproximados>
+- **Lunas:** <nombre(s), duración(es) del ciclo, fase actual>
+- **Próximas observancias:** <festivales, eclipses, días sagrados en el futuro cercano>
 
 ---
 
 ## The Settlement — <Name>
 
-<Description: 2-3 sentences of atmosphere>
+<Descripción: 2-3 frases de ambientación>
 
 ### Three Truths
-- **Obvious:**
-- **Discoverable:**
-- **Secret:**
+- **Obvia:**
+- **Descubrible:**
+- **Secreta:**
 
 ### Settlement Details
-- **Scale:** <hamlet / village / town / city / metropolis>  **Population:** ~<number>
-- **Wealth:** <destitute / poor / modest / prosperous / wealthy>
-- **Law & Order:** <1–5: 1=lawless, 5=totalitarian>  **Enforcement:** <who keeps order>
-- **Notable Districts & Locations:**
-  - <Name>: <one-line description>
-  - <Name>: <one-line description>
+- **Escala:** <caserío / aldea / pueblo / ciudad / metrópolis>  **Población:** ~<número>
+- **Riqueza:** <indigente / pobre / modesta / próspera / rica>
+- **Ley y orden:** <1–5: 1=sin ley, 5=totalitario>  **Aplicación:** <quién mantiene el orden>
+- **Distritos y ubicaciones notables:**
+  - <Nombre>: <descripción en una línea>
+  - <Nombre>: <descripción en una línea>
 
 ---
 
 ## The Nearby Threat — <Name>
 
-<Description>
+<Descripción>
 
 ### Three Truths
-- **Obvious:**
-- **Discoverable:**
-- **Secret:**
+- **Obvia:**
+- **Descubrible:**
+- **Secreta:**
 
 ### Escalation Arc
-| Stage | Label | Trigger | Visible Changes | Reversal Condition |
+| Etapa | Nombre | Disparador | Cambios visibles | Condición de reversión |
 |-------|-------|---------|-----------------|-------------------|
-| 1 | Now | *(starting state)* | <what the world looks like today> | <what would hold it here> |
-| 2 | Stirring | <what causes the shift> | <what changes> | <what could push it back> |
-| 3 | Active | <trigger> | <changes> | <reversal> |
-| 4 | Crisis | <trigger> | <changes> | <reversal> |
-| 5 | No Return | <trigger> | <irreversible state> | — |
+| 1 | Ahora | *(estado inicial)* | <cómo se ve el mundo hoy> | <qué lo mantendría acá> |
+| 2 | Inquietud | <qué causa el cambio> | <qué cambia> | <qué podría revertirlo> |
+| 3 | Activa | <disparador> | <cambios> | <reversión> |
+| 4 | Crisis | <disparador> | <cambios> | <reversión> |
+| 5 | Sin retorno | <disparador> | <estado irreversible> | — |
 
-**Current stage:** 1 — Now
-**Accelerants:** <actions or events that fast-track escalation>
-**What the party can do:** <levers available to slow, halt, or reverse the arc>
+**Etapa actual:** 1 — Ahora
+**Aceleradores:** <acciones o eventos que aceleran la escalada>
+**Qué puede hacer el grupo:** <palancas disponibles para frenar, detener, o revertir el arco>
 
 ---
 
 ## The Mystery — <Name>
 
-<Description>
+<Descripción>
 
 ### Three Truths
-- **Obvious:**
-- **Discoverable:**
-- **Secret:**
+- **Obvia:**
+- **Descubrible:**
+- **Secreta:**
 
 ### Clue Trail
-- **Clue 1 (surface):** <findable without any roll — available from session 1>
-- **Clue 2 (investigation):** <requires deliberate inquiry or a skill check>
-- **Clue 3 (deep):** <only accessible after significant progress>
-- **Red herring:** <a plausible false lead>
-- **Resolution condition:** <what "solving" the mystery looks like>
-- **Answer:** <the truth — hidden from players, visible to DM only>
+- **Pista 1 (superficial):** <encontrable sin ninguna tirada — disponible desde la sesión 1>
+- **Pista 2 (investigación):** <requiere indagación deliberada o una tirada de habilidad>
+- **Pista 3 (profunda):** <solo accesible tras avance significativo>
+- **Pista falsa:** <una pista plausible pero falsa>
+- **Condición de resolución:** <cómo se ve "resolver" el misterio>
+- **Respuesta:** <la verdad — oculta a los jugadores, visible solo para el DM>
 
 ---
 
@@ -106,61 +106,61 @@
 
 ### <Faction Name> — *<archetype: thieves guild / religious order / noble house / mercenary company / cult / civic authority / trade consortium / resistance / scholarly order>*
 
-<Description: 1-2 sentences>
+<Descripción: 1-2 frases>
 
-- **Goals:**
-- **Methods:**
-- **Resources:**
-- **Opposition:**
-- **Secret:**
-- **Current activity:** <what they are actively doing right now>
-- **Attitude toward party:** neutral
+- **Metas:**
+- **Métodos:**
+- **Recursos:**
+- **Oposición:**
+- **Secreto:**
+- **Actividad actual:** <qué está haciendo activamente ahora mismo>
+- **Actitud hacia el grupo:** neutral
 
 ### <Faction Name> — *<archetype>*
 
-<Description>
+<Descripción>
 
-- **Goals:**
-- **Methods:**
-- **Resources:**
-- **Opposition:**
-- **Secret:**
-- **Current activity:**
-- **Attitude toward party:** neutral
+- **Metas:**
+- **Métodos:**
+- **Recursos:**
+- **Oposición:**
+- **Secreto:**
+- **Actividad actual:**
+- **Actitud hacia el grupo:** neutral
 
 ---
 
 ## Adventure Nodes
 
-*Situations, not plots. Each node has a goal at stake and multiple ways in. Record what happens if the party never arrives — that drives Faction Moves in state.md.*
+*Situaciones, no tramas. Cada nodo tiene una meta en juego y múltiples formas de abordarlo. Registrar qué pasa si el grupo nunca llega — eso alimenta Faction Moves en state.md.*
 
 ### Node 1 — <Title>
-- **Situation:** <what's here and what's at stake>
-- **Ways in:** <how the party might reach or trigger this>
-- **If party never arrives:** <what changes in the world — faction move, NPC decision, opportunity closes>
-- **Connections:** <which other nodes this links to>
+- **Situación:** <qué hay acá y qué está en juego>
+- **Formas de acceso:** <cómo podría el grupo llegar o activar esto>
+- **Si el grupo nunca llega:** <qué cambia en el mundo — movimiento de facción, decisión de un NPC, se cierra una oportunidad>
+- **Conexiones:** <a qué otros nodos se conecta este>
 
 ### Node 2 — <Title>
-- **Situation:**
-- **Ways in:**
-- **If party never arrives:**
-- **Connections:**
+- **Situación:**
+- **Formas de acceso:**
+- **Si el grupo nunca llega:**
+- **Conexiones:**
 
 ### Node 3 — <Title>
-- **Situation:**
-- **Ways in:**
-- **If party never arrives:**
-- **Connections:**
+- **Situación:**
+- **Formas de acceso:**
+- **Si el grupo nunca llega:**
+- **Conexiones:**
 
 ---
 
 ## Quest Seed Bank
 
-- **Seed 1 — <Title>:** <Hook. Complication. Possible resolution. Reward.>
-- **Seed 2 — <Title>:** <Hook. Complication. Possible resolution. Reward.>
-- **Seed 3 — <Title>:** <Hook. Complication. Possible resolution. Reward.>
+- **Semilla 1 — <Título>:** <Gancho. Complicación. Posible resolución. Recompensa.>
+- **Semilla 2 — <Título>:** <Gancho. Complicación. Posible resolución. Recompensa.>
+- **Semilla 3 — <Título>:** <Gancho. Complicación. Posible resolución. Recompensa.>
 
 ---
 
 ## NPCs
-*See `npcs.md` for all NPC entries. World-gen NPCs: <Name>, <Name>, <Name>.*
+*Ver `npcs.md` para todas las entradas de NPCs. NPCs generados junto con el mundo: <Nombre>, <Nombre>, <Nombre>.*

@@ -1,6 +1,6 @@
-# Session Log — <campaign-name>
+# Session Log — <nombre-de-campaña>
 
-*(No sessions yet. First entry will appear after /dnd end)*
+*(Todavía no hay sesiones. La primera entrada aparecerá después de /dnd end)*
 
 ---
 
@@ -8,11 +8,11 @@
 
 ---
 
-## Session X — <date>
-**Location:** | **In-world date:** | **Duration:**
+## Session X — <fecha>
+**Ubicación:** | **Fecha en el mundo:** | **Duración:**
 
 ### Recap
-<3-5 sentence summary of what happened>
+<resumen de 3 a 5 frases de lo que pasó>
 
 ### Key Events
 -
@@ -21,8 +21,8 @@
 -
 
 ### XP Awarded
-- Total this session:
-- Running total:
+- Total esta sesión:
+- Total acumulado:
 
 ### Loot & Changes
 -
@@ -31,5 +31,5 @@
 -
 
 ### DM Calibration
-- **What worked:** <what landed — pacing, an NPC, a scene, a mechanic>
-- **Adjust next time:** <one or two things to do differently>
+- **Qué funcionó:** <qué funcionó — ritmo, un NPC, una escena, una mecánica>
+- **Ajustar la próxima vez:** <una o dos cosas para hacer distinto>

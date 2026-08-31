@@ -1,32 +1,32 @@
-# <Name>
-**Player:** <player>  **Campaign:** <campaign>  **Last Updated:** <date>
+# <Nombre>
+**Jugador:** <jugador>  **Campaña:** <campaña>  **Última actualización:** <fecha>
 
 ## Identity
-- **Race:** | **Class:** | **Level:** | **Background:**
-- **Alignment:** | **XP:** / <next level threshold>
+- **Raza:** | **Clase:** | **Level:** | **Trasfondo:**
+- **Alineamiento:** | **XP:** / <umbral del siguiente nivel>
 
 ## Character Pillar
-- **Player's sentence:** *"<the raw one-sentence answer to "what should the DM know about you?">"*
-- **Derived pillar:** <Bond / Flaw / Ideal / Goal> — <one-statement distillation>
-- **Active hooks:** <how the DM is currently using this pillar in play — update each session>
+- **Frase del jugador:** *"<la respuesta cruda de una sola frase a "¿qué debería saber el DM sobre vos?">"*
+- **Pilar derivado:** <Vínculo / Defecto / Ideal / Meta> — <destilado en una sola frase>
+- **Ganchos activos:** <cómo está usando el DM este pilar en la partida actualmente — actualizar cada sesión>
 
-*(Leave blank if player skipped — do not invent one.)*
+*(Dejar en blanco si el jugador se lo saltó — no inventar uno.)*
 
 ## Campaign History
-- **Origin campaign:** <campaign name this character was created in>
-- **Previous campaigns:** <list any prior campaigns, in order>
+- **Campaña de origen:** <nombre de la campaña en la que se creó este personaje>
+- **Campañas previas:** <listar campañas anteriores, en orden>
 
 ## Ability Scores
 | STR | DEX | CON | INT | WIS | CHA |
 |-----|-----|-----|-----|-----|-----|
 | XX (+X) | XX (+X) | XX (+X) | XX (+X) | XX (+X) | XX (+X) |
 
-*Base scores via <roll/point buy>. Racial bonuses applied.*
+*Puntuaciones base vía <tirada/compra por puntos>. Bonificadores raciales aplicados.*
 
 ## Combat Stats
-- **HP:** current / max | **Temp HP:** 0
-- **AC:** | **Initiative:** | **Speed:**
-- **Hit Dice:** Xd[Y] (remaining: X)
+- **HP:** actual / máximo | **Temp HP:** 0
+- **AC:** | **Iniciativa:** | **Velocidad:**
+- **Hit Dice:** Xd[Y] (restantes: X)
 - **Death Saves:** Successes: 0 | Failures: 0
 
 ## Saving Throws
@@ -34,32 +34,32 @@
 |-----|-----|-----|-----|-----|-----|
 | +X | +X | +X | +X | +X | +X |
 
-*\* = proficient (proficiency bonus +X)*
+*\* = competente (bonificador por competencia +X)*
 
 ## Skills
-| Skill | Ability | Bonus | Proficient |
+| Habilidad | Característica | Bonificador | Competente |
 |-------|---------|-------|-----------|
-| Acrobatics | DEX | +0 | — |
-| Animal Handling | WIS | +0 | — |
-| Athletics | STR | +0 | — |
-| Arcana | INT | +0 | — |
-| Deception | CHA | +0 | — |
-| History | INT | +0 | — |
-| Insight | WIS | +0 | — |
-| Intimidation | CHA | +0 | — |
-| Investigation | INT | +0 | — |
-| Medicine | WIS | +0 | — |
-| Nature | INT | +0 | — |
-| Perception | WIS | +0 | — |
-| Performance | CHA | +0 | — |
-| Persuasion | CHA | +0 | — |
-| Religion | INT | +0 | — |
-| Sleight of Hand | DEX | +0 | — |
-| Stealth | DEX | +0 | — |
-| Survival | WIS | +0 | — |
+| Acrobacias | DEX | +0 | — |
+| Trato con animales | WIS | +0 | — |
+| Atletismo | STR | +0 | — |
+| Conocimiento arcano | INT | +0 | — |
+| Engaño | CHA | +0 | — |
+| Historia | INT | +0 | — |
+| Perspicacia | WIS | +0 | — |
+| Intimidación | CHA | +0 | — |
+| Investigación | INT | +0 | — |
+| Medicina | WIS | +0 | — |
+| Naturaleza | INT | +0 | — |
+| Percepción | WIS | +0 | — |
+| Interpretación | CHA | +0 | — |
+| Persuasión | CHA | +0 | — |
+| Religión | INT | +0 | — |
+| Juego de manos | DEX | +0 | — |
+| Sigilo | DEX | +0 | — |
+| Supervivencia | WIS | +0 | — |
 
 ## Attacks
-| Name | Attack Bonus | Damage | Type | Notes |
+| Nombre | Bonificador de ataque | Daño | Tipo | Notas |
 |------|-------------|--------|------|-------|
 | | | | | |
 
@@ -82,15 +82,15 @@
 -
 
 ## Equipment & Inventory
-**Weapons:**
+**Armas:**
 -
 
-**Armour:**
+**Armadura:**
 -
 
-**Adventuring Gear:**
+**Equipo de aventurero:**
 -
 
-**Currency:** 0gp 0sp 0cp
+**Moneda:** 0po 0pp 0pc
 
 ## Backstory & Notes
