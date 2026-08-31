@@ -154,5 +154,6 @@ revision_log: []
 ## Session Flags
 *(tutor_mode, autorun, autorun_interval, tts_voice, sfx_languages, autosave — flags de sesión definidos vía comandos /dnd o por el display companion)*
 *(autosave: on|off — default on. Gobierna el checkpoint de continuidad tras bambalinas (Live State Flags + graph + session tail). Alternar con /dm:dnd autosave on|off.)*
+sfx_languages: es
 
 ## DM Notes (hidden from players)
