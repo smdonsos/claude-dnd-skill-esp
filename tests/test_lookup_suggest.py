@@ -68,5 +68,31 @@ class SuggestTests(unittest.TestCase):
         self.assertEqual(cat, "spells")
 
 
+class NormAccentTests(unittest.TestCase):
+    """_norm() must fold Spanish accents/ñ onto their unaccented form (CLA-25/CLA-8)
+    instead of the old `[^a-z0-9]+` regex silently dropping the accented letter."""
+
+    def test_accented_vowels_fold_to_unaccented(self):
+        self.assertEqual(lookup._norm("salvación"), lookup._norm("salvacion"))
+        self.assertEqual(lookup._norm("café"), lookup._norm("cafe"))
+
+    def test_ene_folds_to_n(self):
+        self.assertEqual(lookup._norm("ñoño"), "nono")
+
+    def test_accented_multiword_query_matches_unaccented(self):
+        self.assertEqual(
+            lookup._norm("Bola de Fuégo"), lookup._norm("bola de fuego")
+        )
+
+    def test_english_names_unaffected(self):
+        self.assertEqual(lookup._norm("Healing Word"), "healing-word")
+        self.assertEqual(lookup._norm("Fireball"), "fireball")
+
+    def test_wikidot_url_slug_uses_same_folding(self):
+        url_accented = lookup.wikidot_url("Poción", category="equipment")
+        url_plain = lookup.wikidot_url("Pocion", category="equipment")
+        self.assertEqual(url_accented, url_plain)
+
+
 if __name__ == "__main__":
     unittest.main()
