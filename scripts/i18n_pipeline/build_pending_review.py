@@ -1,27 +1,28 @@
 #!/usr/bin/env python3
-"""build_pending_review.py — one-shot: generate docs/i18n/pending_review.csv
+"""build_pending_review.py — one-shot: generate local-review/pending_review.json
 listing every dataset entry whose translated `name` couldn't be verified
 against the manual (flagged by validate_batch.py's check_name_grounded or
 other checks), for manual follow-up once a Bestiario/DMG or other source
 becomes available.
 
-The CSV is meant to be opened in a spreadsheet, filled in, and fed back to
+local-review/ is gitignored — this file and its contents are a local
+working set, never committed. The JSON is a plain array of objects, meant
+to be edited directly (or via any script/tool) and fed back to
 apply_review.py:
-    - leave `correction` empty  -> still pending, no action
-    - write exactly "OK"        -> current translation confirmed correct
-    - write anything else       -> that text replaces `name` in the dataset
+    - leave `correction` empty ("")  -> still pending, no action
+    - set `correction` to "OK"       -> current translation confirmed correct
+    - set `correction` to anything   -> that text replaces `name` in the dataset
 
 Usage:
     python3 build_pending_review.py
 """
-import csv
 import json
 import pathlib
 
 HERE = pathlib.Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[1]
 BATCH_DIR = HERE / "batches"
-OUT_PATH = REPO_ROOT / "docs" / "i18n" / "pending_review.csv"
+OUT_PATH = REPO_ROOT / "local-review" / "pending_review.json"
 
 BATCHES = [f"spells_level{i}" for i in range(1, 10)] + ["equipment", "features"]
 
@@ -56,13 +57,7 @@ def main() -> None:
             })
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(OUT_PATH, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=[
-            "category", "index", "source_name_en", "current_name_es",
-            "flag_reason", "correction",
-        ])
-        w.writeheader()
-        w.writerows(rows)
+    OUT_PATH.write_text(json.dumps(rows, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
     print(f"{len(rows)} rows -> {OUT_PATH}")
 

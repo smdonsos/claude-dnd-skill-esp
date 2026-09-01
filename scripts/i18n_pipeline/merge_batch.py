@@ -65,7 +65,7 @@ def main() -> int:
     ap.add_argument("--merge-all", action="store_true",
                      help="Merge every entry regardless of flagged/review status "
                           "(used when unverified entries are tracked separately "
-                          "for later correction, e.g. pending_review.csv).")
+                          "for later correction, e.g. local-review/pending_review.json).")
     args = ap.parse_args()
 
     report_path = args.batch_file.with_suffix(".report.json")

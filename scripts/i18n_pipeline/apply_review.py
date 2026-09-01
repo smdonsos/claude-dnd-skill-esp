@@ -1,22 +1,24 @@
 #!/usr/bin/env python3
-"""apply_review.py — apply completed rows from docs/i18n/pending_review.csv
+"""apply_review.py — apply completed entries from local-review/pending_review.json
 back into dnd5e_srd.json.
 
-Row semantics (see build_pending_review.py):
-    correction empty        -> still pending, skipped
-    correction == "OK"      -> confirmed correct, row removed from the CSV
-    correction == anything  -> replaces `name` in the dataset, row removed
+local-review/ is gitignored — the review file is a local working set, never
+committed; only the resulting dnd5e_srd.json changes get committed.
 
-Rewrites pending_review.csv afterward keeping only the still-pending rows,
-so re-running this script after another editing pass only ever processes
-what's left.
+Entry semantics (see build_pending_review.py):
+    correction == ""         -> still pending, skipped
+    correction == "OK"       -> confirmed correct, entry removed from the JSON
+    correction == anything   -> replaces `name` in the dataset, entry removed
+
+Rewrites pending_review.json afterward keeping only the still-pending
+entries, so re-running this script after another editing pass only ever
+processes what's left.
 
 Usage:
-    python3 apply_review.py                # apply + rewrite the CSV
+    python3 apply_review.py                # apply + rewrite the JSON
     python3 apply_review.py --dry-run
 """
 import argparse
-import csv
 import json
 import pathlib
 import sys
@@ -24,7 +26,7 @@ import sys
 HERE = pathlib.Path(__file__).resolve().parent
 REPO_ROOT = HERE.parents[1]
 SRD_PATH = REPO_ROOT / "skills" / "dnd" / "data" / "dnd5e_srd.json"
-CSV_PATH = REPO_ROOT / "docs" / "i18n" / "pending_review.csv"
+JSON_PATH = REPO_ROOT / "local-review" / "pending_review.json"
 
 
 def main() -> int:
@@ -32,12 +34,11 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
-    if not CSV_PATH.exists():
-        print(f"{CSV_PATH} not found — run build_pending_review.py first.", file=sys.stderr)
+    if not JSON_PATH.exists():
+        print(f"{JSON_PATH} not found — run build_pending_review.py first.", file=sys.stderr)
         return 2
 
-    with open(CSV_PATH, newline="", encoding="utf-8") as f:
-        rows = list(csv.DictReader(f))
+    rows = json.loads(JSON_PATH.read_text(encoding="utf-8"))
 
     by_category: dict[str, dict[str, str]] = {}
     still_pending = []
@@ -78,15 +79,9 @@ def main() -> int:
     with open(SRD_PATH, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, separators=(",", ":"))
 
-    with open(CSV_PATH, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=[
-            "category", "index", "source_name_en", "current_name_es",
-            "flag_reason", "correction",
-        ])
-        w.writeheader()
-        w.writerows(still_pending)
+    JSON_PATH.write_text(json.dumps(still_pending, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
-    print(f"Merged. {len(still_pending)} rows remain in {CSV_PATH}. "
+    print(f"Merged. {len(still_pending)} rows remain in {JSON_PATH}. "
           f"Now run: python -m pytest tests/ -q")
     return 0
 
