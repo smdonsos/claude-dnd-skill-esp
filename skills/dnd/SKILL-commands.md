@@ -38,9 +38,9 @@ Procedimientos completos, paso a paso, para todos los comandos slash `/dm:dnd`. 
 8. **Tres Verdades** — un asentamiento, una amenaza cercana, un misterio (con pistas). Escribí en las secciones correspondientes de world.md.
 9. **Arco de Escalada de la Amenaza** — completa la tabla de cinco etapas en world.md justo después de generar la amenaza. Poné la etapa actual en 1. Escribí `Threat arc stage: 1 — Now` en `state.md → ## World State`.
 10. **2 Facciones** — arquetipo, todos los campos incluida la actividad actual. Escribí en `## Factions` en world.md. Escribí los estados de facción en una línea en `state.md → ## World State`.
-11. **3 PNJ con red de relaciones** — entradas completas (rol, stats, actitud, motivación, secreto, tic de habla, facción, objetivo actual, horario, ejes de personalidad). Generá los tres primero, después completa Relaciones (cada PNJ necesita ≥2 vínculos con otros). Actualizá la tabla índice.
+11. **3 PNJ con red de relaciones** — entradas completas (rol, stats, actitud, motivación, secreto, tic de habla, facción, objetivo actual, horario, ejes de personalidad). Genera los tres primero, después completa Relaciones (cada PNJ necesita ≥2 vínculos con otros). Actualiza la tabla índice.
 12. **3–5 Semillas de Misión** a partir de la amenaza, facciones, misterio, motivaciones de PNJ. Escribí en `## Quest Seed Bank` en world.md.
-13. **Arco de Campaña Dinámico** — genera automáticamente el arco a partir de todos los datos del mundo recién creados. Usá Opus para este paso. Preguntá: *"¿Generar un arco narrativo comprometido? [s/n — recomendado]"*
+13. **Arco de Campaña Dinámico** — genera automáticamente el arco a partir de todos los datos del mundo recién creados. Usa Opus para este paso. Pregunta: *"¿Generar un arco narrativo comprometido? [s/n — recomendado]"*
 
    **Si sí:** A partir del tono, las etapas del arco de amenaza, las facciones, las Tres Verdades, las motivaciones de PNJ y las semillas de misión, deriva:
    - **`theme`** — una oración: ¿de qué trata en el fondo esta historia? No la amenaza — su significado.
@@ -64,7 +64,7 @@ Procedimientos completos, paso a paso, para todos los comandos slash `/dm:dnd`. 
 
 14. Escribí state.md con contador de sesión 0, ubicación inicial.
 15. **Chequeo de servidor de dados físico (solo si está instalado).** Salteá este paso a menos que el servidor de dados opcional esté configurado: prueba con `test -d ~/.dnd-dice || test "$DND_DICE_PHYSICAL" = "1"` y corta si el test falla. Si pasa, corre `curl -sf http://localhost:7777/health` (timeout 1s). Si devuelve OK, obtén la IP de LAN con `python3 -c "import socket; s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM); s.connect(('8.8.8.8', 80)); print(s.getsockname()[0]); s.close()"` y anuncia: *"El servidor de dados está activo. Una vez que cada jugador haya creado un personaje con `/dm:dnd character new`, deberían abrir `http://<ip>:7777/?player=<nombre-pj>` en su teléfono (minúsculas, guiones en vez de espacios) y tocar **consagrar** antes de empezar. Las tiradas de PNJ/DM se resuelven automáticamente en el host."* Si no es alcanzable, saltea en silencio.
-16. Confirmá la creación, ofrece `/dm:dnd character new`.
+16. Confirma la creación, ofrece `/dm:dnd character new`.
 
 ---
 

@@ -169,7 +169,7 @@ def main() -> int:
     if dirty:
         print("Se detectaron cambios locales — se rechaza la actualización:", file=sys.stderr)
         print(dirty, file=sys.stderr)
-        print("\nHacé commit, stash, o descarta tus cambios y vuelve a correr.", file=sys.stderr)
+        print("\nHaz commit, stash, o descarta tus cambios y vuelve a correr.", file=sys.stderr)
         return 3
 
     git("fetch", "--quiet", "origin", branch)
