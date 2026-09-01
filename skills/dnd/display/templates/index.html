@@ -3921,6 +3921,10 @@ const STRINGS = {
     'title.phone_mode': 'Usar este dispositivo como controlador de entrada por teléfono',
     'phone.no_character_bound': 'Ningún personaje vinculado — abrí con ?char=<Nombre>',
     'phone.loading_char': 'Cargando a {ch}…',
+    'ps.compose': '✎ Tu turno — escribe tu acción abajo',
+    'ps.sending': '↑ Enviando…',
+    'ps.sent': '✓ Enviado al DM — espera un momento',
+    'ps.resolving': '⟳ El DM está narrando…',
     'phone.load_error': 'No se pudo cargar la hoja ({status})',
     'phone.network_error': 'Error de red — {msg}',
     'label.loading_party': 'Cargando grupo…',
@@ -4034,6 +4038,10 @@ const STRINGS = {
     'title.phone_mode': 'Use this device as a phone input controller',
     'phone.no_character_bound': 'No character bound — open with ?char=<Name>',
     'phone.loading_char': 'Loading {ch}…',
+    'ps.compose': '✎ Your move — type your action below',
+    'ps.sending': '↑ Sending…',
+    'ps.sent': '✓ Sent to the DM — sit tight',
+    'ps.resolving': '⟳ The DM is narrating…',
     'phone.load_error': 'Could not load sheet ({status})',
     'phone.network_error': 'Network error — {msg}',
     'label.loading_party': 'Loading party…',
@@ -7006,10 +7014,10 @@ function _buildCharTabs(players) {
 // sent (waiting for the DM) → (resolving). Transient states (sending/resolving)
 // hold until cleared; otherwise the state is derived from the staged queue.
 const _PS_TEXT = {
-  compose:   '✎ Your move — type your action below',
-  sending:   '↑ Sending…',
-  sent:      '✓ Sent to the DM — sit tight',
-  resolving: '⟳ The DM is narrating…',
+  compose:   t('ps.compose'),
+  sending:   t('ps.sending'),
+  sent:      t('ps.sent'),
+  resolving: t('ps.resolving'),
 };
 function _setPhoneStatus(state) {
   const el = document.getElementById('phone-status');
