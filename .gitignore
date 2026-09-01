@@ -51,3 +51,14 @@ venv/
 # same copyright status, so it never gets committed either.
 /*.pdf
 /*.txt
+
+# scripts/i18n_pipeline/ (CLA-8 Gemma pipeline) working state — regenerable
+# by re-running gemma_translate.py; only the merged dnd5e_srd.json and the
+# pipeline scripts themselves are meant to be durable. See
+# docs/i18n/PLAN_GEMMA_PIPELINE.md.
+/scripts/i18n_pipeline/batches/
+
+# Local-only human review working files (e.g. pending_review.json) — edited
+# locally to confirm/correct pipeline output, never committed. Only the
+# resulting dnd5e_srd.json changes (applied via apply_review.py) are durable.
+/local-review/

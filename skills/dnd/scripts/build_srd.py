@@ -1674,14 +1674,19 @@ def _build_5ebits(ruleset: str = DEFAULT_RULESET) -> tuple[dict, list[str]]:
             # Tag each augmenter with provenance
             for r in normed_2014:
                 r["_augmented_from_2014"] = True
-            # Dedup by name — prefer 2024-native records (already in
+            # Dedup by index (stable English slug, never translated — see
+            # CLAUDE.md — unlike `name`, which is translated in-place for
+            # shipped Spanish records and would silently stop matching a
+            # fresh English fetch) — prefer 2024-native records (already in
             # categories[key]) over 2014 augmenters
-            existing_names = {r["name"] for r in categories.get(key, [])}
-            new_records = [r for r in normed_2014 if r["name"] not in existing_names]
+            existing_indexes = {r.get("index") or _slugify(r.get("name", ""))
+                                 for r in categories.get(key, [])}
+            new_records = [r for r in normed_2014
+                            if (r.get("index") or _slugify(r.get("name", ""))) not in existing_indexes]
             categories[key] = categories.get(key, []) + new_records
             fallback_keys.append(key)
             print(f" +{len(new_records)} from 2014 "
-                  f"({len(existing_names)} native 2024 retained)")
+                  f"({len(existing_indexes)} native 2024 retained)")
 
     return categories, fallback_keys
 
