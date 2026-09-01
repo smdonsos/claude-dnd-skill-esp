@@ -4874,7 +4874,7 @@ function renderNPCBlock(name, text, isReplay) {
 function _diceRollIcon(text) {
   const t = text.toLowerCase();
   // Highest-stakes — check first
-  if (/death save|death saving|critical hit|fumble/.test(t))             return 'dragon';
+  if (/death save|death saving|critical hit|fumble|golpe crítico|pifia/.test(t))             return 'dragon';
   // Spell
   if (/spell attack|concentration|cantrip|cast/.test(t))                 return 'spellbook';
   // Potion / medicine

@@ -656,7 +656,7 @@ python3 scripts/dice.py 4d6kh3          # keep highest 3 (ability score roll)
 python3 scripts/dice.py d20 --silent    # integer only (for hidden rolls)
 ```
 
-Flags nat 20 (`CRITICAL HIT`) and nat 1 (`FUMBLE`) automatically.
+Flags nat 20 (`GOLPE CRÍTICO`) and nat 1 (`PIFIA`) automatically.
 
 ### `ability-scores.py` — Character creation
 
