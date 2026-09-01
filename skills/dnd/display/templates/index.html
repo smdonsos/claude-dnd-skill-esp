@@ -4928,8 +4928,8 @@ function renderDiceBlock(text, isReplay) {
     el.className = 'dice-result';
     el.textContent = trimmed;
     resultsWrap.appendChild(el);
-    if (/CRITICAL HIT/i.test(trimmed)) hasCrit = true;
-    if (/FUMBLE/i.test(trimmed))        hasFumble = true;
+    if (/GOLPE CRÍTICO/i.test(trimmed)) hasCrit = true;
+    if (/PIFIA/i.test(trimmed))         hasFumble = true;
   });
   block.appendChild(resultsWrap);
 
