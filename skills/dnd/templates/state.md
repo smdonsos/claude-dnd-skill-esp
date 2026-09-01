@@ -8,7 +8,7 @@
 - **Estado del grupo:**
 
 ## Pinned Facts
-*Hechos suaves que el DM siempre mantiene presentes — canon que la mesa nunca quiere que se olvide. Leer en cada /dnd load junto con DM Style Notes y mantenerlos presentes toda la sesión. A diferencia de Live State Flags (que sigue estado cambiante y se reescribe en cada guardado), los pinned facts son estables y solo se agregan o quitan a pedido. Fijá una promesa hecha, el nombre de un hermano muerto, un chiste recurrente de la mesa, una regla casera de la mesa, un detalle que el jugador dijo que le importa. Agregar/listar/quitar con `/dm:dnd pin`.*
+*Hechos suaves que el DM siempre mantiene presentes — canon que la mesa nunca quiere que se olvide. Leer en cada /dnd load junto con DM Style Notes y mantenerlos presentes toda la sesión. A diferencia de Live State Flags (que sigue estado cambiante y se reescribe en cada guardado), los pinned facts son estables y solo se agregan o quitan a pedido. Fija una promesa hecha, el nombre de un hermano muerto, un chiste recurrente de la mesa, una regla casera de la mesa, un detalle que el jugador dijo que le importa. Agregar/listar/quitar con `/dm:dnd pin`.*
 *(todavía no hay nada fijado)*
 
 ## World State

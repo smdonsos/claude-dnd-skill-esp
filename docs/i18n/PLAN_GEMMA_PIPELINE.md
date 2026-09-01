@@ -119,7 +119,7 @@ python3 scripts/i18n_pipeline/gemma_translate.py --category spells --level 1
 python3 scripts/i18n_pipeline/validate_batch.py \
     scripts/i18n_pipeline/batches/spells_level1.jsonl
 
-# 3. Sonnet (o vos) lee spells_level1.review.md, escribe decisions.json:
+# 3. Sonnet (o tú) lee spells_level1.review.md, escribe decisions.json:
 #    {"alarm": "approve", "animal-friendship": {"name": "Amistad animal"}, ...}
 
 # 4. Mergear al dataset real
@@ -144,10 +144,10 @@ plan cubre ahora, eso son entre 18 y 22 horas de cómputo local
 
 Cubre `spells` (295 restantes, niveles 1-9), `equipment` (237), `features`
 (186) — las tres categorías bien verificables contra el Manual del
-Jugador 2024 que tenés. **`monsters` (334) y `magic_items` (362) quedan
+Jugador 2024 que tienes. **`monsters` (334) y `magic_items` (362) quedan
 explícitamente fuera de este pipeline por ahora**: el manual no trae
 bloques de estadísticas de monstruos completos (eso es el Bestiario/
-Manual de Monstruos, que no tenés) y solo menciona objetos mágicos de
+Manual de Monstruos, que no tienes) y solo menciona objetos mágicos de
 forma parcial — meterlos en este flujo significaría que `search_manual`
 casi siempre vuelve vacío y el modelo termina generando con
 `confidence=low` en casi el 100% de los casos, lo que en la práctica

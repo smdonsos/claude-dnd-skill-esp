@@ -176,7 +176,7 @@ def translate_entry(rec: dict, category: str, fewshot: str) -> dict:
             })
     else:
         # Ran out of tool rounds — ask once more, forcing a final answer.
-        messages.append({"role": "user", "content": "Dejá de buscar y respondé ahora con el JSON final."})
+        messages.append({"role": "user", "content": "Deja de buscar y responde ahora con el JSON final."})
 
     parsed = None
     last_error = None

@@ -123,7 +123,7 @@ Procedimientos completos, paso a paso, para todos los comandos slash `/dm:dnd`. 
 4. Lee SKILL-scripts.md (para la sintaxis de scripts de esta sesión)
 5. **Marca esta campaña como activa** (para el hook de autosave): escribe `{"name": "<nombre-campaña>"}` en `$(python3 ${CLAUDE_SKILL_DIR}/scripts/paths.py runtime-dir)/active-campaign.json`. Esto es lo que lee `autosave_checkpoint.py` para saber qué campaña checkpointear; un marcador desactualizado es inofensivo. Después lee state.md, world.md, npcs.md (solo el índice), y todos los characters/*.md
    - **state.md contiene `## DM Style Notes`** — lee e internaliza antes de narrar cualquier cosa. Son patrones de calibración específicos de esta mesa que anulan los instintos por defecto del DM.
-   - **state.md contiene `## Pinned Facts`** — lee y mantén presentes durante toda la sesión. Son hechos blandos y estables que la mesa eligió no olvidar nunca (una promesa hecha, el nombre de un pariente muerto, una regla casera, una broma recurrente, un detalle que el jugador marcó como importante). A diferencia de Live State Flags, no cambian turno a turno — son canon permanente. Incorporalos cuando sea relevante y nunca contradigas uno; si un hecho fijado ahora es incorrecto, corrígelo vía `/dm:dnd pin` en vez de sobreescribirlo en silencio. Si la sección dice *(none pinned yet)*, no hay nada que cargar.
+   - **state.md contiene `## Pinned Facts`** — lee y mantén presentes durante toda la sesión. Son hechos blandos y estables que la mesa eligió no olvidar nunca (una promesa hecha, el nombre de un pariente muerto, una regla casera, una broma recurrente, un detalle que el jugador marcó como importante). A diferencia de Live State Flags, no cambian turno a turno — son canon permanente. Incorpóralos cuando sea relevante y nunca contradigas uno; si un hecho fijado ahora es incorrecto, corrígelo vía `/dm:dnd pin` en vez de sobreescribirlo en silencio. Si la sección dice *(none pinned yet)*, no hay nada que cargar.
    - **world.md:** Carga completo — Fundamentos del Mundo, Tres Verdades, y facciones informan la narración y los movimientos de facción. NO leas `world-seeds.md` al cargar (artefacto de generación, no referencia en vivo).
    - **world-nodes.md (solo campañas importadas):** NO cargar al inicio de sesión. Contiene todo el Banco de Semillas de Misión y los Nodos de Aventura del módulo completo; lee solo los nodos del acto actual cuando una escena los necesite. Si el archivo no existe (dinámica/sandbox, o una importación más vieja), no hay nada que cargar de forma perezosa — `world.md` ya lleva los nodos, sin cambios respecto al comportamiento anterior.
    - **arc.md (solo campañas importadas):** NO cargar al inicio de sesión. `state.md → ## Campaign Arc` ya lleva la ventana del capítulo actual + siguiente. Lee `arc.md` solo al avanzar de capítulo o cuando un jugador pregunte sobre el arco más amplio. Si no existe, el arco vive inline en `state.md` (dinámica/sandbox) — léelo ahí como antes. **Chequea el puntero al cargar:** si el `current_chapter` de `## Campaign Arc` muestra sus `outstanding_beats` ya vacíos, o la última sesión claramente terminó en la ubicación o situación del *siguiente* capítulo, el puntero nunca avanzó — muéstralo (*"el capítulo actual parece terminado; ¿seguimos en `<next_chapter>`?"*) en vez de abrir otra escena en un capítulo que ya está resuelto. Un puntero que nunca se mueve es exactamente cómo una campaña estructurada se desvía en silencio de su propio arco y empieza a improvisar.
@@ -494,7 +494,7 @@ Ver o configurar dónde se guardan los datos de campaña y personaje. Envuelve l
 variable de entorno `DND_CAMPAIGN_ROOT`.
 
 - Sin argumentos → `python3 ${CLAUDE_SKILL_DIR}/scripts/path_config.py` y mostrar la salida.
-- Nueva ruta → `python3 ${CLAUDE_SKILL_DIR}/scripts/path_config.py set <ruta>`. Confirmale al usuario, después recuérdale que el cambio solo tiene efecto en shells nuevas (o después de que hagan `source` de su rc en macOS/Linux).
+- Nueva ruta → `python3 ${CLAUDE_SKILL_DIR}/scripts/path_config.py set <ruta>`. Confírmale al usuario, después recuérdale que el cambio solo tiene efecto en shells nuevas (o después de que hagan `source` de su rc en macOS/Linux).
 - `reset` → `python3 ${CLAUDE_SKILL_DIR}/scripts/path_config.py reset`.
 
 La persistencia es vía rc de shell en macOS/Linux y vía `setx` en Windows. Las campañas existentes no se migran automáticamente; `paths.find_campaign()` maneja el fallback legado + copia-al-acceder.
@@ -537,7 +537,7 @@ El resultado guía la ramificación en los pasos 1 (fuente de ASI), 4 (dote de o
 
 **Primero, ofrece los dos caminos de construcción — llama a `AskUserQuestion`:** *"¿Cómo quieres construir [o: tu personaje]?"*
 - `Paso a paso` → el flujo guiado de abajo (pasos 1–10). Usalo cuando el jugador quiere hacer cada elección deliberadamente, o ya sabe la construcción exacta.
-- `Describilo` → el camino de prosa (paso 0 abajo). Usalo cuando el jugador prefiere decir quién es el personaje en una oración y dejar que armes una hoja legal.
+- `Descríbelo` → el camino de prosa (paso 0 abajo). Usalo cuando el jugador prefiere decir quién es el personaje en una oración y dejar que armes una hoja legal.
 
 Default a `Paso a paso` si se descarta la pregunta. Los dos caminos terminan en la misma hoja y corren la misma validación, cálculo, y pasos de escritura — la única diferencia es cómo se recolectan las elecciones.
 
@@ -643,7 +643,7 @@ Mapea a: `python3 ${CLAUDE_SKILL_DIR}/scripts/npc_rename.py --campaign <actual> 
 Flags:
 - `--random` — elige un nombre del corpus de nombres de fantasía incluido (~4800 combinaciones únicas) que no esté ya en `~/.claude/dnd/.name_registry.json`. Mutuamente excluyente con "Nombre Nuevo" explícito.
 - `--type npc | pc` (default `npc`) — `pc` también mueve el archivo de personaje y actualiza el roster global.
-- `--dry-run` — muestra todas las coincidencias en todos los archivos sin escribir. Correlo siempre primero como chequeo de cordura.
+- `--dry-run` — muestra todas las coincidencias en todos los archivos sin escribir. Córrelo siempre primero como chequeo de cordura.
 - `--yes` — se salta el prompt de confirmación.
 - `--include-archive` — también renombra en `session-log-archive.md`. **El default es dejar el archivo intacto** por precisión histórica y agregar una nota de auditoría de una línea al principio: *"`<viejo>` renombrado a `<nuevo>` en S<N>; las entradas históricas de abajo preservan el nombre original."*
 
@@ -910,7 +910,7 @@ Alterna el modo autorun (taxi) — Claude lleva el loop de turnos automáticamen
    - Lee el archivo, fusiona `"Bash"` en `permissions.allow`, escríbelo de vuelta.
    - Dile al DM: *"Agregué Bash a permissions.allow en ~/.claude/settings.json — autorun no va a preguntar en cada espera. Reinicia esta sesión para que tenga efecto si no lo hace de inmediato."*
    - Si ya estaba presente, saltea en silencio.
-3. Confirmale al DM: *"Autorun activado. Los jugadores envían vía el display; voy a recoger cada acción automáticamente. Mandame un mensaje en cualquier momento para tomar control de un turno."*
+3. Confírmale al DM: *"Autorun activado. Los jugadores envían vía el display; voy a recoger cada acción automáticamente. Mandame un mensaje en cualquier momento para tomar control de un turno."*
 4. Si el usuario especificó un intervalo (ej. `/dm:dnd autorun on 45`), escribe `autorun_interval: 45` en `state.md → ## Session Flags`. El default es 60 si se omite.
 5. Entra de inmediato a la espera de autorun (ver SKILL.md para el bloque de Bash). Si ya hay algo en `.input_queue`, recógelo como la acción del turno actual.
 
@@ -937,7 +937,7 @@ Alterna el checkpoint de continuidad detrás de escena. Escribe `autosave: on|of
 
 **Qué hace el autosave cuando está activo:**
 1. **Micro-saves en el modelo** (siempre disponibles, sin configuración): el DM vacía la continuidad en silencio en los límites de escena y en un ritmo de turnos — ver la regla de *Continuity micro-save* en SKILL.md. Esto mantiene el estado sin guardar cerca de cero para que una compactación de contexto no cueste nada.
-2. **Checkpoint determinístico por Stop-hook** (opcional, opt-in): si el usuario instaló el hook, `autosave_checkpoint.py` toma una instantánea de `state.md` en cada turno y sugiere un micro-save cada N turnos. Instalalo una vez con:
+2. **Checkpoint determinístico por Stop-hook** (opcional, opt-in): si el usuario instaló el hook, `autosave_checkpoint.py` toma una instantánea de `state.md` en cada turno y sugiere un micro-save cada N turnos. Instálalo una vez con:
    ```bash
    python3 ${CLAUDE_SKILL_DIR}/scripts/install_autosave_hook.py        # activar
    python3 ${CLAUDE_SKILL_DIR}/scripts/install_autosave_hook.py --uninstall
