@@ -15,15 +15,15 @@ versiones ya los comparten.
 La migración son solo dos pasos:
 
 ```text
-1. Instalá el plugin
+1. Instala el plugin
    /plugin marketplace add neuralinitiative/claude-dnd-skill
    /plugin install dm@neural-initiative
 
-2. Corré el helper de migración de una sola vez
+2. Corre el helper de migración de una sola vez
    python3 <plugin>/skills/dnd/scripts/migrate_v1_to_v2.py
 ```
 
-Después usá **`/dm:dnd`** de ahí en adelante.
+Después usa **`/dm:dnd`** de ahí en adelante.
 
 > Las dos instalaciones coexisten sin problema entre el paso 1 y el paso 2
 > (comparten la misma raíz de datos), así que no hay ninguna ventana en la que
@@ -47,7 +47,7 @@ Después usá **`/dm:dnd`** de ahí en adelante.
    `/dnd` legacy ya no tape ni duplique a `/dm:dnd`.
 
 **No** toca los datos de campaña, y **no puede** correr `/plugin install` por
-vos (es un comando de la UI de Claude Code) — por eso instalás el plugin
+ti (es un comando de la UI de Claude Code) — por eso instalas el plugin
 primero.
 
 ### Opciones
@@ -59,16 +59,16 @@ python3 migrate_v1_to_v2.py --dry-run  # muestra qué pasaría, no cambia nada
 python3 migrate_v1_to_v2.py --keep-standalone   # solo reubica el runtime; deja /dnd en su lugar
 ```
 
-Si tu instalación standalone vive en un lugar no estándar, apuntá el helper
+Si tu instalación standalone vive en un lugar no estándar, apunta el helper
 ahí con `DND_LEGACY_SKILL_DIR=/ruta/a/dnd`. Si es un **symlink** (un clon de
-dev o un setup con GNU Stow), el helper lo detecta y lo deja tal cual — sacá
-el link vos mismo cuando estés listo.
+dev o un setup con GNU Stow), el helper lo detecta y lo deja tal cual — saca
+el link tú mismo cuando estés listo.
 
 ## Volver atrás
 
-No se borra nada. Para volver a la instalación standalone, movés el
+No se borra nada. Para volver a la instalación standalone, mueves el
 directorio de backup (`~/.claude/skills/dnd.v1-backup-<timestamp>`) de vuelta
-a `~/.claude/skills/dnd`, o reinstalás desde la rama congelada
+a `~/.claude/skills/dnd`, o reinstalas desde la rama congelada
 **`legacy-1.x`**. Tus datos de campaña no se ven afectados de ninguna forma.
 
 ## Reportar problemas
@@ -76,5 +76,5 @@ a `~/.claude/skills/dnd`, o reinstalás desde la rama congelada
 Los casos límite de la migración se trackean en el hilo de discusión fijado
 **"v2 migration reports"** del repo. Si algo no se trasladó limpio — un
 dispositivo que necesitó reaprobación, un certificado que no se detectó —
-dejá una nota ahí con tu versión previa y tu SO para que podamos detectarlo
+deja una nota ahí con tu versión previa y tu SO para que podamos detectarlo
 temprano.

@@ -17,7 +17,7 @@ comportamiento por defecto del skill.
 1. El DM (Claude Code) está sentado en la mesa con el skill cargado.
 2. Cada jugador abre `http://<ip-mac-del-dm>:7777/?player=<su-nombre-de-pj>`
    en su teléfono una vez al inicio de la sesión y toca "tap to consecrate."
-3. Cuando el DM resuelve una acción — *"Hacé una tirada de Percepción"* —
+3. Cuando el DM resuelve una acción — *"Haz una tirada de Percepción"* —
    Claude corre `dice.py d20+4 --player piper --label "Perception"`.
 4. El teléfono de Piper vibra un d20 3D sobre una mesa iluminada con velas.
    Piper sacude el teléfono. El dado da vueltas, se asienta, y Piper ve el
@@ -67,7 +67,7 @@ Los jugadores abren la URL `?player=...` en sus teléfonos. Listo.
 ```
 
 Esto instala `~/Library/LaunchAgents/com.dnd-skill.dice-server.plist`, arranca
-el servidor, y lo mantiene corriendo entre logins / crashes. Volvé a correr el
+el servidor, y lo mantiene corriendo entre logins / crashes. Vuelve a correr el
 script para actualizar o después de mover el directorio del skill. Para
 quitarlo:
 
@@ -78,9 +78,9 @@ rm ~/Library/LaunchAgents/com.dnd-skill.dice-server.plist
 
 ### Linux
 
-El servidor es una app Flask sencilla. Corrélo bajo systemd, screen, tmux, o
+El servidor es una app Flask sencilla. Córrelo bajo systemd, screen, tmux, o
 en una terminal — lo que prefieras. La dirección de bind es `0.0.0.0:7777`
-por defecto; cambiala con `DND_DICE_PORT=8081`.
+por defecto; cámbiala con `DND_DICE_PORT=8081`.
 
 ---
 
@@ -92,7 +92,7 @@ Cada jugador abre esta URL en su teléfono, sustituyendo su propio nombre de PJ:
 http://<ip-mac-del-dm>:7777/?player=piper
 ```
 
-Minúsculas, sin espacios (usá guiones). El nombre debe coincidir con lo que el
+Minúsculas, sin espacios (usa guiones). El nombre debe coincidir con lo que el
 DM pasa vía `--player` en `dice.py`. La convención es usar el nombre corto del
 PJ.
 
@@ -161,7 +161,7 @@ Sin dependencias de CDN externas más allá del propio Three.js y Google Fonts
 
 | Endpoint | Método | Propósito |
 |---|---|---|
-| `GET /` | — | La página de dados. Agregá `?player=NOMBRE` para suscribir un canal. |
+| `GET /` | — | La página de dados. Agrega `?player=NOMBRE` para suscribir un canal. |
 | `GET /events` | SSE | Stream de Server-Sent Events de tiradas para el canal de este jugador (default: `_dm`). |
 | `POST /roll` | JSON | `{"spec":"1d20+5","label":"...","player":"piper","physical":true}` |
 | `GET /spec/<id>` | — | Devuelve la spec de una tirada en vuelo (la página usa esto al cargar). |

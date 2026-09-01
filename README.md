@@ -6,7 +6,7 @@
   <img src="skills/dnd/display/icons/logo_primary_fullcolor.png" width="280" alt="D20 Neural Core">
 </div>
 
-> Claude dirige el juego. Vos jugás. La TV muestra la historia. Tu teléfono es tu control.
+> Claude dirige el juego. Tú juegas. La TV muestra la historia. Tu teléfono es tu control.
 
 Un skill de Dungeon Master de D&D 5e (sistema 2014 / SRD 5.1) no oficial para [Claude Code](https://claude.ai/code) — campañas persistentes, mecánica completa de 5e, y un display companion cinemático opcional que transmite narración con efecto de máquina de escribir, tiradas de dados, y estadísticas de personaje en vivo a cualquier pantalla — TV vía Chromecast, tablet, teléfono, o segundo monitor — mientras los jugadores envían sus acciones desde un teléfono o tablet.
 
@@ -18,13 +18,13 @@ Hecho para grupos que quieren una experiencia de DM real sin necesitar uno en la
 
 ## Qué es esto
 
-Corrés `/dm:dnd load mi-campaña` en Claude Code. Claude se convierte en tu DM — tira dados, le da voz a los PNJ, lleva el registro de PG y XP, y dirige el combate. Si tenés una TV o tablet cerca, el **display companion cinemático** pone la narración en pantalla en tiempo real — efecto de máquina de escribir, fondos atmosféricos que cambian con la escena, un canvas de cielo dinámico, y una barra lateral en vivo con las estadísticas del grupo. Abrilo en cualquier dispositivo de tu red y todos en la mesa pueden seguir la partida. Los jugadores envían sus acciones desde sus teléfonos; Claude las recoge automáticamente y corre el siguiente turno.
+Corres `/dm:dnd load mi-campaña` en Claude Code. Claude se convierte en tu DM — tira dados, le da voz a los PNJ, lleva el registro de PG y XP, y dirige el combate. Si tienes una TV o tablet cerca, el **display companion cinemático** pone la narración en pantalla en tiempo real — efecto de máquina de escribir, fondos atmosféricos que cambian con la escena, un canvas de cielo dinámico, y una barra lateral en vivo con las estadísticas del grupo. Ábrelo en cualquier dispositivo de tu red y todos en la mesa pueden seguir la partida. Los jugadores envían sus acciones desde sus teléfonos; Claude las recoge automáticamente y corre el siguiente turno.
 
 Hay dos formas de jugar, y sirven necesidades distintas:
 
 **Campañas improvisadas** — Claude genera el mundo desde cero y crea automáticamente un arco narrativo comprometido de tres actos a partir del setting, las facciones, y las amenazas que acaba de construir. El arco le da a la historia una forma definida sin guionar lo que pasa — los beats se definen por consecuencia ("qué cambia") no por evento, así que Claude se mantiene flexible en cómo aterriza cada beat mientras se compromete al hecho de que debe aterrizar. El arco avanza a través de las sesiones, se puede revisar cuando los jugadores redirigen la historia, y continúa en un nuevo arco cuando los seis beats se resuelven. Esto es Claude como colaborador creativo completo: constructor de mundos, compañero de improvisación, y arquitecto de historias en uno.
 
-**Campañas estructuradas** — Usá `/dm:dnd import` para meter una fuente pre-escrita (módulos oficiales de WotC, campañas publicadas de terceros, o un documento propio escrito por el DM en formato PDF, markdown, DOCX, o texto plano). Claude lee y segmenta la fuente, extrae el tipo de estructura (lineal, hub-and-spoke, o red de facciones), y construye todos los archivos de campaña automáticamente — actos, capítulos, beats clave de la historia, escenas de anticipo, PNJ, facciones, ubicaciones, y ganchos de misión. La campaña corre con una estructura determinística forzada: los beats requeridos deben aterrizar en cada capítulo, Claude los anticipa antes de entregarlos, y guía con presión del mundo en vez de paredes cuando los jugadores se desvían. Metele el Lost Mine of Phandelver y Claude lo va a correr capítulo por capítulo con los mismos doce estándares de DM aplicados a cada escena.
+**Campañas estructuradas** — Usa `/dm:dnd import` para meter una fuente pre-escrita (módulos oficiales de WotC, campañas publicadas de terceros, o un documento propio escrito por el DM en formato PDF, markdown, DOCX, o texto plano). Claude lee y segmenta la fuente, extrae el tipo de estructura (lineal, hub-and-spoke, o red de facciones), y construye todos los archivos de campaña automáticamente — actos, capítulos, beats clave de la historia, escenas de anticipo, PNJ, facciones, ubicaciones, y ganchos de misión. La campaña corre con una estructura determinística forzada: los beats requeridos deben aterrizar en cada capítulo, Claude los anticipa antes de entregarlos, y guía con presión del mundo en vez de paredes cuando los jugadores se desvían. Metele el Lost Mine of Phandelver y Claude lo va a correr capítulo por capítulo con los mismos doce estándares de DM aplicados a cada escena.
 
 Ambos modos comparten el mismo motor de DM. Los [doce estándares de comportamiento aplicados](https://github.com/neuralinitiative/claude-dnd-skill/blob/main/SKILL.md#what-makes-a-great-dm--applied-standards) se aplican como restricciones duras en cada sesión sin importar en qué modo estés — improvisado o estructurado, el DM improvisa dentro de las situaciones, deja que las decisiones importen, hace de cada PNJ una persona, y controla el ritmo deliberadamente.
 
@@ -35,7 +35,7 @@ También gestiona una red profunda de datos de campaña sin sobrecargar al LLM �
 - **Módulos importados** — un libro publicado se mantiene como un corpus de carga perezosa, no inlineado: el árbol de actos/capítulos, el banco de misiones/ubicaciones, y el texto fuente por capítulo se cargan bajo demanda, así un módulo largo corre capítulo por capítulo sin sentarse entero en el contexto
 - **Historial de sesión** — se archiva como resúmenes de continuidad, no transcripciones crudas; el historial completo de campaña está disponible como referencia sin cargar el peso de tokens por adelantado
 - **Resiliencia a la compactación** — un bloque compacto de Live State Flags en `state.md` ancla las posturas de facciones, la cobertura de los jugadores, y las disposiciones de PNJ; se relee ante cualquier afirmación para mantener la continuidad del mundo fundamentada en los archivos fuente en vez de en la impresión cada vez más difusa de Claude sobre ellos
-- **Autoguardado** — la continuidad (flags de estado, grafo de relaciones, cola de sesión) se checkpointea detrás de escena en los límites de escena y con una cadencia de turnos, así una compactación de contexto nunca pierde tu lugar; activalo/desactivalo con `/dm:dnd autosave on|off`, con un Stop hook opcional como respaldo determinístico por turno
+- **Autoguardado** — la continuidad (flags de estado, grafo de relaciones, cola de sesión) se checkpointea detrás de escena en los límites de escena y con una cadencia de turnos, así una compactación de contexto nunca pierde tu lugar; actívalo/desactívalo con `/dm:dnd autosave on|off`, con un Stop hook opcional como respaldo determinístico por turno
 
 Una campaña puede correr docenas de sesiones de profundidad — con memoria coherente de eventos pasados, actitudes de PNJ, y consecuencias de cola larga — sin la sobrecarga de contexto que fuerza a otras implementaciones a resumir, olvidar, o resetear.
 
@@ -43,11 +43,11 @@ No es un producto oficial de Wizards of the Coast. Usa a Claude como motor de DM
 
 ---
 
-## ¿Usás otro LLM?
+## ¿Usas otro LLM?
 
-Este skill está construido específicamente para Claude Code. Si querés correr el mismo framework en otro modelo — inferencia local, OpenRouter, o cualquier endpoint compatible con OpenAI — mirá [open-tabletop-gm](https://github.com/neuralinitiative/open-tabletop-gm), la versión agnóstica de modelo extraída de este repo. Sacrifica algo de profundidad de integración específica de Claude a cambio de soporte más amplio de modelos e incluye una herramienta de sondeo para comparar la calidad de narración entre modelos.
+Este skill está construido específicamente para Claude Code. Si quieres correr el mismo framework en otro modelo — inferencia local, OpenRouter, o cualquier endpoint compatible con OpenAI — mira [open-tabletop-gm](https://github.com/neuralinitiative/open-tabletop-gm), la versión agnóstica de modelo extraída de este repo. Sacrifica algo de profundidad de integración específica de Claude a cambio de soporte más amplio de modelos e incluye una herramienta de sondeo para comparar la calidad de narración entre modelos.
 
-Si preferís saltarte la instalación por completo y jugar en el navegador, [neuralinitiative.ai](https://neuralinitiative.ai) es la versión alojada — mismo ADN de diseño, iniciá sesión con Google, cargá saldo en tu cuenta, jugá. Cambia el auto-hosting (y menor costo por sesión) por cero configuración y una GUI más refinada.
+Si prefieres saltarte la instalación por completo y jugar en el navegador, [neuralinitiative.ai](https://neuralinitiative.ai) es la versión alojada — mismo ADN de diseño, inicia sesión con Google, carga saldo en tu cuenta, juega. Cambia el auto-hosting (y menor costo por sesión) por cero configuración y una GUI más refinada.
 
 Si estás en Claude Code, estás en el lugar correcto.
 
@@ -56,26 +56,26 @@ Si estás en Claude Code, estás en el lugar correcto.
 ## Funciones
 
 - <img src="skills/dnd/display/icons/scroll.png" height="18"> **Campañas persistentes** — el estado, los PNJ, las misiones, y los personajes sobreviven entre sesiones en archivos markdown planos
-- <img src="skills/dnd/display/icons/dragon.png" height="18"> **Dos modos de campaña** — improvisado (Claude genera el mundo + arco dinámico) o estructurado (importá material pre-escrito y forzá sus beats)
+- <img src="skills/dnd/display/icons/dragon.png" height="18"> **Dos modos de campaña** — improvisado (Claude genera el mundo + arco dinámico) o estructurado (importa material pre-escrito y fuerza sus beats)
 - <img src="skills/dnd/display/icons/crystal_ball.png" height="18"> **Arco narrativo dinámico** — auto-generado en `/dm:dnd new` a partir de la amenaza, facciones, y setting del mundo; tres actos, seis beats definidos por consecuencia y no por evento; el arco se trackea entre sesiones, se revisa cuando los jugadores redirigen la historia, y continúa en un nuevo arco cuando se completa
 - <img src="skills/dnd/display/icons/spellbook.png" height="18"> **Grafo de relaciones de campaña** — grafo de aristas tipadas junto a los archivos markdown de campaña, con anclas de fuente textuales en cada arista; la consulta `scene-context` se trae automáticamente en `/dm:dnd load` para mostrar quién-conoce-a-quién en la escena actual sin releer archivos completos de PNJ; diseñado para sostener la continuidad de sesiones largas cuando la compactación de contexto saca archivos de alcance. Investigación de fondo y el estudio A/B de replay que lo motivó: [`docs/research/graph/`](docs/research/graph/)
 - <img src="skills/dnd/display/icons/pack.png" height="18"> **Importación de campaña** — `/dm:dnd import` acepta PDF, markdown, DOCX, o texto plano; extrae el tipo de estructura, actos, capítulos, beats clave, escenas de anticipo, PNJ, facciones, y ganchos de misión; construye todos los archivos de campaña automáticamente y mantiene la fuente completa como un corpus de carga perezosa así hasta un módulo largo carga capítulo por capítulo
-- <img src="skills/dnd/display/icons/helmet.png" height="18"> **Personajes portables** — traé tu personaje a cualquier campaña; subí de nivel, hacé crecer tu árbol de stats, y llevá tu inventario y botín — o empezá de cero cada vez
+- <img src="skills/dnd/display/icons/helmet.png" height="18"> **Personajes portables** — trae tu personaje a cualquier campaña; sube de nivel, haz crecer tu árbol de stats, y lleva tu inventario y botín — o empieza de cero cada vez
 - <img src="skills/dnd/display/icons/attack.png" height="18"> **Mecánica completa de D&D 5e** — iniciativa, ataques, tiradas de salvación, espacios de conjuro, XP, subida de nivel, descansos cortos/largos
 - <img src="skills/dnd/display/icons/chat.png" height="18"> **DM atmosférico** — tono de fantasía oscura, voces de PNJ distintas, tiradas ocultas, un mundo que reacciona a las decisiones
-- <img src="skills/dnd/display/icons/crystal_ball.png" height="18"> **Display companion cinemático** — narración con máquina de escribir en tu TV, fondos reactivos a la escena, canvas de cielo dinámico, barra lateral en vivo del grupo; proyectá, duplicá, o abrilo en cualquier pantalla de tu red
+- <img src="skills/dnd/display/icons/crystal_ball.png" height="18"> **Display companion cinemático** — narración con máquina de escribir en tu TV, fondos reactivos a la escena, canvas de cielo dinámico, barra lateral en vivo del grupo; proyecta, duplica, o ábrelo en cualquier pantalla de tu red
 - <img src="skills/dnd/display/icons/location.png" height="18"> **Canvas de cielo dinámico** — arco solar, luna, estrellas titilantes, y densidad de nubes renderizados en tiempo real a partir de los datos de tiempo del mundo; transiciona con la hora del día y el clima
 - <img src="skills/dnd/display/icons/focus.png" height="18"> **Input de jugador desde la UI del companion** — los jugadores envían acciones desde el teléfono/tablet con un envío de un toque y una franja de estado en vivo *Tu turno → Enviado → ✓ El DM tiene tu turno → narrando*; Claude las recoge automáticamente en modo autorun
-- <img src="skills/dnd/display/icons/attack.png" height="18"> **Manejo forzado de tiradas** — elegí al inicio de la partida si los jugadores tiran sus propios d20 (el DM pide la tirada y espera) o el DM tira abiertamente; override por personaje desde el teléfono; el DM nunca tira en silencio por un PJ
+- <img src="skills/dnd/display/icons/attack.png" height="18"> **Manejo forzado de tiradas** — elige al inicio de la partida si los jugadores tiran sus propios d20 (el DM pide la tirada y espera) o el DM tira abiertamente; override por personaje desde el teléfono; el DM nunca tira en silencio por un PJ
 - <img src="skills/dnd/display/icons/scroll.png" height="18"> **Controles de lectura** — un stepper de tamaño de texto por jugador (legible desde el otro lado de la sala vía Chromecast) y un slider de longitud de narración que fija el presupuesto de palabras por turno del DM
 - <img src="skills/dnd/display/icons/timer.png" height="18"> **Modo autorun / taxi** — Claude conduce el ciclo de turnos sin input del DM; un reloj de cuenta regresiva circular muestra la próxima ventana de disparo automático
-- <img src="skills/dnd/display/icons/shield.png" height="18"> **Soporte de mesa por LAN** — servite el companion en tu red local; cada dispositivo en la sala ve el mismo display
+- <img src="skills/dnd/display/icons/shield.png" height="18"> **Soporte de mesa por LAN** — sírvete el companion en tu red local; cada dispositivo en la sala ve el mismo display
 - <img src="skills/dnd/display/icons/shield.png" height="18"> **TLS / HTTPS** — generación de certificado autofirmado incluida; necesario para soporte completo de funciones del navegador sobre LAN
 - <img src="skills/dnd/display/icons/location.png" height="18"> **17 tipos de escena** — detectados automáticamente a partir de palabras clave de la narración — taberna, mazmorra, océano, cripta, arcano, glaciar, y más
-- <img src="skills/dnd/display/icons/spellbook.png" height="18"> **Hojas de personaje clickeables** — tocá cualquier tarjeta de la barra lateral para abrir un modal de hoja de personaje completa (ataques, rasgos, inventario); funciona en teléfonos y tablets vía LAN
-- <img src="skills/dnd/display/icons/spellbook.png" height="18"> **Lookup de conjuro/rasgo del SRD** — hacé clic en cualquier nombre de conjuro o rasgo en una hoja de personaje para ver su descripción completa; dataset de 5e incluido con entradas suplementarias para contenido no-SRD (Xanathar's, Tasha's, rasgos de subclase); link de respaldo a wikidot para lo que no está en los datos locales
-- <img src="skills/dnd/display/icons/crystal_ball.png" height="18"> **Botón de Ayuda del DM** — hacé clic en el botón ◈ del display para una pista o advertencia contextual bajo demanda; generada a partir de la escena actual sin sobrecarga de tokens por turno
-- <img src="skills/dnd/display/icons/potion.png" height="18"> **Modo tutor / aprendizaje** — activalo por sesión para bloques de pista automáticos después de cada escena, punto de decisión, y tirada; ideal para jugadores nuevos en D&D
+- <img src="skills/dnd/display/icons/spellbook.png" height="18"> **Hojas de personaje clickeables** — toca cualquier tarjeta de la barra lateral para abrir un modal de hoja de personaje completa (ataques, rasgos, inventario); funciona en teléfonos y tablets vía LAN
+- <img src="skills/dnd/display/icons/spellbook.png" height="18"> **Lookup de conjuro/rasgo del SRD** — haz clic en cualquier nombre de conjuro o rasgo en una hoja de personaje para ver su descripción completa; dataset de 5e incluido con entradas suplementarias para contenido no-SRD (Xanathar's, Tasha's, rasgos de subclase); link de respaldo a wikidot para lo que no está en los datos locales
+- <img src="skills/dnd/display/icons/crystal_ball.png" height="18"> **Botón de Ayuda del DM** — haz clic en el botón ◈ del display para una pista o advertencia contextual bajo demanda; generada a partir de la escena actual sin sobrecarga de tokens por turno
+- <img src="skills/dnd/display/icons/potion.png" height="18"> **Modo tutor / aprendizaje** — actívalo por sesión para bloques de pista automáticos después de cada escena, punto de decisión, y tirada; ideal para jugadores nuevos en D&D
 - <img src="skills/dnd/display/icons/focus.png" height="18"> **Efectos de sonido del lado del navegador** — 12 tipos de SFX sintetizados bajo demanda vía numpy y reproducidos a través de Web Audio API; funciona en cualquier dispositivo con la pestaña abierta, incluidos teléfonos vía LAN
 - <img src="skills/dnd/display/icons/dragon.png" height="18"> **Couch co-op** — múltiples personajes, display compartido, orden de turnos visible para todos en la sala
 - <img src="skills/dnd/display/icons/attack.png" height="18"> **Tracker de combate** — iniciativa auto-tirada, puntero de turno `▶`, barras de PG, matemática de dados en línea enviada al display
@@ -115,17 +115,17 @@ El servidor Flask recibe el texto de narración, las acciones de jugador, los re
 
 ## Instalación
 
-Instalalo como plugin de Claude Code:
+Instálalo como plugin de Claude Code:
 
 ```
 /plugin marketplace add neuralinitiative/claude-dnd-skill
 /plugin install dm@neural-initiative
 ```
 
-Después invocalo como **`/dm:dnd`** (los skills de plugin llevan namespace `plugin:skill` — el plugin `dm` provee el skill `dnd`), o simplemente describí lo que querés una vez que una campaña está cargada. Actualizá con `/plugin update dm`.
+Después invócalo como **`/dm:dnd`** (los skills de plugin llevan namespace `plugin:skill` — el plugin `dm` provee el skill `dnd`), o simplemente describe lo que quieres una vez que una campaña está cargada. Actualiza con `/plugin update dm`.
 
 ```bash
-# Opcional — instalá las dependencias del display companion (una sola vez).
+# Opcional — instala las dependencias del display companion (una sola vez).
 # El juego principal funciona sin esto; potencian la pantalla en vivo + audio.
 pip3 install flask flask-cors numpy cryptography
 ```
@@ -134,7 +134,7 @@ pip3 install flask flask-cors numpy cryptography
 > solo-plugin — el viejo standalone `~/.claude/skills/dnd` (`/dnd`) es reemplazado por
 > el plugin (`/dm:dnd`). **Tus campañas y personajes quedan intactos** — viven en
 > `~/.claude/dnd/` (o `$DND_CAMPAIGN_ROOT`), completamente separados del
-> código del skill. Instalá el plugin de arriba, después corré el helper de una sola vez para trasladar
+> código del skill. Instala el plugin de arriba, después corre el helper de una sola vez para trasladar
 > los emparejamientos de dispositivo / certificados TLS y retirar la instalación vieja:
 > `python3 <plugin>/skills/dnd/scripts/migrate_v1_to_v2.py`. Guía completa:
 > **[MIGRATING.md](MIGRATING.md)**.
@@ -152,9 +152,9 @@ El skill trackea releases vía un archivo `VERSION` de nivel superior y notas po
 /dm:dnd update            # hace pull si estás atrás (solo fast-forward; se niega con árbol sucio)
 ```
 
-**Las instalaciones como plugin se actualizan a través del gestor de plugins** — corré `/plugin update dm` en su lugar. `/dm:dnd update` detecta una instalación como plugin y te redirige ahí en vez de hacer git-pull bajo el estado trackeado del gestor.
+**Las instalaciones como plugin se actualizan a través del gestor de plugins** — corre `/plugin update dm` en su lugar. `/dm:dnd update` detecta una instalación como plugin y te redirige ahí en vez de hacer git-pull bajo el estado trackeado del gestor.
 
-La salida de `--check` incluye las cadenas de versión de ambos lados así podés ver de un vistazo si te quedaste atrás. Después de actualizar, reiniciá Claude Code para que carguen el nuevo `SKILL.md` y los procedimientos de comandos.
+La salida de `--check` incluye las cadenas de versión de ambos lados así puedes ver de un vistazo si te quedaste atrás. Después de actualizar, reinicia Claude Code para que carguen el nuevo `SKILL.md` y los procedimientos de comandos.
 
 El skill sigue el [versionado semántico](https://semver.org/): `MAJOR.MINOR.PATCH`. Los cambios que rompen compatibilidad y requieren migración de datos de campaña suben MAJOR; las funciones nuevas opt-in suben MINOR; las correcciones de bugs suben PATCH. Las campañas activas siguen funcionando a través de subidas de MINOR/PATCH sin acción.
 
@@ -166,18 +166,18 @@ El skill sigue el [versionado semántico](https://semver.org/): `MAJOR.MINOR.PAT
 
 ```
 /dm:dnd new mi-campaña          # genera semilla de mundo, facciones, PNJ, arco de historia dinámico
-/dm:dnd character new           # creá un personaje
-/dm:dnd load mi-campaña         # empezá una sesión
+/dm:dnd character new           # crea un personaje
+/dm:dnd load mi-campaña         # empieza una sesión
 ```
 
-**Campaña estructurada** — importá un módulo pre-escrito o publicado:
+**Campaña estructurada** — importa un módulo pre-escrito o publicado:
 
 ```
 /dm:dnd import mi-campaña ruta/al/modulo.pdf   # extrae la estructura y construye los archivos de campaña
-/dm:dnd load mi-campaña                        # empezá una sesión — Claude fuerza el arco
+/dm:dnd load mi-campaña                        # empieza una sesión — Claude fuerza el arco
 ```
 
-Una vez cargada, escribí con naturalidad — no hace falta el prefijo `/dm:dnd`. El DM interpreta todo como acción dentro del juego.
+Una vez cargada, escribe con naturalidad — no hace falta el prefijo `/dm:dnd`. El DM interpreta todo como acción dentro del juego.
 
 ---
 
@@ -304,7 +304,7 @@ El puntero avanza después de cada turno. Las barras de PG se actualizan en tiem
 
 ## Manejo de Dados y Tiradas
 
-Cómo se tiran los propios d20 de un jugador (ataques, chequeos, salvaciones, tiradas de muerte) se elige **al inicio de la partida** y se guarda como `roll_mode` en `state.md → ## Session Flags`. Tanto `/dm:dnd new` como `/dm:dnd load` preguntan **"¿Tiradas de dados?"** así lo confirmás cada sesión.
+Cómo se tiran los propios d20 de un jugador (ataques, chequeos, salvaciones, tiradas de muerte) se elige **al inicio de la partida** y se guarda como `roll_mode` en `state.md → ## Session Flags`. Tanto `/dm:dnd new` como `/dm:dnd load` preguntan **"¿Tiradas de dados?"** así lo confirmas cada sesión.
 
 | Modo | Comportamiento |
 |------|------|
@@ -343,7 +343,7 @@ Los descansos largos avanzan el reloj del mundo en `state.md`.
 
 ## Display Companion Cinemático
 
-Un servidor web local opcional (`display/dnd-display-app.py`) que renderiza la narración del DM en cualquier pantalla — TV, tablet, teléfono, o segundo monitor. Proyectalo, duplicalo, o abrilo en cualquier dispositivo de tu red local.
+Un servidor web local opcional (`display/dnd-display-app.py`) que renderiza la narración del DM en cualquier pantalla — TV, tablet, teléfono, o segundo monitor. Proyéctalo, duplícalo, o ábrelo en cualquier dispositivo de tu red local.
 
 ### Configuración
 
@@ -353,7 +353,7 @@ pip3 install flask flask-cors numpy cryptography
 
 ### Arrancando el Display
 
-El display arranca automáticamente cuando respondés **y** al prompt de `/dm:dnd load`. O arrancalo manualmente:
+El display arranca automáticamente cuando respondes **y** al prompt de `/dm:dnd load`. O arráncalo manualmente:
 
 ```bash
 # Solo local (Mac/misma máquina) — HTTP, sin configuración de certificado
@@ -366,27 +366,27 @@ bash ${CLAUDE_SKILL_DIR}/display/start-display.sh --lan
 bash ${CLAUDE_SKILL_DIR}/display/start-display.sh --lan --tls
 ```
 
-Después abrí `http://localhost:5001` en tu navegador. HTTP es el default — sin advertencias de certificado. Para dispositivos LAN usá la URL con IP impresa al arrancar (ej. `http://192.168.1.x:5001`). Usá `--tls` solo cuando la red es pública o no confiable.
+Después abre `http://localhost:5001` en tu navegador. HTTP es el default — sin advertencias de certificado. Para dispositivos LAN usa la URL con IP impresa al arrancar (ej. `http://192.168.1.x:5001`). Usa `--tls` solo cuando la red es pública o no confiable.
 
 ### Opciones de Visualización
 
-Abrí la URL del display en un navegador, después elegí cómo mostrarlo:
+Abre la URL del display en un navegador, después elige cómo mostrarlo:
 
 | Opción | Cómo |
 |--------|-----|
-| **TV — Proyectar pestaña** | Chrome → menú de tres puntos → Cast → Cast tab; seleccioná tu Chromecast o smart TV |
+| **TV — Proyectar pestaña** | Chrome → menú de tres puntos → Cast → Cast tab; selecciona tu Chromecast o smart TV |
 | **TV — Duplicar pantalla** | macOS: Centro de Control → Duplicar Pantalla → Apple TV / receptor AirPlay |
-| **iPad / tablet** | Arrancá con `--lan`, abrí `http://<tu-ip>:5001` en Safari o Chrome; funciona apaisado |
-| **Segundo monitor** | Abrí `http://localhost:5001` en una ventana del navegador y arrastrala al segundo display |
+| **iPad / tablet** | Arranca con `--lan`, abre `http://<tu-ip>:5001` en Safari o Chrome; funciona apaisado |
+| **Segundo monitor** | Abre `http://localhost:5001` en una ventana del navegador y arrástrala al segundo display |
 
 ### TLS / HTTPS (opcional)
 
-HTTP es el default. Usá `--tls` solo cuando la red es pública o no confiable. Cuando se pasa `--tls` a `start-display.sh`:
+HTTP es el default. Usa `--tls` solo cuando la red es pública o no confiable. Cuando se pasa `--tls` a `start-display.sh`:
 - Se auto-genera un certificado autofirmado (validez de 10 años) si `cert.pem` todavía no está presente
 - Un servidor HTTP plano arranca en `:8080` para servir `cert.pem` para descarga
 - Se imprimen en la terminal instrucciones de instalación por plataforma (iOS, Android, Mac)
 
-Para iOS: abrí `http://<tu-ip>:8080/cert.pem` en Safari → tocá Permitir → Configuración → General → VPN y Gestión de Dispositivos → instalá el perfil → Configuración de Confianza de Certificado → activá confianza completa.
+Para iOS: abre `http://<tu-ip>:8080/cert.pem` en Safari → toca Permitir → Configuración → General → VPN y Gestión de Dispositivos → instala el perfil → Configuración de Confianza de Certificado → activa confianza completa.
 
 ### Input de Jugador desde la UI del Companion
 
@@ -401,7 +401,7 @@ Los jugadores abren el companion en el navegador de su teléfono. Cada dispositi
 
 El panel muestra un reloj circular de cuenta regresiva **"Próximo Turno"** que se repite en el intervalo de autorun configurado.
 
-**La aprobación de dispositivo confía por defecto en cualquier dispositivo de tu LAN** — conveniente para una red hogareña casual. Configurá `DND_REQUIRE_APPROVAL=1` para restaurar la compuerta de aprobar/rechazar por dispositivo en redes públicas o no confiables.
+**La aprobación de dispositivo confía por defecto en cualquier dispositivo de tu LAN** — conveniente para una red hogareña casual. Configura `DND_REQUIRE_APPROVAL=1` para restaurar la compuerta de aprobar/rechazar por dispositivo en redes públicas o no confiables.
 
 ### Configuración de Jugador (teléfono)
 
@@ -410,8 +410,8 @@ Cada dispositivo tiene una vista de **Configuración** con controles que ajustan
 | Control | Qué hace |
 |---------|---------------|
 | **Tamaño de Texto** (`A−` / `A+`, clic en el % para resetear) | Escala la columna de lectura vía un multiplicador de tamaño de fuente (tamaño de fuente, no zoom de página) así la narración se mantiene legible desde el otro lado de la sala vía Chromecast. Persiste por navegador (`localStorage`), aplicado anti-FOUC. |
-| **Narración** slider (250–2500 palabras) | Fija el objetivo de conteo de palabras al que apunta el DM cada turno. Hace POST a `/narration-pref`; la próxima acción en cola lleva una directiva `[[Narration length…]]` que el DM respeta como presupuesto duro por turno. Perilla rápida "mantené los turnos cortos" para mesas con presión de tiempo. |
-| **Tiradas** toggle (se muestra cuando el dispositivo está vinculado a un PJ) | Cambia ese personaje entre *Jugadores* (tirás tus propios d20) y *Auto-tirar* (el DM los tira abiertamente), sobrescribiendo el default de campaña para ese personaje puntual. Ver [Manejo de Dados y Tiradas](#manejo-de-dados-y-tiradas). |
+| **Narración** slider (250–2500 palabras) | Fija el objetivo de conteo de palabras al que apunta el DM cada turno. Hace POST a `/narration-pref`; la próxima acción en cola lleva una directiva `[[Narration length…]]` que el DM respeta como presupuesto duro por turno. Perilla rápida "mantén los turnos cortos" para mesas con presión de tiempo. |
+| **Tiradas** toggle (se muestra cuando el dispositivo está vinculado a un PJ) | Cambia ese personaje entre *Jugadores* (tiras tus propios d20) y *Auto-tirar* (el DM los tira abiertamente), sobrescribiendo el default de campaña para ese personaje puntual. Ver [Manejo de Dados y Tiradas](#manejo-de-dados-y-tiradas). |
 | **Efectos de Sonido** toggle | Activa los SFX del lado del navegador (ver [Efectos de Sonido](#efectos-de-sonido)). |
 
 ### Modo Autorun
@@ -424,9 +424,9 @@ Autorun es la forma principal de correr sesiones con la UI del companion. Una ve
 /dm:dnd autorun off         # vuelve al modo manual
 ```
 
-La cuenta regresiva es configurable por campaña fijando `autorun_interval: N` en `state.md → ## Session Flags`. Para interrumpir autorun desde la CLI de Claude Code, presioná **Ctrl+C** durante la espera.
+La cuenta regresiva es configurable por campaña fijando `autorun_interval: N` en `state.md → ## Session Flags`. Para interrumpir autorun desde la CLI de Claude Code, presiona **Ctrl+C** durante la espera.
 
-**Umbral de N jugadores** — por defecto autorun se dispara cuando todos los jugadores conocidos están listos. Para grupos multi-dispositivo podés requerir solo N jugadores:
+**Umbral de N jugadores** — por defecto autorun se dispara cuando todos los jugadores conocidos están listos. Para grupos multi-dispositivo puedes requerir solo N jugadores:
 
 ```bash
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --autorun-threshold 2  # dispara cuando 2 están listos
@@ -437,9 +437,9 @@ python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --autorun-threshold 0  # reset
 
 Hay dos formas de mostrar pistas y advertencias en el display — un botón bajo demanda y un modo automático por sesión.
 
-**Botón de Ayuda del DM (◈)** — un botón **◈ Ayuda del DM** está siempre en la esquina inferior derecha del display. Hacé clic y en unos segundos se genera una pista o advertencia contextual a partir de la escena actual y se envía al display — sin comando de CLI necesario, sin sobrecarga de tokens por turno. El botón lee los últimos 8 bloques del display y el estado actual de campaña, llama a Claude en modo no interactivo, y envía el resultado como un bloque de pista vía el pipeline SSE normal. Muestra "Pensando…" mientras está en vuelo; se resetea automáticamente cuando llega el bloque. Múltiples clics simultáneos solo disparan una ejecución.
+**Botón de Ayuda del DM (◈)** — un botón **◈ Ayuda del DM** está siempre en la esquina inferior derecha del display. Haz clic y en unos segundos se genera una pista o advertencia contextual a partir de la escena actual y se envía al display — sin comando de CLI necesario, sin sobrecarga de tokens por turno. El botón lee los últimos 8 bloques del display y el estado actual de campaña, llama a Claude en modo no interactivo, y envía el resultado como un bloque de pista vía el pipeline SSE normal. Muestra "Pensando…" mientras está en vuelo; se resetea automáticamente cuando llega el bloque. Múltiples clics simultáneos solo disparan una ejecución.
 
-Los bloques de pista están **colapsados por defecto** — hacé clic o toca el encabezado para expandir. Las advertencias usan un borde ámbar:
+Los bloques de pista están **colapsados por defecto** — haz clic o toca el encabezado para expandir. Las advertencias usan un borde ámbar:
 
 - **Pista del DM** (◈, colapsable) — habilidades que vale la pena intentar, opciones visibles, qué podría costar cada camino
 - **Advertencia** (⚠, borde ámbar) — marca decisiones irreversibles antes de que el jugador se comprometa
@@ -454,7 +454,7 @@ Las advertencias usan un borde ámbar para distinguir decisiones de alto riesgo:
 
 ![Tutor warning block](screenshots/tutor-warning.png)
 
-**Modo tutor (por sesión)** — para jugadores nuevos que quieren guía continua, activa bloques de pista automáticos después de cada escena, punto de decisión, y tirada — sin necesidad de botón. Agrega ~10–20% de sobrecarga de tokens por turno. Usá el botón de Ayuda del DM en su lugar para pistas bajo demanda sin el costo continuo.
+**Modo tutor (por sesión)** — para jugadores nuevos que quieren guía continua, activa bloques de pista automáticos después de cada escena, punto de decisión, y tirada — sin necesidad de botón. Agrega ~10–20% de sobrecarga de tokens por turno. Usa el botón de Ayuda del DM en su lugar para pistas bajo demanda sin el costo continuo.
 
 ```
 /dm:dnd tutor on    # activa para esta sesión
@@ -501,7 +501,7 @@ Una capa de canvas renderizada sobre el fondo de la escena muestra un cielo en v
 - **Clima** — calmo: 2 nubes livianas; nublado: 5 nubes oscuras pesadas, sol atenuado; lluvioso: cobertura de nubes densa, paleta apagada; tormentoso: cielo casi negro; noche despejada: campo de estrellas completo
 - **Nubes** — 5 objetos de nube cada uno construido con 8 círculos superpuestos; van a la deriva lentamente y envuelven
 
-Enviá los datos de tiempo del mundo después de cargar una campaña y después de cualquier descanso o avance de tiempo:
+Envía los datos de tiempo del mundo después de cargar una campaña y después de cualquier descanso o avance de tiempo:
 
 ```bash
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --world-time \
@@ -519,7 +519,7 @@ El texto de narración se escanea del lado del servidor en busca de 12 categorí
 impact · sword · arrow · shout · thud · magic · coins · door · low_hum · fire · breath
 ```
 
-La síntesis de SFX usa numpy — si numpy no está instalado la función se degrada en silencio. Activalo vía el toggle de **Efectos de Sonido** arriba a la derecha del display.
+La síntesis de SFX usa numpy — si numpy no está instalado la función se degrada en silencio. Actívalo vía el toggle de **Efectos de Sonido** arriba a la derecha del display.
 
 | Texto de narración | SFX |
 |----------------|-----|
@@ -537,7 +537,7 @@ La síntesis de SFX usa numpy — si numpy no está instalado la función se deg
 
 El navegador cachea cada WAV después del primer fetch. Los SFX se disparan naturalmente junto con la animación de máquina de escribir ya que ambos se conducen por los mismos fragmentos de narración.
 
-La detección de triggers es específica por idioma — un paquete en español (`es`) viene incluido junto al de inglés (`en`), y de hecho el skill trae paquetes para los 24 idiomas soportados por Gemini. Las campañas nuevas usan `sfx_languages: es` por defecto en `state.md → ## Session Flags` (este fork narra en español por defecto; ver `CLAUDE.md`). Sobrescribí con una lista separada por comas, ej. `sfx_languages: en` o `sfx_languages: es,en` (se chequean en orden, la primera coincidencia gana). `state.md` tiene precedencia siempre que el campo esté presente — un default a nivel de entorno vía `DND_SFX_LANGUAGES` solo aplica a campañas que omiten el campo por completo.
+La detección de triggers es específica por idioma — un paquete en español (`es`) viene incluido junto al de inglés (`en`), y de hecho el skill trae paquetes para los 24 idiomas soportados por Gemini. Las campañas nuevas usan `sfx_languages: es` por defecto en `state.md → ## Session Flags` (este fork narra en español por defecto; ver `CLAUDE.md`). Sobrescribe con una lista separada por comas, ej. `sfx_languages: en` o `sfx_languages: es,en` (se chequean en orden, la primera coincidencia gana). `state.md` tiene precedencia siempre que el campo esté presente — un default a nivel de entorno vía `DND_SFX_LANGUAGES` solo aplica a campañas que omiten el campo por completo.
 
 ### Barra Lateral de Personaje en Vivo
 
@@ -567,7 +567,7 @@ python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Aldric --xp 270 300
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Aldric --conditions-add "Poisoned"
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Aldric --slot-use 2
 
-# O agrupá los cambios de stats directamente con un envío de narración (sin llamada separada a push_stats.py):
+# O agrupa los cambios de stats directamente con un envío de narración (sin llamada separada a push_stats.py):
 python3 ${CLAUDE_SKILL_DIR}/display/send.py \
   --stat-hp "Aldric:10:18" \
   --stat-condition-add "Aldric:Poisoned" \
@@ -594,11 +594,11 @@ python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --world-time \
 
 ### Hoja de Personaje Clickeable
 
-Hacé clic o toca cualquier tarjeta de personaje en la barra lateral para abrir un modal de hoja de personaje completa — ataques, rasgos, e inventario de un vistazo. Funciona en desktop y en teléfonos/tablets conectados vía LAN.
+Haz clic o toca cualquier tarjeta de personaje en la barra lateral para abrir un modal de hoja de personaje completa — ataques, rasgos, e inventario de un vistazo. Funciona en desktop y en teléfonos/tablets conectados vía LAN.
 
 ![Character sheet modal](screenshots/character-sheet-modal.png)
 
-Incluí el campo `sheet` al enviar las stats en `/dm:dnd load` para poblar la hoja completa:
+Incluye el campo `sheet` al enviar las stats en `/dm:dnd load` para poblar la hoja completa:
 
 ```bash
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --replace-players --json '{
@@ -618,7 +618,7 @@ python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --replace-players --json '{
 }'
 ```
 
-Si se omite `sheet`, el modal igual abre pero solo muestra las stats visibles en la barra lateral. Cerrá con **Esc**, haciendo clic afuera del panel, o el botón ✕.
+Si se omite `sheet`, el modal igual abre pero solo muestra las stats visibles en la barra lateral. Cierra con **Esc**, haciendo clic afuera del panel, o el botón ✕.
 
 Hacer clic en el nombre de un conjuro o rasgo dentro de la hoja abre un modal de descripción tomado del dataset SRD incluido. Las progresiones escalables (ej. el daño de Ataque Furtivo) se colapsan automáticamente al nivel actual del personaje. Si un conjuro o rasgo no está en el dataset SRD central, se muestra en su lugar un link a la página correspondiente en D&D 5e Wiki. Para extender el dataset local con contenido no-SRD desde un archivo de personaje:
 
@@ -626,7 +626,7 @@ Hacer clic en el nombre de un conjuro o rasgo dentro de la hoja abre un modal de
 python3 ${CLAUDE_SKILL_DIR}/scripts/build_supplemental.py --character ~/.claude/dnd/campaigns/<nombre>/characters/<nombrepersonaje>.md
 ```
 
-Esto trae descripciones de dnd5e.wikidot.com para cualquier entrada faltante y las escribe en `data/dnd5e_supplemental.json`. Corrélo una vez después de crear o importar un personaje. Un suplemento pre-construido cubriendo Circle of Spores, rasgos de arquetipo Thief, y varios conjuros de Xanathar's viene incluido con el skill.
+Esto trae descripciones de dnd5e.wikidot.com para cualquier entrada faltante y las escribe en `data/dnd5e_supplemental.json`. Córrelo una vez después de crear o importar un personaje. Un suplemento pre-construido cubriendo Circle of Spores, rasgos de arquetipo Thief, y varios conjuros de Xanathar's viene incluido con el skill.
 
 La barra lateral:
 - Muestra tarjetas compactas de doble columna para grupos de 2+ (grilla completa de habilidades para juego en solitario)
@@ -686,11 +686,11 @@ python3 scripts/combat.py tracker '<state_json>' <numero_ronda>
 python3 scripts/combat.py attack --atk 5 --ac 13 --dmg 1d8+3
 ```
 
-`init` genera una línea `STATE_JSON:` — guardá esto en `state.md` bajo `## Active Combat` para persistencia entre turnos.
+`init` genera una línea `STATE_JSON:` — guarda esto en `state.md` bajo `## Active Combat` para persistencia entre turnos.
 
 ### `build_supplemental.py` — Extiende el dataset SRD con contenido no-SRD
 
-Corré esto después de crear o importar un personaje para traer descripciones de conjuros y rasgos que no están en el SRD central:
+Corre esto después de crear o importar un personaje para traer descripciones de conjuros y rasgos que no están en el SRD central:
 
 ```bash
 # Escanea un archivo de personaje y trae lo que falte
@@ -840,7 +840,7 @@ Las campañas existentes siguen cargando sin cambios. La primera vez que se carg
 
 Los archivos de personaje heredan el ruleset de su campaña en tiempo de ejecución vía `paths.campaign_ruleset()`; no se requiere migración por personaje. El display companion auto-detecta el ruleset de la campaña y lo muestra como una pequeña insignia en el cluster del reloj del mundo.
 
-Si querés cambiar una campaña legacy a 2024, corré el migrador manualmente:
+Si quieres cambiar una campaña legacy a 2024, corre el migrador manualmente:
 
 ```bash
 python3 scripts/migrate_ruleset.py <nombre-campaña> --ruleset 2024 --yes
@@ -854,4 +854,4 @@ Nota: cambiar una campaña 2014 en curso a 2024 a mitad de arco no es recomendab
 
 [AGPL-3.0-or-later](LICENSE). Copyright (c) 2026 Neural Initiative LLC.
 
-El auto-hosting y la modificación son explícitamente bienvenidos — forkeá, corré, cambiá como quieras. La AGPL protege específicamente contra re-alojar esto como un SaaS de código cerrado sin compartir las modificaciones de vuelta. Para la mayoría de los usuarios esta distinción nunca importa.
+El auto-hosting y la modificación son explícitamente bienvenidos — forkea, corre, cambia como quieras. La AGPL protege específicamente contra re-alojar esto como un SaaS de código cerrado sin compartir las modificaciones de vuelta. Para la mayoría de los usuarios esta distinción nunca importa.
