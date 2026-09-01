@@ -6042,6 +6042,12 @@ function updateStats(stats) {
     if (factions.length) {
       const SCLS = { allied:'allied', friendly:'friendly', neutral:'neutral',
                      unfriendly:'unfriendly', suspicious:'suspicious', hostile:'hostile' };
+      // Display-only label mapping — f.standing itself stays untouched
+      // (allied/friendly/neutral/suspicious/hostile), since it's also the
+      // key SCLS looks up above and what push_stats.py/SKILL-commands.md
+      // document as the exact values the DM sends.
+      const STANDING_LABELS_ES = { allied:'Aliado', friendly:'Amistoso',
+                     neutral:'Neutral', suspicious:'Receloso', hostile:'Hostil' };
       factions.forEach(f => {
         const item = document.createElement('div');
         item.className = 'sb-faction-item';
@@ -6050,7 +6056,7 @@ function updateStats(stats) {
         nm.textContent = f.name || '—';
         const st = document.createElement('span');
         st.className = 'sb-faction-standing ' + (SCLS[(f.standing||'').toLowerCase()] || 'unknown');
-        st.textContent = f.standing || '—';
+        st.textContent = STANDING_LABELS_ES[(f.standing||'').toLowerCase()] || f.standing || '—';
         item.appendChild(nm);
         item.appendChild(st);
         factPanel.appendChild(item);
@@ -6068,6 +6074,10 @@ function updateStats(stats) {
     questPanel.querySelectorAll('.sb-quest-item').forEach(el => el.remove());
     if (quests.length) {
       const QCLS = { active:'active', threat:'threat', resolved:'resolved', failed:'failed' };
+      // Display-only label mapping — q.status itself stays untouched, same
+      // reasoning as STANDING_LABELS_ES above.
+      const QUEST_STATUS_LABELS_ES = { active:'Activa', threat:'Amenaza',
+                     resolved:'Resuelta', failed:'Fallida' };
       quests.forEach(q => {
         const item = document.createElement('div');
         item.className = 'sb-quest-item';
@@ -6076,7 +6086,7 @@ function updateStats(stats) {
         nm.textContent = q.name || '—';
         const st = document.createElement('span');
         st.className = 'sb-quest-status ' + (QCLS[(q.status||'').toLowerCase()] || 'unknown');
-        st.textContent = q.status || '—';
+        st.textContent = QUEST_STATUS_LABELS_ES[(q.status||'').toLowerCase()] || q.status || '—';
         item.appendChild(nm);
         item.appendChild(st);
         questPanel.appendChild(item);
