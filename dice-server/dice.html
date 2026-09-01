@@ -338,7 +338,7 @@
 
   <div id="prompt">
     <div class="ornament">⚜ the table is set ⚜</div>
-    <div class="verse">Tirá el dado</div>
+    <div class="verse">Tira el dado</div>
     <div class="rule"></div>
     <div class="sub">tap · or shake the phone</div>
   </div>
@@ -349,7 +349,7 @@
     <div class="ornament">⚜</div>
     <h1>la mesa del destino</h1>
     <div class="rule"></div>
-    <p class="sub" id="unlock-sub">tocá para consagrar</p>
+    <p class="sub" id="unlock-sub">toca para consagrar</p>
     <div id="player-name-display" style="margin-top:18px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:24px;opacity:0.85;letter-spacing:0.04em;"></div>
   </div>
 
@@ -1103,8 +1103,8 @@
 
       // pick a flavorful verb per die count for the prompt
       const verseOptions = parsed.count > 1
-        ? ["Tirá los dados", "Soltalos", "Lanzá tu suerte"]
-        : ["Tirá el dado", "Lanzalo", "Dejalo caer"];
+        ? ["Tira los dados", "Suéltalos", "Lanza tu suerte"]
+        : ["Tira el dado", "Lánzalo", "Déjalo caer"];
       promptVerse.textContent = verseOptions[Math.floor(Math.random() * verseOptions.length)];
       promptEl.classList.add("show");
       statusText.textContent = "esperando tu mano";

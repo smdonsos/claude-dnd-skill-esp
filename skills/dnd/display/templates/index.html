@@ -6047,7 +6047,7 @@ function updateStats(stats) {
       // key SCLS looks up above and what push_stats.py/SKILL-commands.md
       // document as the exact values the DM sends.
       const STANDING_LABELS_ES = { allied:'Aliado', friendly:'Amistoso',
-                     neutral:'Neutral', suspicious:'Receloso', hostile:'Hostil' };
+                     neutral:'Neutral', unfriendly:'Antipático', suspicious:'Receloso', hostile:'Hostil' };
       factions.forEach(f => {
         const item = document.createElement('div');
         item.className = 'sb-faction-item';
