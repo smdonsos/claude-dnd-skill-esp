@@ -51,7 +51,7 @@ PROSE_FIELDS = {
 }
 
 # Few-shot anchor: the human/Sonnet-verified level-0 spell translations,
-# used verbatim as in-context examples so Gemma's register (voseo/tuteo)
+# used verbatim as in-context examples so Gemma's register (tuteo)
 # and terminology style match what's already merged, instead of drifting.
 FEWSHOT_SPELL_INDEXES = ["fire-bolt", "poison-spray", "mage-hand"]
 
