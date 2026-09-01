@@ -101,7 +101,14 @@ def build_schema(fields: list[str]) -> dict:
 
 def _ollama_chat(messages: list[dict], tools: list[dict] | None = None,
                   fmt: dict | None = None, timeout: int = 180) -> dict:
-    payload = {"model": MODEL, "messages": messages, "stream": False}
+    # think=False: measured ~15x speedup (90-110s -> ~6s per entry) with no
+    # loss of real tool-calling behavior — confirmed via a live test where
+    # the model still searched the manual twice ("Web" then "telaraña")
+    # before answering, converging on a verified name. What's lost is the
+    # verbose reasoning trace, not the grounding itself — evidence_quotes
+    # (verified separately by validate_batch.py) is what we actually rely
+    # on for auditability, not the thinking text.
+    payload = {"model": MODEL, "messages": messages, "stream": False, "think": False}
     if tools:
         payload["tools"] = tools
     if fmt:
