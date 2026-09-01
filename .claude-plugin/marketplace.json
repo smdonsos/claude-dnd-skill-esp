@@ -5,17 +5,17 @@
     "url": "https://github.com/neuralinitiative"
   },
   "metadata": {
-    "description": "Neural Initiative's Claude Code plugins.",
+    "description": "Plugins de Claude Code de Neural Initiative.",
     "version": "1.0.0"
   },
   "plugins": [
     {
       "name": "dm",
       "source": "./",
-      "description": "Dungeon Master assistant for persistent D&D 5e campaigns — campaign/character management, combat, NPCs, dice, an optional live display companion, and full session state across sessions.",
+      "description": "Asistente de Dungeon Master para campañas persistentes de D&D 5e en español — gestión de campaña/personajes, combate, PNJ, dados, un display companion en vivo opcional, y estado de sesión completo entre sesiones.",
       "version": "2.4.0",
       "license": "AGPL-3.0-or-later",
-      "keywords": ["dnd", "dungeons-and-dragons", "ttrpg", "5e", "dungeon-master", "game"]
+      "keywords": ["dnd", "dungeons-and-dragons", "ttrpg", "5e", "dungeon-master", "game", "espanol"]
     }
   ]
 }

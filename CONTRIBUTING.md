@@ -1,28 +1,28 @@
-# Contributing to claude-dnd-skill
+# Cómo contribuir a claude-dnd-skill
 
-Thanks for your interest in contributing — pull requests are welcome. A few practical notes below.
+Gracias por tu interés en contribuir — los pull requests son bienvenidos. Algunas notas prácticas abajo.
 
-## License of contributions
+## Licencia de las contribuciones
 
-By submitting a pull request, you agree that your contribution is licensed under the [GNU Affero General Public License v3.0 or later](LICENSE), the same license as the rest of the project.
+Al enviar un pull request, aceptás que tu contribución queda licenciada bajo la [GNU Affero General Public License v3.0 or later](LICENSE), la misma licencia que el resto del proyecto.
 
-You retain copyright on your own contributions. AGPL-3.0-or-later applies forward from your contribution onward; the combined work remains licensed under AGPL-3.0-or-later.
+Conservás el copyright de tus propias contribuciones. AGPL-3.0-or-later aplica hacia adelante desde tu contribución en más; la obra combinada sigue licenciada bajo AGPL-3.0-or-later.
 
-## What's most useful to contribute
+## Qué es más útil contribuir
 
-- **Bug fixes** on the display companion, dice mechanics, session-flow scripts, or anything in `scripts/`
-- **i18n / language packs** for SFX triggers — see `display/audio.py` for the existing pattern. #32 added Chinese; more languages are very welcome
-- **Atmospheric extensions** like the optional dice server (#30) — anything that improves the in-person table experience without compromising the persistent-state model
-- **Performance and cleanup** in the Python helper modules
+- **Correcciones de bugs** en el display companion, la mecánica de dados, los scripts de flujo de sesión, o cualquier cosa en `scripts/`
+- **i18n / paquetes de idioma** para los triggers de SFX — ver `display/audio.py` para el patrón existente. Ya hay 24 paquetes de idioma (incluido español); más idiomas son muy bienvenidos
+- **Extensiones atmosféricas** como el servidor de dados opcional (#30) — cualquier cosa que mejore la experiencia de mesa presencial sin comprometer el modelo de estado persistente
+- **Rendimiento y limpieza** en los módulos helper de Python
 
-## Process
+## Proceso
 
-1. For substantive changes, open an issue first — gives a chance to align on scope before code is written
-2. Small bug fixes or doc improvements can go straight to a PR
-3. Write a clear PR description that explains the *why*, not just the *what*
-4. There's no CI; the maintainer reviews PRs manually
-5. The maintainer may apply minor hardening on top of merged PRs (e.g. tightening defaults, adding SRI on CDN-loaded assets) — these are documented as separate follow-up commits in the same release, never as edits to your work
+1. Para cambios sustantivos, abrí un issue primero — da la oportunidad de alinear el alcance antes de escribir código
+2. Correcciones de bugs chicas o mejoras de documentación pueden ir directo a un PR
+3. Escribí una descripción de PR clara que explique el *por qué*, no solo el *qué*
+4. No hay CI; el maintainer revisa los PRs manualmente
+5. El maintainer puede aplicar hardening menor sobre PRs ya mergeados (ej. ajustar defaults, agregar SRI a assets cargados desde CDN) — esto se documenta como commits de seguimiento separados en el mismo release, nunca como ediciones a tu trabajo
 
-## Questions
+## Preguntas
 
-Open an issue or comment on an existing PR. The maintainer reads everything.
+Abrí un issue o comentá en un PR existente. El maintainer lee todo.
