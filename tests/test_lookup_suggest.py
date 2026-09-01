@@ -33,16 +33,20 @@ class SuggestTests(unittest.TestCase):
         self.assertIn("envenenado", _names(hints))
 
     def test_spell_typo(self):
+        # "spells" is translated (Fase 3/CLA-8) — the English typo resolves
+        # under the Spanish display name via the untranslated `index`.
         hints = lookup.suggest("fireballl", category="spell")
-        self.assertIn("fireball", _names(hints))
+        self.assertIn("bola de fuego", _names(hints))
 
     def test_monster_typo(self):
         hints = lookup.suggest("gobblin", category="monster")
         self.assertIn("goblin", _names(hints))
 
     def test_feature_typo(self):
+        # "features" is translated (Fase 3/CLA-8) — same reasoning as
+        # test_spell_typo above.
         hints = lookup.suggest("cunnning action", category="feature")
-        self.assertIn("cunning action", _names(hints))
+        self.assertIn("acción astuta", _names(hints))
 
     def test_cross_category_typo(self):
         # No category given — should still find the near-miss across

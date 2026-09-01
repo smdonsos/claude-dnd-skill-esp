@@ -34,7 +34,10 @@ PROSE_FIELDS = ["name", "description", "higher_level", "material"]
 # Cheap post-fix for the one field-bleed artifact class observed in
 # practice (see validate_batch.py check_field_bleed) — strips a trailing
 # echoed "index: <slug>" line the model sometimes appends to a field.
-_TRAILING_INDEX_ECHO = re.compile(r"\n+index:\s*[\w-]+\s*$", re.IGNORECASE)
+# Broadened after finding "mage-armor" material end with
+# '\n\nindex: "mage-armor"' (quoted) — the original pattern only matched
+# a bare word/slug, not a quoted JSON-style value.
+_TRAILING_INDEX_ECHO = re.compile(r"\n+index:\s*\"?[\w-]+\"?\s*$", re.IGNORECASE)
 
 
 def _clean(value: str) -> str:
@@ -59,6 +62,10 @@ def main() -> int:
                      help="JSON {index: 'approve'|'reject'|{field: override}}. "
                           "Entries not in the review packet auto-approve.")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--merge-all", action="store_true",
+                     help="Merge every entry regardless of flagged/review status "
+                          "(used when unverified entries are tracked separately "
+                          "for later correction, e.g. pending_review.csv).")
     args = ap.parse_args()
 
     report_path = args.batch_file.with_suffix(".report.json")
@@ -79,7 +86,7 @@ def main() -> int:
     to_apply: dict[str, dict] = {}
     for idx, entry in entries.items():
         decision = decisions.get(idx)
-        if idx in flagged_or_sampled and decision is None:
+        if idx in flagged_or_sampled and decision is None and not args.merge_all:
             print(f"SKIP {idx}: flagged/needs review, no decision recorded", file=sys.stderr)
             continue
         if decision == "reject":

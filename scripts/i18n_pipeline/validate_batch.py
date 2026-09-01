@@ -55,10 +55,15 @@ ENGLISH_LEFTOVER_TOKENS = [
 
 
 def check_schema(entry: dict) -> list[str]:
+    """Only flag an empty translated field when the ENGLISH SOURCE had
+    something to translate there. Many equipment entries (mundane gear
+    like "Club") legitimately have no description in the dataset — an
+    empty translated description for those is correct, not a bug."""
     problems = []
     if not entry.get("name"):
         problems.append("schema:empty_name")
-    if not entry.get("description"):
+    src = entry.get("_source", {})
+    if src.get("description") and not entry.get("description"):
         problems.append("schema:empty_description")
     return problems
 
@@ -88,6 +93,15 @@ def check_bullet_structure(entry: dict) -> list[str]:
 
 
 def check_evidence(entry: dict) -> list[str]:
+    """Informational only (see CHECKS) — NOT a flag driver.
+
+    In practice the model often reconstructs a plausible-looking "quote"
+    (real name + real school glued together with invented connective text)
+    instead of literally copy-pasting, so this fires on a majority of
+    otherwise-correct entries (verified by hand: "Crear o destruir agua"/
+    "Purificar comida y bebida" are real, verified manual terms that got
+    flagged here purely because the cited "quote" wasn't verbatim). Kept
+    for diagnostics; check_name_grounded() below is the real signal."""
     quotes = entry.get("evidence_quotes") or []
     if not quotes:
         return ["evidence:none_provided"]
@@ -96,6 +110,21 @@ def check_evidence(entry: dict) -> list[str]:
         if not grounding.verify_quote(q):
             problems.append(f"evidence:not_found:{q[:60]!r}")
     return problems
+
+
+def check_name_grounded(entry: dict) -> list[str]:
+    """The real anti-hallucination check: search the manual for the
+    translated `name` ITSELF (not the model's self-authored evidence
+    quote). Catches real errors (e.g. "thunderwave" -> "Onda de trueno",
+    zero hits — the verified official term is "Ola atronadora") without
+    the high false-positive rate of check_evidence's verbatim-quote
+    matching against a column-mangled PDF-text dump."""
+    name = (entry.get("name") or "").strip()
+    if not name:
+        return []
+    if grounding.name_appears_in_manual(name):
+        return []
+    return ["name_ungrounded:not_found_in_manual"]
 
 
 def check_low_confidence(entry: dict) -> list[str]:
@@ -111,7 +140,13 @@ def check_leftover_english(entry: dict) -> list[str]:
 
 
 FIELD_BLEED_PATTERNS = ["index:", "_source", "\"name\":", "\"description\":",
-                         "json fuente", "evidence_quotes"]
+                         "json fuente", "evidence_quotes",
+                         # Found in "detect-poison-and-disease" material: the
+                         # model's raw self-correction/reasoning bled into the
+                         # actual field content instead of stopping at the
+                         # final JSON answer.
+                         "search_manual said", "resulting json", "final check",
+                         "let's go", "wait, "]
 
 
 def check_field_bleed(entry: dict) -> list[str]:
@@ -128,16 +163,24 @@ def check_field_bleed(entry: dict) -> list[str]:
     return problems
 
 
+# Checks that determine whether an entry needs a human/Sonnet look.
 CHECKS = [check_schema, check_dice_notation, check_bullet_structure,
-          check_evidence, check_low_confidence, check_leftover_english,
+          check_name_grounded, check_low_confidence, check_leftover_english,
           check_field_bleed]
 
+# Informational only — reported per-entry but never flags on its own
+# (see check_evidence's docstring for why: high false-positive rate).
+INFO_CHECKS = [check_evidence]
 
-def validate_entry(entry: dict) -> list[str]:
+
+def validate_entry(entry: dict) -> tuple[list[str], list[str]]:
     problems: list[str] = []
     for check in CHECKS:
         problems.extend(check(entry))
-    return problems
+    info: list[str] = []
+    for check in INFO_CHECKS:
+        info.extend(check(entry))
+    return problems, info
 
 
 def main() -> int:
@@ -156,8 +199,9 @@ def main() -> int:
 
     results = []
     for e in entries:
-        problems = validate_entry(e)
-        results.append({"index": e["_index"], "flagged": bool(problems), "problems": problems})
+        problems, info = validate_entry(e)
+        results.append({"index": e["_index"], "flagged": bool(problems),
+                         "problems": problems, "info": info})
 
     flagged = [r["index"] for r in results if r["flagged"]]
     rng = random.Random(args.seed)

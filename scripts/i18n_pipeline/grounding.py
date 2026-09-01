@@ -42,6 +42,27 @@ def _manual_lines() -> list[str]:
     return _manual_text().splitlines()
 
 
+@functools.lru_cache(maxsize=1)
+def _manual_flat() -> str:
+    """Whitespace-collapsed manual text (all runs of whitespace -> single
+    space). The two-column PDF layout hard-wraps mid-phrase, so a name that
+    spans a line break (e.g. "Sentido del\npeligro") never substring-matches
+    against _manual_lines()'s per-line search even when it's genuinely
+    present. Used by name_appears_in_manual() for a more lenient recheck."""
+    return re.sub(r"\s+", " ", _manual_text())
+
+
+def name_appears_in_manual(name: str) -> bool:
+    """Lenient existence check for validate_batch.py's check_name_grounded:
+    True if `name` appears verbatim (case-insensitive, whitespace-collapsed)
+    anywhere in the manual — catches names split across a PDF line-wrap
+    that the per-line search_manual() would miss."""
+    name = re.sub(r"\s+", " ", name.strip())
+    if not name:
+        return False
+    return name.lower() in _manual_flat().lower()
+
+
 def search_manual(query: str, context_lines: int = 1, max_hits: int = 6) -> list[str]:
     """Literal, case-sensitive-off substring search over the manual dump.
 
