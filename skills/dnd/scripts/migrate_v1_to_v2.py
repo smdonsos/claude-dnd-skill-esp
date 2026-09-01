@@ -148,7 +148,7 @@ def _retire_standalone(yes: bool, dry_run: bool) -> int:
     """Back up and remove the legacy standalone skill dir. Returns 0/1/2."""
     if LEGACY_SKILL.is_symlink():
         _say("• El skill legado es un SYMLINK (probablemente un dev clone o setup de GNU Stow).")
-        _say(f"  Se deja intacto. Eliminá el enlace tú mismo cuando quieras:")
+        _say(f"  Se deja intacto. Elimina el enlace tú mismo cuando quieras:")
         _say(f"      rm '{LEGACY_SKILL}'")
         return 0
 
@@ -168,7 +168,7 @@ def _retire_standalone(yes: bool, dry_run: bool) -> int:
         except EOFError:
             ans = ""
         if ans not in ("y", "yes"):
-            _say("  Omitido. (Volvé a correr con --yes para confirmar automáticamente, o eliminalo manualmente después.)")
+            _say("  Omitido. (Vuelve a correr con --yes para confirmar automáticamente, o elimínalo manualmente después.)")
             return 1
     try:
         shutil.move(str(LEGACY_SKILL), str(backup))
@@ -194,7 +194,7 @@ def main() -> int:
     if not LEGACY_SKILL.exists():
         _say(f"No se encontró instalación standalone en {LEGACY_SKILL}.")
         _say("Nada que migrar — ya estás en el plugin, o estás empezando de cero.")
-        _say("Instalá el plugin con:")
+        _say("Instala el plugin con:")
         _say("    /plugin marketplace add neuralinitiative/claude-dnd-skill")
         _say("    /plugin install dm@neural-initiative")
         return 0

@@ -139,10 +139,10 @@ def main() -> int:
         if remote_ver is None:
             print("No se pudo contactar al marketplace para chequear una versión más nueva "
                   "(sin conexión, o el repo todavía no está publicado ahí).")
-            print("Actualizá en cualquier momento con:  /plugin update dm")
+            print("Actualiza en cualquier momento con:  /plugin update dm")
         elif _is_newer(remote_ver, local_ver):
             print(f"⬆  Actualización disponible: {local_ver} → {remote_ver}")
-            print("   Actualizá con:  /plugin update dm")
+            print("   Actualiza con:  /plugin update dm")
             print("   Después /reload-plugins (o reinicia Claude Code) para cargarla.")
         else:
             print(f"✓  Actualizado (la última versión publicada es {remote_ver}).")
@@ -156,7 +156,7 @@ def main() -> int:
         print(
             "Si lo instalaste manualmente, reinstala con:\n"
             "    git clone https://github.com/neuralinitiative/claude-dnd-skill\n"
-            "o instalalo como plugin (ver README).",
+            "o instálalo como plugin (ver README).",
             file=sys.stderr,
         )
         return 2
@@ -213,7 +213,7 @@ def main() -> int:
         )
         return pull.returncode
 
-    print(f"\nActualizado a {remote[:7]}. Reiniciá Claude Code para cargar los archivos nuevos del skill.")
+    print(f"\nActualizado a {remote[:7]}. Reinicia Claude Code para cargar los archivos nuevos del skill.")
     return 0
 
 

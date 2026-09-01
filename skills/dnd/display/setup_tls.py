@@ -171,7 +171,7 @@ def main() -> None:
     print()
     _print_urls(lan_ip)
     print()
-    print("Reiniciá el display para aplicar los cambios:")
+    print("Reinicia el display para aplicar los cambios:")
     print(f"  pkill -f dnd-display-app.py ; bash {DISPLAY_DIR}/start-display.sh")
 
 
