@@ -112,9 +112,9 @@ def format_attack(r: dict) -> str:
     lines = []
     flag = ""
     if r["crit"]:
-        flag = " *** CRITICAL HIT! ***"
+        flag = " *** GOLPE CRÍTICO! ***"
     elif r["fumble"]:
-        flag = " *** FUMBLE — automatic miss ***"
+        flag = " *** PIFIA — fallo automático ***"
 
     atk_str = f"d20({r['d20']}) + {r['attack_bonus']} = {r['total']} vs AC {r['target_ac']}"
     outcome = "HIT" if r["hit"] else "MISS"
