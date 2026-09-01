@@ -3573,7 +3573,7 @@
 <img id="corner-logo" src="/icons/logo_primary_fullcolor.png" alt="D20 Neural Core">
 
 <!-- Sidebar toggle button -->
-<button id="sidebar-toggle" title="Toggle character sidebar">◀ Hide</button>
+<button id="sidebar-toggle" title="Mostrar u ocultar la barra de personajes">◀ Ocultar</button>
 
 <!-- CRIT / FUMBLE full-screen flash -->
 <div id="flash-overlay"></div>
@@ -3589,69 +3589,69 @@
 
 <!-- Audio toggle controls — SFX triggered by narration text -->
 <div id="audio-controls">
-  <div class="audio-row" id="controls-toggle-row" title="Hide the settings column">
-    <span class="audio-label" id="controls-toggle">Hide ▶</span>
+  <div class="audio-row" id="controls-toggle-row" title="Ocultar la columna de configuración">
+    <span class="audio-label" id="controls-toggle">Ocultar ▶</span>
   </div>
-  <div class="audio-row" id="sfx-row" title="Sound effects (triggered by narration)">
-    <span class="audio-label">Sound Effects</span>
+  <div class="audio-row" id="sfx-row" title="Efectos de sonido (disparados por la narración)">
+    <span class="audio-label">Efectos de sonido</span>
     <div class="toggle-track" id="sfx-track"><div class="toggle-thumb"></div></div>
   </div>
-  <div class="audio-row" id="verbosity-row" title="Narration length the DM targets each turn — shorter = faster turns">
-    <span class="audio-label">Narration</span>
+  <div class="audio-row" id="verbosity-row" title="Extensión de narración que el DM apunta cada turno — menos = turnos más rápidos">
+    <span class="audio-label">Narración</span>
     <span class="vb-wrap">
-      <input id="vb-slider" type="range" min="250" max="2500" step="250" value="500" aria-label="Narration length target in words">
-      <span id="vb-val" class="theme-label">500w</span>
+      <input id="vb-slider" type="range" min="250" max="2500" step="250" value="500" aria-label="Extensión de narración objetivo en palabras">
+      <span id="vb-val" class="theme-label">500p</span>
     </span>
   </div>
-  <div class="audio-row" id="speed-row" title="Typing speed — click to cycle">
-    <span class="audio-label">Type Speed</span>
+  <div class="audio-row" id="speed-row" title="Velocidad de tipeo — clic para cambiar">
+    <span class="audio-label">Velocidad</span>
     <span id="speed-label" class="speed-label">Normal</span>
   </div>
-  <div class="audio-row" id="narrate-row" title="Auto-narrate new blocks in this browser only" hidden>
-    <span class="audio-label">Auto Narrate</span>
-    <span id="narrate-label" class="narrate-label">Off</span>
+  <div class="audio-row" id="narrate-row" title="Narrar automáticamente los bloques nuevos solo en este navegador" hidden>
+    <span class="audio-label">Narración automática</span>
+    <span id="narrate-label" class="narrate-label">Desactivada</span>
   </div>
-  <div class="audio-row" id="theme-row" title="Display theme — Dark / Light / Auto (system)">
-    <span class="audio-label">Theme</span>
-    <span id="theme-label" class="theme-label">Dark</span>
+  <div class="audio-row" id="theme-row" title="Tema de pantalla — Oscuro / Claro / Auto (sistema)">
+    <span class="audio-label">Tema</span>
+    <span id="theme-label" class="theme-label">Oscuro</span>
   </div>
-  <div class="audio-row" id="skin-row" title="Display style">
-    <span class="audio-label">Style</span>
-    <select id="skin-select" class="theme-label theme-select" aria-label="Display style">
+  <div class="audio-row" id="skin-row" title="Estilo de pantalla">
+    <span class="audio-label">Estilo</span>
+    <select id="skin-select" class="theme-label theme-select" aria-label="Estilo de pantalla">
       <option value="vellum">Vellum</option>
       <option value="editorial">Editorial</option>
     </select>
   </div>
-  <div class="audio-row" id="onscreen-dice-row" title="Open the dice roller on this screen when the DM calls for a roll (for games without phones)">
-    <span class="audio-label">Roll on screen</span>
+  <div class="audio-row" id="onscreen-dice-row" title="Abrir el tirador de dados en esta pantalla cuando el DM pida una tirada (para partidas sin teléfonos)">
+    <span class="audio-label">Tirar en pantalla</span>
     <div class="toggle-track" id="osd-track"><div class="toggle-thumb"></div></div>
   </div>
-  <div class="audio-row" id="textsize-row" title="Reading text size — font size, not page zoom">
-    <span class="audio-label">Text Size</span>
+  <div class="audio-row" id="textsize-row" title="Tamaño del texto de lectura — tamaño de fuente, no zoom de página">
+    <span class="audio-label">Tamaño de texto</span>
     <span class="ts-stepper">
-      <button id="ts-dec" class="ts-btn" type="button" aria-label="Smaller text">A−</button>
+      <button id="ts-dec" class="ts-btn" type="button" aria-label="Texto más chico">A−</button>
       <span id="ts-val" class="theme-label">100%</span>
-      <button id="ts-inc" class="ts-btn" type="button" aria-label="Bigger text">A+</button>
+      <button id="ts-inc" class="ts-btn" type="button" aria-label="Texto más grande">A+</button>
     </span>
   </div>
 </div>
 
 <!-- DM Help — on-demand hint button -->
-<button id="dm-help-btn" title="Request a DM hint for the current scene">◈ DM Help</button>
+<button id="dm-help-btn" title="Pedir una pista del DM para la escena actual">◈ Ayuda del DM</button>
 
 <!-- Editorial right-edge rail + drawer scrim (shown only under data-skin="editorial" on the TV view).
      #dm-help-btn and #phone-mode-btn are adopted into the rail at load; they are position:fixed,
      so Vellum (rail = display:contents) keeps their original placement untouched. -->
 <div id="ed-scrim"></div>
-<div id="ed-rail" aria-label="Display controls">
-  <button class="ed-launch" id="ed-launch-input" type="button" data-drawer="input-panel" title="Party input">
-    <span class="ed-ic">✎</span><span>Party</span>
+<div id="ed-rail" aria-label="Controles de pantalla">
+  <button class="ed-launch" id="ed-launch-input" type="button" data-drawer="input-panel" title="Entrada del grupo">
+    <span class="ed-ic">✎</span><span>Grupo</span>
   </button>
-  <button class="ed-launch" id="ed-launch-dice" type="button" data-drawer="dice-drawer" title="Dice roller">
-    <span class="ed-ic">⚄</span><span>Dice</span>
+  <button class="ed-launch" id="ed-launch-dice" type="button" data-drawer="dice-drawer" title="Tirador de dados">
+    <span class="ed-ic">⚄</span><span>Dados</span>
   </button>
-  <button class="ed-launch" id="ed-launch-settings" type="button" data-drawer="audio-controls" title="Display settings">
-    <span class="ed-ic">⚙</span><span>Settings</span>
+  <button class="ed-launch" id="ed-launch-settings" type="button" data-drawer="audio-controls" title="Configuración de pantalla">
+    <span class="ed-ic">⚙</span><span>Config</span>
   </button>
 </div>
 
@@ -3664,11 +3664,11 @@
      view is opened without a ?char= binding, e.g. via the Phone Mode button). -->
 <div id="char-select" hidden>
   <div id="cs-card">
-    <div id="cs-kicker">Phone Controller</div>
-    <div id="cs-title">Who are you playing?</div>
-    <div id="cs-list"><div class="cs-empty">Loading party…</div></div>
+    <div id="cs-kicker">Controlador de teléfono</div>
+    <div id="cs-title">¿A quién estás jugando?</div>
+    <div id="cs-list"><div class="cs-empty">Cargando grupo…</div></div>
     <div id="cs-foot">
-      <button id="cs-back" type="button">← Back to display</button>
+      <button id="cs-back" type="button">← Volver a la pantalla</button>
     </div>
   </div>
 </div>
@@ -3678,11 +3678,11 @@
 
 <!-- Phone-only display-settings popover — lets each phone pick its own Theme / Style -->
 <div id="phone-settings">
-  <button id="ph-set-toggle" type="button" title="Display settings" aria-label="Display settings">⚙</button>
+  <button id="ph-set-toggle" type="button" title="Configuración de pantalla" aria-label="Configuración de pantalla">⚙</button>
   <div id="ph-set-menu" role="menu">
-    <button class="ph-set-opt" id="ph-theme-opt" type="button"><span>Theme</span><strong id="ph-theme-val">Dark</strong></button>
-    <label class="ph-set-opt ph-set-row" id="ph-skin-opt"><span>Style</span><select id="ph-skin-select" class="ph-set-select" aria-label="Display style"><option value="vellum">Vellum</option><option value="editorial">Editorial</option></select></label>
-    <button class="ph-set-opt" id="ph-roll-opt" type="button" hidden><span>Rolls</span><strong id="ph-roll-val">Players</strong></button>
+    <button class="ph-set-opt" id="ph-theme-opt" type="button"><span>Tema</span><strong id="ph-theme-val">Oscuro</strong></button>
+    <label class="ph-set-opt ph-set-row" id="ph-skin-opt"><span>Estilo</span><select id="ph-skin-select" class="ph-set-select" aria-label="Estilo de pantalla"><option value="vellum">Vellum</option><option value="editorial">Editorial</option></select></label>
+    <button class="ph-set-opt" id="ph-roll-opt" type="button" hidden><span>Tiradas</span><strong id="ph-roll-val">Jugadores</strong></button>
   </div>
 </div>
 
@@ -3695,7 +3695,7 @@
 <!-- Player input panel — submit actions from the display companion -->
 <div id="input-panel" class="collapsed">
   <div id="input-panel-header">
-    <span id="input-panel-label">Party Input</span>
+    <span id="input-panel-label">Entrada del grupo</span>
     <span id="input-badge"></span>
     <div id="autorun-indicator">
       <svg class="autorun-pie" viewBox="0 0 24 24" width="13" height="13">
@@ -3703,7 +3703,7 @@
         <circle class="autorun-fill" cx="12" cy="12" r="9"
                 stroke-dasharray="56.55" stroke-dashoffset="0"/>
       </svg>
-      <span class="autorun-label">Next Turn</span>
+      <span class="autorun-label">Próximo turno</span>
     </div>
     <span id="input-toggle-arrow">▲</span>
   </div>
@@ -3713,27 +3713,27 @@
          exist for the TV view too — tab data-attributes only take effect in
          input-only mode. -->
     <div id="dp-tabs">
-      <button class="dp-tab active" data-tab="move" type="button">Move</button>
-      <button class="dp-tab"        data-tab="roll" type="button">Roll</button>
-      <button class="dp-tab"        data-tab="character" type="button">Sheet</button>
+      <button class="dp-tab active" data-tab="move" type="button">Mover</button>
+      <button class="dp-tab"        data-tab="roll" type="button">Tirar</button>
+      <button class="dp-tab"        data-tab="character" type="button">Hoja</button>
     </div>
     <div id="phone-status" data-tab-section="move"></div>
     <div id="staged-queue" data-tab-section="move"></div>
     <div id="waiting-indicator" data-tab-section="move"></div>
     <div id="char-tabs" data-tab-section="move">
-      <button class="char-tab active" data-char="Everybody">Everybody</button>
+      <button class="char-tab active" data-char="Everybody">Todos</button>
     </div>
-    <textarea id="player-input-text" rows="2" placeholder="Enter action or dialogue…" maxlength="500"
+    <textarea id="player-input-text" rows="2" placeholder="Escribí una acción o diálogo…" maxlength="500"
               data-tab-section="move"></textarea>
     <div id="input-footer" data-tab-section="move">
-      <button id="skip-turn-btn" style="display:none" title="Skip this character's turn">Skip Turn</button>
-      <button id="stage-btn">Stage</button>
+      <button id="skip-turn-btn" style="display:none" title="Saltar el turno de este personaje">Saltar turno</button>
+      <button id="stage-btn">Preparar</button>
     </div>
     <!-- Phone-only dice pad (shown by ?view=input) -->
     <div id="dice-pad" data-tab-section="roll">
       <div id="dp-bound" style="display:none"></div>
       <div class="dp-row">
-        <input id="dp-name" type="text" maxlength="24" placeholder="Name"
+        <input id="dp-name" type="text" maxlength="24" placeholder="Nombre"
                autocomplete="off" autocorrect="off" autocapitalize="words" spellcheck="false">
       </div>
       <div id="dp-reel-wrap"><div id="dp-reel">d20</div></div>
@@ -3749,28 +3749,28 @@
         <button class="dp-die" data-spec="2d6">2d6</button>
       </div>
       <div class="dp-row">
-        <button class="dp-adv active" data-adv="normal"  title="Roll one d20">Straight</button>
-        <button class="dp-adv"        data-adv="advantage"    title="Roll two d20s, keep higher">Adv ▲</button>
-        <button class="dp-adv"        data-adv="disadvantage" title="Roll two d20s, keep lower">Dis ▼</button>
+        <button class="dp-adv active" data-adv="normal"  title="Tirar un d20">Directo</button>
+        <button class="dp-adv"        data-adv="advantage"    title="Tirar dos d20, quedarte con el mayor">Vent ▲</button>
+        <button class="dp-adv"        data-adv="disadvantage" title="Tirar dos d20, quedarte con el menor">Desv ▼</button>
       </div>
-      <div id="dp-hint">Advantage / disadvantage applies only to d20 rolls.</div>
+      <div id="dp-hint">La ventaja/desventaja solo aplica a tiradas de d20.</div>
       <div class="dp-row">
-        <button class="dp-mod" data-delta="-1" aria-label="decrease modifier">−</button>
+        <button class="dp-mod" data-delta="-1" aria-label="disminuir modificador">−</button>
         <span style="opacity:.7">Mod</span>
         <span id="dp-mod-val">+0</span>
-        <button class="dp-mod" data-delta="1" aria-label="increase modifier">+</button>
+        <button class="dp-mod" data-delta="1" aria-label="aumentar modificador">+</button>
       </div>
       <div class="dp-row">
-        <input id="dp-label" type="text" maxlength="60" placeholder="Label (e.g. Stealth) — optional"
+        <input id="dp-label" type="text" maxlength="60" placeholder="Etiqueta (ej. Sigilo) — opcional"
                autocomplete="off" autocorrect="off" autocapitalize="sentences" spellcheck="false">
       </div>
       <div class="dp-row">
-        <button id="dp-roll">Roll</button>
+        <button id="dp-roll">Tirar</button>
       </div>
     </div>
     <!-- Phone-only character sheet pane (Sheet tab) -->
     <div id="character-pane" data-tab-section="character">
-      <div id="cp-status">Loading…</div>
+      <div id="cp-status">Cargando…</div>
       <div id="cp-body"></div>
     </div>
   </div>
@@ -3779,14 +3779,14 @@
 <!-- Character sheet modal (click any player card in the sidebar to open) -->
 <div id="sheet-modal">
   <div id="sheet-panel">
-    <button id="sheet-close" title="Close (Esc)">✕</button>
+    <button id="sheet-close" title="Cerrar (Esc)">✕</button>
     <div id="sheet-content"></div>
   </div>
 </div>
 
 <div id="srd-modal">
   <div id="srd-panel">
-    <button id="srd-close" title="Close">✕</button>
+    <button id="srd-close" title="Cerrar">✕</button>
     <div id="srd-category-badge"></div>
     <div id="srd-body"></div>
   </div>
@@ -3797,16 +3797,16 @@
   <!-- Player cards are injected here by updateStats() -->
   <!-- Turn order section (shown only during combat) -->
   <div id="sb-turn-section" style="display:none">
-    <div class="sb-turn-header">Round <span id="sb-round">1</span></div>
+    <div class="sb-turn-header">Ronda <span id="sb-round">1</span></div>
     <div id="sb-turn-list"></div>
   </div>
   <!-- Faction standings — injected by updateStats() when factions data is present -->
   <div id="sb-factions" style="display:none">
-    <div class="sb-factions-header">Factions</div>
+    <div class="sb-factions-header">Facciones</div>
   </div>
   <!-- Quest tracker — injected by updateStats() when quests data is present -->
   <div id="sb-quests" style="display:none">
-    <div class="sb-quests-header">Quests</div>
+    <div class="sb-quests-header">Misiones</div>
   </div>
 </div>
 
@@ -3814,7 +3814,7 @@
 <div id="text-scroll">
   <div id="text-content"></div>
 </div>
-<button id="new-content-pill" type="button" aria-label="Jump to newest narration">New ↓</button>
+<button id="new-content-pill" type="button" aria-label="Saltar a lo más nuevo">Nuevo ↓</button>
 
 <script>
 'use strict';
@@ -3834,14 +3834,240 @@
 // itself, so a string missing from either dict never renders blank.
 const STRINGS = {
   es: {
-    // Populated in Fase 4 — see docs/i18n/glosario.md for the D&D
-    // terminology to use (spell/condition/class names, mechanic terms).
+    'dmhelp.label': '◈ Ayuda del DM',
+    'dmhelp.thinking': '◈ Pensando…',
+    'dmhelp.running': '◈ Corriendo…',
+    'toast.dmhelp.ready': 'Pista del DM lista ↓',
+    'toast.dmhelp.requested': 'Ayuda del DM solicitada — pensando…',
+    'toast.dmhelp.already_running': 'Ya hay una pista en camino…',
+    'toast.dmhelp.unavailable': 'La ayuda del DM no está disponible ahora',
+    'toast.dmhelp.network_error': 'No se pudo contactar al servidor para la ayuda del DM',
+    'toast.move.acked': '✓ El DM tiene tu jugada',
+    'label.voices': 'Voces',
+    'aria.listen_narration': 'Escuchar la narración',
+    'aria.select_voice': 'Elegir voz del narrador',
+    'theme.dark': 'Oscuro',
+    'theme.light': 'Claro',
+    'theme.auto': 'Auto',
+    'title.theme_auto': 'Tema de pantalla — Auto (sistema: {theme})',
+    'title.theme_cycle': 'Tema de pantalla — {theme}. Clic para cambiar.',
+    'label.on': 'Activada',
+    'label.off': 'Desactivada',
+    'sheet.section.ability_scores': 'Puntuaciones de característica',
+    'sheet.no_sheet_short': 'Hoja completa no cargada — ejecutá /dnd load para restaurarla.',
+    'sheet.no_sheet_long': 'Hoja completa no cargada — incluí "sheet" en el objeto del jugador al enviar stats con /dnd load',
+    'sheet.section.attacks': 'Ataques',
+    'sheet.table.name': 'Nombre',
+    'sheet.table.bonus': 'Bono',
+    'sheet.table.damage': 'Daño',
+    'sheet.table.type': 'Tipo',
+    'sheet.table.notes': 'Notas',
+    'sheet.section.spellcasting': 'Lanzamiento de conjuros',
+    'sheet.spells.slots': 'Espacios: {slots}',
+    'sheet.spells.save_dc': 'CD de salvación {dc}',
+    'sheet.spells.attack_bonus': 'Atq {bonus}',
+    'sheet.spells.cantrips': 'Trucos',
+    'sheet.spells.prepared': 'Preparados',
+    'sheet.section.features': 'Rasgos y pasivas',
+    'sheet.section.inventory': 'Inventario',
+    'sheet.section.relationships': 'Relaciones',
+    'sheet.stat.hp': 'PG',
+    'sheet.stat.temp_hp': 'PG temp',
+    'sheet.stat.ac': 'CA',
+    'sheet.stat.init': 'Ini',
+    'sheet.stat.speed': 'Vel',
+    'sheet.stat.hit_dice': 'Dado golpe',
+    'sheet.xp': 'PX  {current} / {next}',
+    'label.inspiration': 'Inspiración',
+    'label.inspiration_badge': '✦ Inspiración',
+    'effect.rounds_suffix': ' rondas',
+    'effect.concentration_ends': 'termina la concentración',
+    'effect.expired': 'expiró',
+    'srd.looking_up': 'Buscando…',
+    'srd.not_found': '"{name}" no está en el set de datos local.',
+    'srd.wiki_link': 'Ver en D&D 5e Wiki ↗',
+    'srd.maybe_supplement': "Puede ser de un suplemento (Xanathar, Tasha, etc.)",
+    'srd.did_you_mean': '¿Quisiste decir',
+    'srd.unavailable': 'Búsqueda no disponible — ¿está corriendo el display?',
+    'label.ready': 'Listo',
+    'label.ready_check': '✓ Listo',
+    'label.skip': 'Saltar',
+    'title.skip_turn': "Saltar el turno de este personaje",
+    'title.remove': 'Quitar',
+    'input.badge_ready': '{n} listos',
+    'input.badge_staged': '{n} en cola',
+    'queue.ready_of_threshold': '{ready}/{threshold} listos',
+    'queue.queued': 'En cola — se dispara cuando el DM presiona Enter',
+    'queue.queued_icon': '⏳ En cola — se dispara cuando el DM presiona Enter',
+    'autorun.next_turn': 'Próximo turno',
+    'autorun.next_turn_countdown': 'Próximo turno — {s}s',
+    'autorun.next_turn_checking': 'Próximo turno — verificando…',
+    'label.stage': 'Preparar',
+    'label.awaiting_approval': 'Esperando aprobación…',
+    'label.retrying': 'Reintentando ({n})…',
+    'label.send_failed_status': 'Error al enviar ({status}) — tocá para reintentar',
+    'label.send_failed': 'Error al enviar — tocá para reintentar',
+    'device.new_request': 'Nuevo dispositivo solicita acceso de entrada',
+    'label.approve': 'Aprobar',
+    'label.deny': 'Rechazar',
+    'label.access_denied': 'Acceso denegado',
+    'sidebar.hide': '◀ Ocultar',
+    'sidebar.show': '▶ Stats',
+    'settings.hide': 'Ocultar ▶',
+    'settings.show': '◀ Config',
+    'button.full_display': '👁 Pantalla completa',
+    'title.full_display': 'Cambiar a la pantalla completa del DM (leer la narración desde este dispositivo)',
+    'button.phone_mode': '📱 Modo teléfono',
+    'title.phone_mode': 'Usar este dispositivo como controlador de entrada por teléfono',
+    'phone.no_character_bound': 'Ningún personaje vinculado — abrí con ?char=<Nombre>',
+    'phone.loading_char': 'Cargando a {ch}…',
+    'phone.load_error': 'No se pudo cargar la hoja ({status})',
+    'phone.network_error': 'Error de red — {msg}',
+    'label.loading_party': 'Cargando grupo…',
+    'dice.roll_failed': 'la tirada falló',
+    'dice.rolled_waiting': '✓ Tirado — esperando al DM',
+    'dice.request_cancelled': '— pedido cancelado por el DM —',
+    'dice.requested_d20': 'Tirar d20',
+    'dice.requested_spec': 'Tirar {spec}',
+    'label.everybody': 'Todos',
+    'label.warning': 'Advertencia',
+    'label.dm_hint': 'Pista del DM',
+    'label.milestone': 'Hito',
+    'speed.normal': 'Normal',
+    'speed.fast': 'Rápida',
+    'speed.instant': 'Instantánea',
+    'label.male': 'Masculina',
+    'label.female': 'Femenina',
+    'label.players': 'Jugadores',
+    'label.player': 'Jugador',
+    'label.auto_roll': 'Tirada automática',
+    'tts.loading': 'Cargando…',
+    'tts.empty': 'Sin voces',
+    'tts.stop': 'Detener narración',
+    'tts.listen': 'Escuchar narración',
   },
   en: {
-    // Reference/fallback copy. Not required to be exhaustive: literals
-    // not yet migrated to t() keep rendering directly regardless.
+    'dmhelp.label': '◈ DM Help',
+    'dmhelp.thinking': '◈ Thinking…',
+    'dmhelp.running': '◈ Running…',
+    'toast.dmhelp.ready': 'DM hint ready ↓',
+    'toast.dmhelp.requested': 'DM Help requested — thinking…',
+    'toast.dmhelp.already_running': 'A hint is already on the way…',
+    'toast.dmhelp.unavailable': 'DM Help isn’t available right now',
+    'toast.dmhelp.network_error': 'Couldn’t reach the server for DM Help',
+    'toast.move.acked': '✓ The DM has your move',
+    'label.voices': 'Voices',
+    'aria.listen_narration': 'Listen to narration',
+    'aria.select_voice': 'Select narrator voice',
+    'theme.dark': 'Dark',
+    'theme.light': 'Light',
+    'theme.auto': 'Auto',
+    'title.theme_auto': 'Display theme — Auto (system: {theme})',
+    'title.theme_cycle': 'Display theme — {theme}. Click to cycle.',
+    'label.on': 'On',
+    'label.off': 'Off',
+    'sheet.section.ability_scores': 'Ability Scores',
+    'sheet.no_sheet_short': 'Full sheet not loaded — run /dnd load to restore.',
+    'sheet.no_sheet_long': 'Full sheet not loaded — include "sheet" in the player object when pushing stats on /dnd load',
+    'sheet.section.attacks': 'Attacks',
+    'sheet.table.name': 'Name',
+    'sheet.table.bonus': 'Bonus',
+    'sheet.table.damage': 'Damage',
+    'sheet.table.type': 'Type',
+    'sheet.table.notes': 'Notes',
+    'sheet.section.spellcasting': 'Spellcasting',
+    'sheet.spells.slots': 'Slots: {slots}',
+    'sheet.spells.save_dc': 'Save DC {dc}',
+    'sheet.spells.attack_bonus': 'Atk {bonus}',
+    'sheet.spells.cantrips': 'Cantrips',
+    'sheet.spells.prepared': 'Prepared',
+    'sheet.section.features': 'Features & Passives',
+    'sheet.section.inventory': 'Inventory',
+    'sheet.section.relationships': 'Relationships',
+    'sheet.stat.hp': 'HP',
+    'sheet.stat.temp_hp': 'Temp HP',
+    'sheet.stat.ac': 'AC',
+    'sheet.stat.init': 'Init',
+    'sheet.stat.speed': 'Speed',
+    'sheet.stat.hit_dice': 'Hit Dice',
+    'sheet.xp': 'XP  {current} / {next}',
+    'label.inspiration': 'Inspiration',
+    'label.inspiration_badge': '✦ Inspiration',
+    'effect.rounds_suffix': ' rnd',
+    'effect.concentration_ends': 'concentration ends',
+    'effect.expired': 'expired',
+    'srd.looking_up': 'Looking up…',
+    'srd.not_found': '"{name}" is not in the local dataset.',
+    'srd.wiki_link': 'View on D&D 5e Wiki ↗',
+    'srd.maybe_supplement': "May be from a supplement (Xanathar's, Tasha's, etc.)",
+    'srd.did_you_mean': 'Did you mean',
+    'srd.unavailable': 'Lookup unavailable — is the display running?',
+    'label.ready': 'Ready',
+    'label.ready_check': '✓ Ready',
+    'label.skip': 'Skip',
+    'title.skip_turn': "Skip this character's turn",
+    'title.remove': 'Remove',
+    'input.badge_ready': '{n} ready',
+    'input.badge_staged': '{n} staged',
+    'queue.ready_of_threshold': '{ready}/{threshold} ready',
+    'queue.queued': 'Queued — fires on DM Enter',
+    'queue.queued_icon': '⏳ Queued — fires on DM Enter',
+    'autorun.next_turn': 'Next Turn',
+    'autorun.next_turn_countdown': 'Next Turn — {s}s',
+    'autorun.next_turn_checking': 'Next Turn — checking…',
+    'label.stage': 'Stage',
+    'label.awaiting_approval': 'Awaiting approval…',
+    'label.retrying': 'Retrying ({n})…',
+    'label.send_failed_status': 'Send failed ({status}) — tap to retry',
+    'label.send_failed': 'Send failed — tap to retry',
+    'device.new_request': 'New device requesting input access',
+    'label.approve': 'Approve',
+    'label.deny': 'Deny',
+    'label.access_denied': 'Access denied',
+    'sidebar.hide': '◀ Hide',
+    'sidebar.show': '▶ Stats',
+    'settings.hide': 'Hide ▶',
+    'settings.show': '◀ Settings',
+    'button.full_display': '👁 Full Display',
+    'title.full_display': 'Switch to full DM display (read narration off this device)',
+    'button.phone_mode': '📱 Phone Mode',
+    'title.phone_mode': 'Use this device as a phone input controller',
+    'phone.no_character_bound': 'No character bound — open with ?char=<Name>',
+    'phone.loading_char': 'Loading {ch}…',
+    'phone.load_error': 'Could not load sheet ({status})',
+    'phone.network_error': 'Network error — {msg}',
+    'label.loading_party': 'Loading party…',
+    'dice.roll_failed': 'roll failed',
+    'dice.rolled_waiting': '✓ Rolled — waiting for DM',
+    'dice.request_cancelled': '— request cancelled by DM —',
+    'dice.requested_d20': 'Roll d20',
+    'dice.requested_spec': 'Roll {spec}',
+    'label.everybody': 'Everybody',
+    'label.warning': 'Warning',
+    'label.dm_hint': 'DM Hint',
+    'label.milestone': 'Milestone',
+    'speed.normal': 'Normal',
+    'speed.fast': 'Fast',
+    'speed.instant': 'Instant',
+    'label.male': 'Male',
+    'label.female': 'Female',
+    'label.players': 'Players',
+    'label.player': 'Player',
+    'label.auto_roll': 'Auto-roll',
+    'tts.loading': 'Loading…',
+    'tts.empty': 'No voices',
+    'tts.stop': 'Stop narration',
+    'tts.listen': 'Listen to narration',
   },
 };
+
+// Simple {placeholder} interpolation on top of t() — used for the handful of
+// dynamic strings above that carry a runtime value (counts, names, statuses).
+function ti(key, vars) {
+  let s = t(key);
+  if (vars) for (const k in vars) s = s.replace('{' + k + '}', vars[k]);
+  return s;
+}
 
 // This fork ships Spanish-only; no language switcher is planned, so LANG
 // is a constant rather than a runtime setting.
@@ -4957,7 +5183,7 @@ function renderTutorBlock(text, isReplay) {
   const header = document.createElement('div');
   header.className = 'tutor-header';
   header.innerHTML = `<span class="tutor-icon">${isWarning ? '⚠' : '◈'}</span>` +
-                     `<span class="tutor-label">${isWarning ? 'Warning' : 'DM Hint'}</span>` +
+                     `<span class="tutor-label">${isWarning ? t('label.warning') : t('label.dm_hint')}</span>` +
                      `<span class="tutor-chevron">▼</span>`;
   block.appendChild(header);
 
@@ -4985,7 +5211,7 @@ function renderTutorBlock(text, isReplay) {
 
   // Reset DM Help button — hint arrived, execution complete
   clearTimeout(_helpResetTimer);
-  if (_helpPending && !isReplay) _showToast('DM hint ready ↓');
+  if (_helpPending && !isReplay) _showToast(t('toast.dmhelp.ready'));
   _dmHelpReset();
 }
 
@@ -5001,7 +5227,7 @@ function renderInspirationBlock(name, reason) {
     `<img src="/icons/focus.png" style="width:22px;height:22px;vertical-align:middle;opacity:0.85;margin-left:10px;filter:drop-shadow(0 0 6px rgba(220,190,60,0.6))">`;
   const sub = document.createElement('div');
   sub.className = 'inspiration-sub';
-  sub.textContent = 'Inspiration';
+  sub.textContent = t('label.inspiration');
   block.appendChild(title);
   block.appendChild(sub);
   if (reason) {
@@ -5076,7 +5302,7 @@ function renderReplayBatch(items) {
       return;
     }
     if (item.milestone_award) {
-      renderMilestoneBlock(item.milestone_award, item.label || 'Milestone', item.reason || '', true);
+      renderMilestoneBlock(item.milestone_award, item.label || t('label.milestone'), item.reason || '', true);
       return;
     }
     if (item.xp_award) {
@@ -5483,7 +5709,7 @@ function _buildPlayerCard(p, solo) {
     const badge = document.createElement('div');
     badge.className = 'sb-inspiration';
     badge.dataset.role = 'inspiration';
-    badge.textContent = '✦ Inspiration';
+    badge.textContent = t('label.inspiration_badge');
     card.appendChild(badge);
   }
 
@@ -5552,13 +5778,13 @@ function openSheet(name) {
   const hp = p.hp || {};
   const hd = p.hit_dice || {};
   const stripData = [
-    ['HP',       hp.current != null ? `${hp.current}/${hp.max}` : '—'],
-    ['AC',       p.ac       ?? '—'],
-    ['Init',     p.initiative ?? '—'],
-    ['Speed',    p.speed    != null ? p.speed + ' ft' : '—'],
-    ['Hit Dice', hd.die     ? `${hd.remaining ?? '?'}/${hd.max ?? '?'} ${hd.die}` : '—'],
+    [t('sheet.stat.hp'),       hp.current != null ? `${hp.current}/${hp.max}` : '—'],
+    [t('sheet.stat.ac'),       p.ac       ?? '—'],
+    [t('sheet.stat.init'),     p.initiative ?? '—'],
+    [t('sheet.stat.speed'),    p.speed    != null ? p.speed + ' ft' : '—'],
+    [t('sheet.stat.hit_dice'), hd.die     ? `${hd.remaining ?? '?'}/${hd.max ?? '?'} ${hd.die}` : '—'],
   ];
-  if (hp.temp) stripData.splice(1, 0, ['Temp HP', '+' + hp.temp]);
+  if (hp.temp) stripData.splice(1, 0, [t('sheet.stat.temp_hp'), '+' + hp.temp]);
   const strip = document.createElement('div');
   strip.className = 'sm-combat-strip';
   stripData.forEach(([label, val]) => {
@@ -5572,7 +5798,7 @@ function openSheet(name) {
   if (p.xp && p.xp.current != null) {
     const xpEl = document.createElement('div');
     xpEl.className = 'sm-xp';
-    xpEl.textContent = `XP  ${p.xp.current} / ${p.xp.next ?? '?'}`;
+    xpEl.textContent = ti('sheet.xp', { current: p.xp.current, next: p.xp.next ?? '?' });
     content.appendChild(xpEl);
   }
 
@@ -5581,7 +5807,7 @@ function openSheet(name) {
     content.appendChild(_smDivider());
     const title = document.createElement('div');
     title.className = 'sm-section-title';
-    title.textContent = 'Ability Scores';
+    title.textContent = t('sheet.section.ability_scores');
     content.appendChild(title);
     const grid = document.createElement('div');
     grid.className = 'sm-ab-grid';
@@ -5603,7 +5829,7 @@ function openSheet(name) {
   if (!p.sheet) {
     const noData = document.createElement('div');
     noData.className = 'sm-no-data';
-    noData.textContent = 'Full sheet not loaded — run /dnd load to restore.';
+    noData.textContent = t('sheet.no_sheet_short');
     content.appendChild(noData);
   }
 
@@ -5612,12 +5838,12 @@ function openSheet(name) {
     content.appendChild(_smDivider());
     const title = document.createElement('div');
     title.className = 'sm-section-title';
-    title.innerHTML = '<img src="/icons/dagger.png" class="sheet-section-icon" alt="">Attacks';
+    title.innerHTML = `<img src="/icons/dagger.png" class="sheet-section-icon" alt="">${t('sheet.section.attacks')}`;
     content.appendChild(title);
     const table = document.createElement('table');
     table.className = 'sm-attacks-table';
     table.innerHTML = `<thead><tr>
-      <th>Name</th><th>Bonus</th><th>Damage</th><th>Type</th><th>Notes</th>
+      <th>${t('sheet.table.name')}</th><th>${t('sheet.table.bonus')}</th><th>${t('sheet.table.damage')}</th><th>${t('sheet.table.type')}</th><th>${t('sheet.table.notes')}</th>
     </tr></thead>`;
     const tbody = document.createElement('tbody');
     sheet.attacks.forEach(a => {
@@ -5642,7 +5868,7 @@ function openSheet(name) {
     content.appendChild(_smDivider());
     const title = document.createElement('div');
     title.className = 'sm-section-title';
-    title.innerHTML = '<img src="/icons/crystal_ball.png" class="sheet-section-icon" alt="">Spellcasting';
+    title.innerHTML = `<img src="/icons/crystal_ball.png" class="sheet-section-icon" alt="">${t('sheet.section.spellcasting')}`;
     content.appendChild(title);
     // Derive live slot string from spell_slots object if available; fall back to static string
     let _slotsStr = sp.slots || '';
@@ -5658,16 +5884,16 @@ function openSheet(name) {
       const meta = document.createElement('div');
       meta.className = 'sm-spell-meta';
       const parts = [];
-      if (_slotsStr)        parts.push('Slots: ' + _slotsStr);
-      if (sp.save_dc)       parts.push('Save DC ' + sp.save_dc);
-      if (sp.attack_bonus)  parts.push('Atk ' + sp.attack_bonus);
+      if (_slotsStr)        parts.push(ti('sheet.spells.slots', { slots: _slotsStr }));
+      if (sp.save_dc)       parts.push(ti('sheet.spells.save_dc', { dc: sp.save_dc }));
+      if (sp.attack_bonus)  parts.push(ti('sheet.spells.attack_bonus', { bonus: sp.attack_bonus }));
       meta.textContent = parts.join('  ·  ');
       content.appendChild(meta);
     }
     if (sp.cantrips && sp.cantrips.length) {
       const lbl = document.createElement('div');
       lbl.className = 'sm-sub-label cantrip-label';
-      lbl.textContent = 'Cantrips';
+      lbl.textContent = t('sheet.spells.cantrips');
       content.appendChild(lbl);
       const grid = document.createElement('div');
       grid.className = 'sm-spell-grid';
@@ -5683,7 +5909,7 @@ function openSheet(name) {
     if (sp.prepared && sp.prepared.length) {
       const lbl = document.createElement('div');
       lbl.className = 'sm-sub-label prepared-label';
-      lbl.textContent = 'Prepared';
+      lbl.textContent = t('sheet.spells.prepared');
       content.appendChild(lbl);
       const grid = document.createElement('div');
       grid.className = 'sm-spell-grid';
@@ -5703,7 +5929,7 @@ function openSheet(name) {
     content.appendChild(_smDivider());
     const title = document.createElement('div');
     title.className = 'sm-section-title';
-    title.innerHTML = '<img src="/icons/scroll.png" class="sheet-section-icon" alt="">Features & Passives';
+    title.innerHTML = `<img src="/icons/scroll.png" class="sheet-section-icon" alt="">${t('sheet.section.features')}`;
     content.appendChild(title);
     sheet.features.forEach(f => {
       const el = document.createElement('div');
@@ -5726,7 +5952,7 @@ function openSheet(name) {
     content.appendChild(_smDivider());
     const title = document.createElement('div');
     title.className = 'sm-section-title';
-    title.innerHTML = '<img src="/icons/pack.png" class="sheet-section-icon" alt="">Inventory';
+    title.innerHTML = `<img src="/icons/pack.png" class="sheet-section-icon" alt="">${t('sheet.section.inventory')}`;
     content.appendChild(title);
     const list = document.createElement('ul');
     list.className = 'sm-inventory-list';
@@ -5744,7 +5970,7 @@ function openSheet(name) {
     content.appendChild(_smDivider());
     const title = document.createElement('div');
     title.className = 'sm-section-title';
-    title.textContent = 'Relationships';
+    title.textContent = t('sheet.section.relationships');
     content.appendChild(title);
     sheet.relationships.forEach(r => {
       const el = document.createElement('div');
@@ -5768,7 +5994,7 @@ function openSheet(name) {
     content.appendChild(_smDivider());
     const noData = document.createElement('div');
     noData.className = 'sm-no-data';
-    noData.textContent = 'Full sheet not loaded — include "sheet" in the player object when pushing stats on /dnd load';
+    noData.textContent = t('sheet.no_sheet_long');
     content.appendChild(noData);
   }
 
@@ -5791,7 +6017,7 @@ function openSrdModal(name, category, level) {
   const body  = document.getElementById('srd-body');
   const badge = document.getElementById('srd-category-badge');
   badge.textContent = '';
-  body.innerHTML = '<div id="srd-loading">Looking up…</div>';
+  body.innerHTML = `<div id="srd-loading">${t('srd.looking_up')}</div>`;
   modal.classList.add('open');
   document.getElementById('srd-panel').scrollTop = 0;
 
@@ -5803,8 +6029,8 @@ function openSrdModal(name, category, level) {
     .then(data => {
       if (!data.found) {
         const linkHtml = data.wikidot_url
-          ? `<br><a href="${data.wikidot_url}" target="_blank" rel="noopener" style="color:#c9a84c;font-size:11px;opacity:0.85;text-decoration:none;">View on D&D 5e Wiki ↗</a>`
-          : `<br><span style="font-size:10px;opacity:0.6">May be from a supplement (Xanathar's, Tasha's, etc.)</span>`;
+          ? `<br><a href="${data.wikidot_url}" target="_blank" rel="noopener" style="color:#c9a84c;font-size:11px;opacity:0.85;text-decoration:none;">${t('srd.wiki_link')}</a>`
+          : `<br><span style="font-size:10px;opacity:0.6">${t('srd.maybe_supplement')}</span>`;
         // Near-miss "did you mean?" chips — tap one to re-run the lookup on the
         // closest matching name. Recovers a mistyped spell/condition/monster
         // instead of dead-ending on the not-found notice.
@@ -5813,9 +6039,9 @@ function openSrdModal(name, category, level) {
           const chips = data.suggestions.map(s =>
             `<button class="srd-suggest-chip" data-srd-name="${_esc(s.name)}" data-srd-category="${_esc(s.category || '')}">${_esc(s.name)}</button>`
           ).join('');
-          didYouMean = `<div class="srd-did-you-mean"><span class="srd-dym-label">Did you mean</span>${chips}</div>`;
+          didYouMean = `<div class="srd-did-you-mean"><span class="srd-dym-label">${t('srd.did_you_mean')}</span>${chips}</div>`;
         }
-        body.innerHTML = `<div id="srd-not-found">"${_esc(name)}" is not in the local dataset.${linkHtml}</div>${didYouMean}`;
+        body.innerHTML = `<div id="srd-not-found">${ti('srd.not_found', { name: _esc(name) })}${linkHtml}</div>${didYouMean}`;
         body.querySelectorAll('.srd-suggest-chip').forEach(chip => {
           chip.addEventListener('click', () => {
             openSrdModal(chip.dataset.srdName, chip.dataset.srdCategory || '', level);
@@ -5846,7 +6072,7 @@ function openSrdModal(name, category, level) {
       body.innerHTML = html;
     })
     .catch(() => {
-      body.innerHTML = '<div id="srd-not-found">Lookup unavailable — is the display running?</div>';
+      body.innerHTML = `<div id="srd-not-found">${t('srd.unavailable')}</div>`;
     });
 }
 
@@ -5917,7 +6143,7 @@ function _makeEffectPill(eff, ownerName) {
 
   if (eff.duration_type === 'rounds') {
     const r = eff.duration_remaining || 0;
-    pill.textContent = `⧗ ${eff.name} · ${r} rnd`;
+    pill.textContent = `⧗ ${eff.name} · ${r}${t('effect.rounds_suffix')}`;
     warn = r <= 2;
     pill.dataset.durationType = 'rounds';
   } else if (eff.duration_type === 'minutes' || eff.duration_type === 'hours') {
@@ -5946,7 +6172,7 @@ function renderEffectExpiredBlock(owner, name, wasConcentration) {
   const inner = document.createElement('div');
   inner.className = 'effect-expired-result';
   const icon = wasConcentration ? '◈' : '⧗';
-  inner.textContent = `${icon} ${name} (${owner}) — ${wasConcentration ? 'concentration ends' : 'expired'}`;
+  inner.textContent = `${icon} ${name} (${owner}) — ${wasConcentration ? t('effect.concentration_ends') : t('effect.expired')}`;
   block.appendChild(inner);
   textContent.appendChild(block);
   textScroll.scrollTop = textScroll.scrollHeight;
@@ -6146,7 +6372,7 @@ function _dmHelpReset() {
   _helpPending = false;
   _dmHelpBtn.disabled = false;
   _dmHelpBtn.classList.remove('pending', 'locked');
-  _dmHelpBtn.textContent = '◈ DM Help';
+  _dmHelpBtn.textContent = t('dmhelp.label');
 }
 
 // Transient toast (status messages). Auto-dismisses; call again to replace.
@@ -6165,8 +6391,8 @@ _dmHelpBtn.addEventListener('click', async () => {
   _helpPending = true;
   _dmHelpBtn.disabled = true;
   _dmHelpBtn.classList.add('pending');
-  _dmHelpBtn.textContent = '◈ Thinking…';
-  _showToast('DM Help requested — thinking…');
+  _dmHelpBtn.textContent = t('dmhelp.thinking');
+  _showToast(t('toast.dmhelp.requested'));
 
   try {
     const res = await fetch('/help-request', {
@@ -6177,8 +6403,8 @@ _dmHelpBtn.addEventListener('click', async () => {
       // Another request already running
       _dmHelpBtn.classList.remove('pending');
       _dmHelpBtn.classList.add('locked');
-      _dmHelpBtn.textContent = '◈ Running…';
-      _showToast('A hint is already on the way…');
+      _dmHelpBtn.textContent = t('dmhelp.running');
+      _showToast(t('toast.dmhelp.already_running'));
       // Auto-reset when the tutor block arrives (see renderTutorBlock)
       // Safety timeout in case it never arrives
       clearTimeout(_helpResetTimer);
@@ -6189,11 +6415,11 @@ _dmHelpBtn.addEventListener('click', async () => {
       clearTimeout(_helpResetTimer);
       _helpResetTimer = setTimeout(_dmHelpReset, 20000);
     } else {
-      _showToast('DM Help isn’t available right now');
+      _showToast(t('toast.dmhelp.unavailable'));
       _dmHelpReset();
     }
   } catch (_) {
-    _showToast('Couldn’t reach the server for DM Help');
+    _showToast(t('toast.dmhelp.network_error'));
     _dmHelpReset();
   }
 });
@@ -6285,9 +6511,9 @@ document.getElementById('sfx-row').addEventListener('click', () => {
 
 // ── Typing speed toggle ──────────────────────────────────────────────
 const _speedSteps = [
-  { label: 'Normal',  ms: 36 },
-  { label: 'Fast',    ms: 18 },
-  { label: 'Instant', ms: 0  },
+  { label: t('speed.normal'),  ms: 36 },
+  { label: t('speed.fast'),    ms: 18 },
+  { label: t('speed.instant'), ms: 0  },
 ];
 let _speedIdx = 0;
 const _speedLabel = document.getElementById('speed-label');
@@ -6348,7 +6574,7 @@ function _ttsStopActive() {
   if (_ttsActivePlayBtn) {
     _ttsActivePlayBtn.innerHTML = _SVG_SPEAKER;
     _ttsActivePlayBtn.classList.remove('tts-playing', 'tts-loading');
-    _ttsActivePlayBtn.setAttribute('aria-label', 'Listen to narration');
+    _ttsActivePlayBtn.setAttribute('aria-label', t('tts.listen'));
     _ttsActivePlayBtn = null;
   }
 }
@@ -6371,7 +6597,7 @@ async function _ttsPlayBlock(btn, blockEl) {
 
   btn.innerHTML = _SVG_SPIN;
   btn.classList.add('tts-loading');
-  btn.setAttribute('aria-label', 'Loading…');
+  btn.setAttribute('aria-label', t('tts.loading'));
   _ttsActivePlayBtn = btn;
 
   try {
@@ -6399,7 +6625,7 @@ async function _ttsPlayBlock(btn, blockEl) {
     btn.innerHTML = _SVG_STOP;
     btn.classList.remove('tts-loading');
     btn.classList.add('tts-playing');
-    btn.setAttribute('aria-label', 'Stop narration');
+    btn.setAttribute('aria-label', t('tts.stop'));
     _ttsActiveSource = source;
 
     source.onended = () => {
@@ -6408,7 +6634,7 @@ async function _ttsPlayBlock(btn, blockEl) {
         if (_ttsActivePlayBtn === btn) {
           btn.innerHTML = _SVG_SPEAKER;
           btn.classList.remove('tts-playing');
-          btn.setAttribute('aria-label', 'Listen to narration');
+          btn.setAttribute('aria-label', t('tts.listen'));
           _ttsActivePlayBtn = null;
         }
       }
@@ -6422,7 +6648,7 @@ async function _ttsPlayBlock(btn, blockEl) {
       setTimeout(() => {
         if (!btn.classList.contains('tts-playing') && !btn.classList.contains('tts-loading')) {
           btn.innerHTML = _SVG_SPEAKER;
-          btn.setAttribute('aria-label', 'Listen to narration');
+          btn.setAttribute('aria-label', t('tts.listen'));
         }
       }, 3000);
       _ttsActivePlayBtn = null;
@@ -6470,8 +6696,8 @@ function _ttsBuildVoiceMenu() {
       menu.appendChild(opt);
     });
   }
-  _addGroup('Male',   _TTS_VOICES_MALE);
-  _addGroup('Female', _TTS_VOICES_FEMALE);
+  _addGroup(t('label.male'),   _TTS_VOICES_MALE);
+  _addGroup(t('label.female'), _TTS_VOICES_FEMALE);
   return menu;
 }
 
@@ -6485,14 +6711,14 @@ function _addTtsBar(blockEl) {
   const playBtn = document.createElement('button');
   playBtn.className = 'tts-play-btn';
   playBtn.innerHTML = _SVG_SPEAKER;
-  playBtn.setAttribute('aria-label', 'Listen to narration');
+  playBtn.setAttribute('aria-label', t('aria.listen_narration'));
   playBtn.addEventListener('click', e => { e.stopPropagation(); _ttsPlayBlock(playBtn, blockEl); });
   bar.appendChild(playBtn);
 
   const voiceBtn = document.createElement('button');
   voiceBtn.className = 'tts-voice-btn';
-  voiceBtn.innerHTML = '<span class="tts-voice-label">Voices</span>' + _SVG_CHEVRON;
-  voiceBtn.setAttribute('aria-label', 'Select narrator voice');
+  voiceBtn.innerHTML = `<span class="tts-voice-label">${t('label.voices')}</span>` + _SVG_CHEVRON;
+  voiceBtn.setAttribute('aria-label', t('aria.select_voice'));
   bar.appendChild(voiceBtn);
 
   const menu = _ttsBuildVoiceMenu();
@@ -6524,7 +6750,7 @@ if (_TTS_AVAILABLE) {
   if (narrateRow && narrateLabel) {
     narrateRow.hidden = false;
     const refresh = () => {
-      narrateLabel.textContent = _ttsAutoNarrate ? 'On' : 'Off';
+      narrateLabel.textContent = _ttsAutoNarrate ? t('label.on') : t('label.off');
       narrateLabel.classList.toggle('on', _ttsAutoNarrate);
     };
     refresh();
@@ -6550,7 +6776,9 @@ if (_TTS_AVAILABLE) {
 // ═══════════════════════════════════════════════════════════════════
 
 const _THEME_CYCLE = ['dark', 'light', 'auto'];
-const _THEME_LABEL = { dark: 'Dark', light: 'Light', auto: 'Auto' };
+function _themeLabel(theme) {
+  return { dark: t('theme.dark'), light: t('theme.light'), auto: t('theme.auto') }[theme] || t('theme.dark');
+}
 
 function _readStoredTheme() {
   try {
@@ -6591,13 +6819,13 @@ function _effectiveTheme(theme) {
   _applyTheme(current);
 
   function refresh() {
-    label.textContent = _THEME_LABEL[current] || 'Dark';
+    label.textContent = _themeLabel(current);
     label.classList.toggle('on', current !== 'dark');
     // Surface the effective theme for "auto" via the tooltip
     if (current === 'auto') {
-      row.title = `Display theme — Auto (system: ${_effectiveTheme(current)})`;
+      row.title = ti('title.theme_auto', { theme: _themeLabel(_effectiveTheme(current)) });
     } else {
-      row.title = `Display theme — ${_THEME_LABEL[current]}. Click to cycle.`;
+      row.title = ti('title.theme_cycle', { theme: _themeLabel(current) });
     }
   }
   refresh();
@@ -6754,7 +6982,7 @@ function _buildCharTabs(players) {
     const btn = document.createElement('button');
     btn.className = 'char-tab' + (name === _selectedChar ? ' active' : '');
     btn.dataset.char = name;
-    btn.textContent = name;
+    btn.textContent = name === 'Everybody' ? t('label.everybody') : name;
     btn.addEventListener('click', e => {
       e.stopPropagation();
       _selectedChar = name;
@@ -6821,7 +7049,7 @@ function _renderStagedQueue(data) {
 
     const readyBtn = document.createElement('button');
     readyBtn.className = 'ready-btn' + (info.ready ? ' is-ready' : '');
-    readyBtn.textContent = info.ready ? '✓ Ready' : 'Ready';
+    readyBtn.textContent = info.ready ? t('label.ready_check') : t('label.ready');
     readyBtn.addEventListener('click', () => _toggleReady(char));
 
     acts.appendChild(readyBtn);
@@ -6829,15 +7057,15 @@ function _renderStagedQueue(data) {
     if (!info.ready) {
       const skipBtn = document.createElement('button');
       skipBtn.className = 'skip-btn';
-      skipBtn.textContent = 'Skip';
-      skipBtn.title = 'Skip this character\'s turn';
+      skipBtn.textContent = t('label.skip');
+      skipBtn.title = t('title.skip_turn');
       skipBtn.addEventListener('click', () => _skipTurn(char));
       acts.appendChild(skipBtn);
     }
 
     const unstageBtn = document.createElement('button');
     unstageBtn.className = 'unstage-btn';
-    unstageBtn.title = 'Remove';
+    unstageBtn.title = t('title.remove');
     unstageBtn.textContent = '✕';
     unstageBtn.addEventListener('click', () => _unstageAction(char));
 
@@ -6855,7 +7083,7 @@ function _renderStagedQueue(data) {
     _inputBadge.style.display = 'inline';
     const readyCount = entries.filter(([, v]) => v.ready).length;
     _inputBadge.textContent = readyCount === entries.length
-      ? `${entries.length} ready` : `${entries.length} staged`;
+      ? ti('input.badge_ready', { n: entries.length }) : ti('input.badge_staged', { n: entries.length });
     if (_inputPanel.classList.contains('collapsed')) {
       _inputPanel.classList.remove('collapsed');
       _inputArrow.textContent = '▼';
@@ -6876,8 +7104,8 @@ function _renderStagedQueue(data) {
   if (anyReady && notReady.length > 0) {
     _waitingEl.style.display = 'flex';
     const label = needMore
-      ? `${readyCount}/${threshold} ready`
-      : `Queued \u2014 fires on DM Enter`;
+      ? ti('queue.ready_of_threshold', { ready: readyCount, threshold })
+      : t('queue.queued');
     const checks = notReady.map(c => `<span class="queue-check" style="opacity:0.5">${c}</span>`).join('');
     _waitingEl.innerHTML = `<span class="queue-label">${label}</span>${checks}`;
   } else {
@@ -6910,8 +7138,8 @@ function _startAutorunCountdown(interval, ts) {
     if (fill) fill.setAttribute('stroke-dashoffset', (_AUTORUN_CIRC * progress).toFixed(2));
     if (label) {
       label.textContent = remaining > 1
-        ? `Next Turn \u2014 ${Math.ceil(remaining)}s`
-        : 'Next Turn \u2014 checking\u2026';
+        ? ti('autorun.next_turn_countdown', { s: Math.ceil(remaining) })
+        : t('autorun.next_turn_checking');
     }
     if (remaining > 0) {
       _autorunRaf = requestAnimationFrame(tick);
@@ -6935,7 +7163,7 @@ function _stopAutorunCountdown() {
   const fill = document.querySelector('.autorun-fill');
   if (fill) { fill.setAttribute('stroke-dashoffset', '0'); fill.classList.remove('waiting'); }
   const label = document.querySelector('.autorun-label');
-  if (label) label.textContent = 'Next Turn';
+  if (label) label.textContent = t('autorun.next_turn');
 }
 
 // ── Queue status panel (persists until wrapper injects) ──────────
@@ -6946,7 +7174,7 @@ function _renderQueueStatus(chars) {
     return;
   }
   const checks = chars.map(c => `<span class="queue-check">✓ ${c}</span>`).join('');
-  _waitingEl.innerHTML = `<span class="queue-label">⏳ Queued — fires on DM Enter</span>${checks}`;
+  _waitingEl.innerHTML = `<span class="queue-label">${t('queue.queued_icon')}</span>${checks}`;
   _waitingEl.style.display = 'block';
 }
 
@@ -6982,7 +7210,7 @@ async function _stageAction() {
         // Device pending approval — persist state so it survives page reload
         localStorage.setItem('dnd_awaiting_approval', _deviceId);
         _stageBtn.disabled = false;
-        _stageBtn.textContent = 'Awaiting approval…';
+        _stageBtn.textContent = t('label.awaiting_approval');
         return;  // leave text in box; auto-retry once approved via _onDeviceApproved
       }
       if (res.ok) {
@@ -6998,21 +7226,21 @@ async function _stageAction() {
       break;
     } catch (_) {
       if (attempts < 3) {
-        _stageBtn.textContent = `Retrying (${attempts})…`;
+        _stageBtn.textContent = ti('label.retrying', { n: attempts });
         await new Promise(r => setTimeout(r, 2000));
       }
     }
   }
   _stageBtn.disabled = false;
   if (_sent) {
-    _stageBtn.textContent = 'Stage';
+    _stageBtn.textContent = t('label.stage');
   } else {
     // Honest failure: the text + the dnd_staged_input cache are preserved, so a
     // tap re-sends without retyping. Never silently reset to 'Stage' on failure —
     // that's what read as "submitted but not acknowledged, gone forever".
     _stageBtn.textContent = _lastStatus
-      ? `Send failed (${_lastStatus}) — tap to retry`
-      : 'Send failed — tap to retry';
+      ? ti('label.send_failed_status', { status: _lastStatus })
+      : t('label.send_failed');
   }
 }
 
@@ -7109,7 +7337,7 @@ _buildCharTabs([]);
     // the SSE device_request replay will confirm and keep it, or clear it if approved.
     if (localStorage.getItem('dnd_awaiting_approval') === _deviceId) {
       _stageBtn.disabled = false;
-      _stageBtn.textContent = 'Awaiting approval…';
+      _stageBtn.textContent = t('label.awaiting_approval');
     }
   } catch (_) {
     localStorage.removeItem('dnd_staged_input');
@@ -7146,7 +7374,7 @@ function _showDeviceRequest(dev) {
 
   const label = document.createElement('span');
   label.className = 'device-card-label';
-  label.textContent = 'New device requesting input access';
+  label.textContent = t('device.new_request');
 
   const ip = document.createElement('span');
   ip.className = 'device-card-ip';
@@ -7154,12 +7382,12 @@ function _showDeviceRequest(dev) {
 
   const approveBtn = document.createElement('button');
   approveBtn.className = 'device-approve-btn';
-  approveBtn.textContent = 'Approve';
+  approveBtn.textContent = t('label.approve');
   approveBtn.addEventListener('click', () => _respondDevice(dev.id, true));
 
   const denyBtn = document.createElement('button');
   denyBtn.className = 'device-deny-btn';
-  denyBtn.textContent = 'Deny';
+  denyBtn.textContent = t('label.deny');
   denyBtn.addEventListener('click', () => _respondDevice(dev.id, false));
 
   card.appendChild(label);
@@ -7186,7 +7414,7 @@ function _onDeviceApproved(deviceId) {
   if (deviceId === _deviceId) {
     localStorage.removeItem('dnd_awaiting_approval');
     _stageBtn.disabled = false;
-    _stageBtn.textContent = 'Stage';
+    _stageBtn.textContent = t('label.stage');
     if (_inputText.value.trim()) {
       _stageAction();  // auto-retry with cached text
     }
@@ -7199,7 +7427,7 @@ function _onDeviceDenied(deviceId) {
     localStorage.removeItem('dnd_awaiting_approval');
     localStorage.removeItem('dnd_staged_input');
     _stageBtn.disabled = true;
-    _stageBtn.textContent = 'Access denied';
+    _stageBtn.textContent = t('label.access_denied');
   }
 }
 
@@ -7283,11 +7511,11 @@ function _setSidebarVisible(visible) {
   if (visible) {
     _sidebar.classList.remove('hidden');
     _textScroll.classList.remove('sidebar-hidden');
-    _sidebarBtn.textContent = '◀ Hide';
+    _sidebarBtn.textContent = t('sidebar.hide');
   } else {
     _sidebar.classList.add('hidden');
     _textScroll.classList.add('sidebar-hidden');
-    _sidebarBtn.textContent = '▶ Stats';
+    _sidebarBtn.textContent = t('sidebar.show');
   }
 }
 
@@ -7302,11 +7530,11 @@ function _setControlsVisible(visible) {
   if (visible) {
     _audioControls.classList.remove('collapsed');
     _textScroll.classList.remove('controls-hidden');
-    if (_controlsBtn) _controlsBtn.textContent = 'Hide ▶';
+    if (_controlsBtn) _controlsBtn.textContent = t('settings.hide');
   } else {
     _audioControls.classList.add('collapsed');
     _textScroll.classList.add('controls-hidden');
-    if (_controlsBtn) _controlsBtn.textContent = '◀ Settings';
+    if (_controlsBtn) _controlsBtn.textContent = t('settings.show');
   }
   try { localStorage.setItem('dnd-controls-visible', visible ? '1' : '0'); } catch (e) {}
 }
@@ -7374,7 +7602,7 @@ function connect() {
       _showProcessingIndicator();
       // Phone: confirm the DM actually picked up the move (not just that it queued).
       if (document.body.classList.contains('input-only')) {
-        _showToast('✓ The DM has your move');
+        _showToast(t('toast.move.acked'));
         _setPhoneStatus('resolving');
         clearTimeout(window._psResolveTimer);
         window._psResolveTimer = setTimeout(() => {
@@ -7445,7 +7673,7 @@ function connect() {
       renderInspirationBlock(payload.inspiration_award, payload.reason || '');
     }
     if (payload.milestone_award) {
-      renderMilestoneBlock(payload.milestone_award, payload.label || 'Milestone', payload.reason || '');
+      renderMilestoneBlock(payload.milestone_award, payload.label || t('label.milestone'), payload.reason || '');
     }
     // milestone_spend: server processes the counter decrement; no feed block
     if (payload.xp_award) {
@@ -7631,9 +7859,9 @@ function _onscreenDiceOn() { try { return localStorage.getItem('dnd-onscreen-dic
     if (rOpt && rVal && boundChar) {
       rOpt.hidden = false;
       let mode = localStorage.getItem('dnd-roll-' + boundChar) || 'players';
-      const labels = { players: 'Players', auto: 'Auto-roll' };
+      const labels = { players: t('label.players'), auto: t('label.auto_roll') };
       function applyRoll(post) {
-        rVal.textContent = labels[mode] || 'Players';
+        rVal.textContent = labels[mode] || t('label.players');
         try { localStorage.setItem('dnd-roll-' + boundChar, mode); } catch (_) {}
         if (!post) return;
         const headers = { 'Content-Type': 'application/json' };
@@ -7688,7 +7916,7 @@ function _refreshCharSelect() {
   if (!list) return;
   const names = _modePlayersCache || [];
   if (!names.length) {
-    list.innerHTML = '<div class="cs-empty">Loading party…</div>';
+    list.innerHTML = `<div class="cs-empty">${t('label.loading_party')}</div>`;
     return;
   }
   list.innerHTML = '';
@@ -7726,8 +7954,8 @@ function _initModeSwitcher(inputMode) {
     const btn = document.createElement('button');
     btn.id = 'full-mode-btn';
     btn.type = 'button';
-    btn.title = 'Switch to full DM display (read narration off this device)';
-    btn.textContent = '👁 Full Display';
+    btn.title = t('title.full_display');
+    btn.textContent = t('button.full_display');
     btn.addEventListener('click', e => {
       e.stopPropagation();
       // Strip ?view, ?char, ?character — keep any other harmless params
@@ -7745,8 +7973,8 @@ function _initModeSwitcher(inputMode) {
   const btn = document.createElement('button');
   btn.id = 'phone-mode-btn';
   btn.type = 'button';
-  btn.title = 'Use this device as a phone input controller';
-  btn.textContent = '📱 Phone Mode';
+  btn.title = t('title.phone_mode');
+  btn.textContent = t('button.phone_mode');
   btn.addEventListener('click', e => {
     e.stopPropagation();
     const url = new URL(window.location.href);
@@ -7795,17 +8023,17 @@ async function _loadCharacterSheet() {
               || localStorage.getItem('dnd_player_name')
               || '').trim();
   if (!ch) {
-    status.textContent = 'No character bound — open with ?char=<Name>';
+    status.textContent = t('phone.no_character_bound');
     bodyEl.innerHTML = '';
     return;
   }
-  status.textContent = `Loading ${ch}…`;
+  status.textContent = ti('phone.loading_char', { ch });
   try {
     const res = await fetch(`/character/${encodeURIComponent(ch)}`, {
       headers: _authHeaders(),
     });
     if (!res.ok) {
-      status.textContent = `Could not load sheet (${res.status})`;
+      status.textContent = ti('phone.load_error', { status: res.status });
       bodyEl.innerHTML = '';
       return;
     }
@@ -7813,7 +8041,7 @@ async function _loadCharacterSheet() {
     bodyEl.innerHTML = _renderMarkdown(md);
     status.textContent = '';
   } catch (e) {
-    status.textContent = `Network error — ${e.message || e}`;
+    status.textContent = ti('phone.network_error', { msg: e.message || e });
     bodyEl.innerHTML = '';
   }
 }
@@ -8053,7 +8281,7 @@ function _initDicePad() {
     if (!result) {
       reel.classList.remove('spinning');
       reel.textContent = '!';
-      document.getElementById('dp-result-line').textContent = 'roll failed';
+      document.getElementById('dp-result-line').textContent = t('dice.roll_failed');
       rollBtn.disabled = false;
       rollBtn.classList.remove('pulse');
       if (_locked) _setLocked(false);
@@ -8089,7 +8317,7 @@ function _initDicePad() {
       if (boundEl) {
         let done = boundEl.querySelector('.req');
         if (!done) { done = document.createElement('span'); done.className = 'req'; boundEl.appendChild(done); }
-        done.textContent = '✓ Rolled — waiting for DM';
+        done.textContent = t('dice.rolled_waiting');
       }
       _activeRequestId = '';
     } else {
@@ -8155,7 +8383,7 @@ function _initDicePad() {
     labelEl.value = baseLabel;
     if (boundEl) {
       const dcStr = (req.dc != null) ? ` · DC ${req.dc}` : '';
-      const desc  = baseLabel || (reqSpec === '1d20' ? 'Roll d20' : `Roll ${reqSpec}`);
+      const desc  = baseLabel || (reqSpec === '1d20' ? t('dice.requested_d20') : ti('dice.requested_spec', { spec: reqSpec }));
       let r = boundEl.querySelector('.req');
       if (!r) { r = document.createElement('span'); r.className = 'req'; boundEl.appendChild(r); }
       r.textContent = `↻ ${desc}${dcStr}`;
@@ -8200,8 +8428,8 @@ function _initDicePad() {
     // Brief inline confirmation so the player sees the unlock happened.
     const line = document.getElementById('dp-result-line');
     if (line) {
-      line.textContent = '— request cancelled by DM —';
-      setTimeout(() => { if (line.textContent === '— request cancelled by DM —') line.textContent = ''; }, 4000);
+      line.textContent = t('dice.request_cancelled');
+      setTimeout(() => { if (line.textContent === t('dice.request_cancelled')) line.textContent = ''; }, 4000);
     }
   }
   window._onDiceRequestCancelled = _onDiceRequestCancelled;
