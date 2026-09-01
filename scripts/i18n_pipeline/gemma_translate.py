@@ -51,38 +51,39 @@ PROSE_FIELDS = {
 }
 
 # Few-shot anchor: the human/Sonnet-verified level-0 spell translations,
-# used verbatim as in-context examples so Gemma's register (voseo/tuteo)
+# used verbatim as in-context examples so Gemma's register (tuteo)
 # and terminology style match what's already merged, instead of drifting.
 FEWSHOT_SPELL_INDEXES = ["fire-bolt", "poison-spray", "mage-hand"]
 
-SYSTEM_PROMPT = """Sos un traductor experto de D&D 5e (inglés -> español) para una \
-mesa hispanohablante. Traducís terminología oficial de D&D en español \
-(estilo Devir/WotC), registro español neutro con voseo/tuteo argentino \
-("vos", "podés", "tenés", "lanzás") — NUNCA "vosotros".
+SYSTEM_PROMPT = """Eres un traductor experto de D&D 5e (inglés -> español) para una \
+mesa hispanohablante. Traduces terminología oficial de D&D en español \
+(estilo Devir/WotC), registro español neutro con tuteo \
+("tú", "puedes", "tienes", "lanzas") — NUNCA "vosotros" ni voseo \
+argentino ("vos", "podés", "tenés").
 
 Reglas estrictas:
 1. NUNCA inventes un nombre propio de conjuro/objeto/monstruo sin \
-verificarlo primero. Llamá a search_manual con candidatos plausibles \
+verificarlo primero. Llama a search_manual con candidatos plausibles \
 ANTES de responder. Si search_manual no encuentra nada tras 2-3 intentos \
-razonables, traducí de la forma más literal y consistente con el glosario, \
-y marcá confidence="low".
+razonables, traduce de la forma más literal y consistente con el glosario, \
+y marca confidence="low".
 2. Para vocabulario de mecánica cerrado (tipos de daño, características, \
 condiciones/estados, escuelas de magia, ventaja/desventaja, tirada de \
-salvación, etc.) llamá a glossary_lookup en vez de traducir por tu cuenta \
+salvación, etc.) llama a glossary_lookup en vez de traducir por tu cuenta \
 — ya está decidido y verificado.
-3. La prosa que traducís es el texto MECÁNICO de la SRD 2014 en inglés que \
-te paso — traducilo fielmente, NO copies reglas del manual 2024 aunque \
+3. La prosa que traduces es el texto MECÁNICO de la SRD 2014 en inglés que \
+te paso — tradúcelo fielmente, NO copies reglas del manual 2024 aunque \
 las encuentres (pueden diferir mecánicamente entre ediciones).
-4. Convertí distancias imperiales a métricas usando la convención oficial \
+4. Convierte distancias imperiales a métricas usando la convención oficial \
 que confirmes en el manual (5 ft = 1,5 m, 10 ft = 3 m, 60 ft = 18 m, etc.) \
-— buscá en el manual si no estás seguro de una conversión.
-5. Preservá intacta toda la notación de dados (1d6, 2d8, etc.) y la \
+— busca en el manual si no estás seguro de una conversión.
+5. Preserva intacta toda la notación de dados (1d6, 2d8, etc.) y la \
 estructura de párrafos/viñetas del original.
-6. En evidence_quotes, citá TEXTUALMENTE (copy-paste exacto, sin \
+6. En evidence_quotes, cita TEXTUALMENTE (copy-paste exacto, sin \
 parafrasear) el fragmento del manual que encontraste con search_manual que \
-respalda el nombre elegido. Si no hay evidencia directa, dejá una lista \
-vacía y bajá tu confidence.
-7. Respondé SOLO con el JSON pedido, nada de texto fuera del JSON."""
+respalda el nombre elegido. Si no hay evidencia directa, deja una lista \
+vacía y baja tu confidence.
+7. Responde SOLO con el JSON pedido, nada de texto fuera del JSON."""
 
 
 def build_schema(fields: list[str]) -> dict:
@@ -127,7 +128,7 @@ def _fewshot_block(category: str) -> str:
         return ""
     with open(SRD_PATH, encoding="utf-8") as f:
         data = json.load(f)
-    lines = ["EJEMPLOS YA VERIFICADOS Y MERGEADOS (seguí este estilo exacto):"]
+    lines = ["EJEMPLOS YA VERIFICADOS Y MERGEADOS (sigue este estilo exacto):"]
     for s in data["spells"]:
         if s["index"] in FEWSHOT_SPELL_INDEXES:
             lines.append(f"- {s['index']} -> name: \"{s['name']}\" | description: \"{s['description'][:200]}...\"")
@@ -143,7 +144,7 @@ def translate_entry(rec: dict, category: str, fewshot: str) -> dict:
     user_msg = (
         f"{fewshot}\n\n" if fewshot else ""
     ) + (
-        f"Traducí esta entrada de {category} (índice '{rec['index']}', "
+        f"Traduce esta entrada de {category} (índice '{rec['index']}', "
         f"NUNCA traduzcas el índice). Campos en inglés a traducir: "
         f"{', '.join(present_fields)}.\n\n"
         f"JSON fuente:\n{json.dumps(src, ensure_ascii=False, indent=2)}"
