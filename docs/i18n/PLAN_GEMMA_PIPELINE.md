@@ -185,7 +185,11 @@ cambiar en este flujo.
 - [x] Confirmado tool-calling real (`search_manual`) con traza de
       `thinking` visible
 - [x] Confirmado JSON-schema forzado + reintento ante parseo fallido
-- [ ] Corrida completa de `spells` (295 restantes), `equipment` (237),
-      `features` (186) — pendiente, corre desatendido
+- [x] Corrida completa mergeada a `dnd5e_srd.json`: `spells` 319/319 (24
+      nivel 0 + 295 niveles 1-9), `equipment` 235/237, `features` 186/186
+      (716/718 total). 55 nombres sin traducir y 2 fugas de campo detectadas
+      y corregidas en la misma pasada; ~315 entradas quedan documentadas en
+      `local-review/pending_review.json` (local, no versionado) para
+      verificación futura contra una fuente adicional
 - [ ] `monsters`/`magic_items` — bloqueado hasta conseguir Bestiario/DMG
       en español

@@ -73,9 +73,13 @@ def main() -> int:
         print(f"Run validate_batch.py first — {report_path} not found.", file=sys.stderr)
         return 2
     report = json.loads(report_path.read_text(encoding="utf-8"))
+    # Gate on BOTH flagged entries and the random quality-audit sample
+    # (report["sample_indices"]) — a sampled-but-clean entry still needs an
+    # explicit decision, otherwise the sample provides no actual protection
+    # at merge time (see validate_batch.py's sample_indices comment).
     flagged_or_sampled = {
         r["index"] for r in report["results"] if r["flagged"]
-    }
+    } | set(report.get("sample_indices", []))
 
     decisions = {}
     if args.decisions and args.decisions.exists():

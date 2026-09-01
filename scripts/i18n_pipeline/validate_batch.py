@@ -16,10 +16,11 @@ Checks (no LLM calls, all deterministic):
   - low_confidence: model self-reported confidence == "low"
   - leftover_english: a short blocklist of common English function words
     found in the Spanish `name`/`description` (weak signal, cheap)
-  - glossary_conflict: closed-category English terms mentioned in _source
-    whose glossary translation does not appear anywhere in the Spanish
-    output (e.g. if the source damage type is "Poison" but "veneno"/
-    "envenenad" is nowhere in the translated description)
+  - glossary_conflict: closed-category English terms mentioned in _source's
+    prose whose glossary translation (matched on a short stem, to tolerate
+    inflection) does not appear anywhere in the Spanish output (e.g. if the
+    English description says "poisoned" but "envenenad..." is nowhere in
+    the translated description)
 
 Any failed check flags the entry. Output: <batch>.report.json (full
 machine-readable results) and <batch>.review.md (only flagged entries +
@@ -127,6 +128,41 @@ def check_name_grounded(entry: dict) -> list[str]:
     return ["name_ungrounded:not_found_in_manual"]
 
 
+def check_glossary_conflict(entry: dict) -> list[str]:
+    """Closed-category English terms mentioned in _source's prose (e.g. "the
+    creature is poisoned" inside a spell's English description) whose
+    glossary translation doesn't show up anywhere in the Spanish output.
+
+    Matches on a short stem of the glossary's Spanish translation (first 5
+    chars of its first word) rather than the full string, since the correct
+    translation is often inflected differently in context (e.g. glossary
+    "Poisoned" -> "envenenado", but a description says "envenenada" or
+    "envenenados" — an exact-string check would false-positive on those).
+    """
+    src = entry.get("_source", {})
+    src_text = " ".join(str(v) for k, v in src.items() if k != "index" and isinstance(v, str))
+    if not src_text:
+        return []
+    out_text = " ".join(
+        str(entry.get(f, "")) for f in ("name", "description", "higher_level", "material")
+    ).lower()
+    problems = []
+    seen = set()
+    for en, es in grounding.all_glossary_terms().items():
+        en_norm = en.strip()
+        es_norm = es.strip()
+        if len(en_norm) < 3 or not es_norm or en_norm.lower() in seen:
+            continue
+        if not re.search(r"\b" + re.escape(en_norm) + r"\b", src_text, re.IGNORECASE):
+            continue
+        seen.add(en_norm.lower())
+        es_word = es_norm.split()[0]
+        stem = es_word.lower()[:5] if len(es_word) >= 5 else es_word.lower()
+        if stem and stem not in out_text:
+            problems.append(f"glossary_conflict:{en_norm}->{es_norm}")
+    return problems
+
+
 def check_low_confidence(entry: dict) -> list[str]:
     if entry.get("confidence") == "low":
         return ["confidence:low"]
@@ -165,8 +201,8 @@ def check_field_bleed(entry: dict) -> list[str]:
 
 # Checks that determine whether an entry needs a human/Sonnet look.
 CHECKS = [check_schema, check_dice_notation, check_bullet_structure,
-          check_name_grounded, check_low_confidence, check_leftover_english,
-          check_field_bleed]
+          check_name_grounded, check_glossary_conflict, check_low_confidence,
+          check_leftover_english, check_field_bleed]
 
 # Informational only — reported per-entry but never flags on its own
 # (see check_evidence's docstring for why: high false-positive rate).
@@ -216,6 +252,12 @@ def main() -> int:
         "flagged_count": len(flagged),
         "sample_count": len(sample),
         "review_count": len(review_set),
+        # Randomly-sampled clean indexes, so merge_batch.py can gate on them
+        # too (not just `flagged`) — the whole point of the sample is to
+        # catch silent systematic errors (e.g. Grappled/Restrained) that no
+        # per-entry check would flag, which only works if a sampled entry
+        # actually requires a merge decision.
+        "sample_indices": sorted(sample),
         "results": results,
     }
     report_path = args.batch_file.with_suffix(".report.json")
