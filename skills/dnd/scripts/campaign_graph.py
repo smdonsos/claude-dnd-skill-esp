@@ -838,7 +838,7 @@ def cmd_extract_apply(args) -> int:
                 return "n"
             if a in {"q", "quit", "exit"}:
                 return "q"
-            print("    ingresá y / n / q")
+            print("    ingresa y / n / q")
 
     quit_review = False
     for i, p in enumerate(proposals, 1):

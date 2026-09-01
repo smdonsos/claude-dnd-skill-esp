@@ -181,8 +181,8 @@ def _print_urls(lan_ip: Optional[str]) -> None:
     if lan_ip:
         print(f"  LAN       : https://{lan_ip}:5001")
     print()
-    print("Teléfono/tablet: abrí la URL de LAN y aceptá la advertencia de seguridad")
-    print("del navegador (una sola vez — tocá Avanzado → Continuar).")
+    print("Teléfono/tablet: abre la URL de LAN y acepta la advertencia de seguridad")
+    print("del navegador (una sola vez — toca Avanzado → Continuar).")
 
 
 if __name__ == "__main__":

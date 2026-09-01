@@ -143,7 +143,7 @@ def main() -> int:
         elif _is_newer(remote_ver, local_ver):
             print(f"⬆  Actualización disponible: {local_ver} → {remote_ver}")
             print("   Actualizá con:  /plugin update dm")
-            print("   Después /reload-plugins (o reiniciá Claude Code) para cargarla.")
+            print("   Después /reload-plugins (o reinicia Claude Code) para cargarla.")
         else:
             print(f"✓  Actualizado (la última versión publicada es {remote_ver}).")
         print("\n(El código del plugin lo gestiona Claude Code; `/dnd update` informa el estado "
@@ -154,7 +154,7 @@ def main() -> int:
         print(f"El skill en {SKILL_DIR} no es un git checkout ni una instalación de plugin.",
               file=sys.stderr)
         print(
-            "Si lo instalaste manualmente, reinstalá con:\n"
+            "Si lo instalaste manualmente, reinstala con:\n"
             "    git clone https://github.com/neuralinitiative/claude-dnd-skill\n"
             "o instalalo como plugin (ver README).",
             file=sys.stderr,
@@ -169,7 +169,7 @@ def main() -> int:
     if dirty:
         print("Se detectaron cambios locales — se rechaza la actualización:", file=sys.stderr)
         print(dirty, file=sys.stderr)
-        print("\nHacé commit, stash, o descartá tus cambios y volvé a correr.", file=sys.stderr)
+        print("\nHacé commit, stash, o descarta tus cambios y vuelve a correr.", file=sys.stderr)
         return 3
 
     git("fetch", "--quiet", "origin", branch)
@@ -208,7 +208,7 @@ def main() -> int:
     sys.stderr.write(pull.stderr)
     if pull.returncode != 0:
         print(
-            "\nEl fast-forward falló — resolvé manualmente con git en el directorio del skill.",
+            "\nEl fast-forward falló — resuelve manualmente con git en el directorio del skill.",
             file=sys.stderr,
         )
         return pull.returncode
