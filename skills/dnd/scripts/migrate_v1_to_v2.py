@@ -148,7 +148,7 @@ def _retire_standalone(yes: bool, dry_run: bool) -> int:
     """Back up and remove the legacy standalone skill dir. Returns 0/1/2."""
     if LEGACY_SKILL.is_symlink():
         _say("• El skill legado es un SYMLINK (probablemente un dev clone o setup de GNU Stow).")
-        _say(f"  Se deja intacto. Eliminá el enlace vos mismo cuando quieras:")
+        _say(f"  Se deja intacto. Eliminá el enlace tú mismo cuando quieras:")
         _say(f"      rm '{LEGACY_SKILL}'")
         return 0
 
@@ -234,7 +234,7 @@ def main() -> int:
     # 4) Next steps.
     _say()
     _say("Listo." if rc == 0 else "Terminado con pasos omitidos.")
-    _say("De ahora en más, invocá al DM con  /dm:dnd  (el viejo /dnd quedó retirado).")
+    _say("De ahora en más, invoca al DM con  /dm:dnd  (el viejo /dnd quedó retirado).")
     _say("Si todavía no instalaste el plugin:")
     _say("    /plugin marketplace add neuralinitiative/claude-dnd-skill")
     _say("    /plugin install dm@neural-initiative")

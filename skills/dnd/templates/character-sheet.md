@@ -6,7 +6,7 @@
 - **Alineamiento:** | **XP:** / <umbral del siguiente nivel>
 
 ## Character Pillar
-- **Frase del jugador:** *"<la respuesta cruda de una sola frase a "¿qué debería saber el DM sobre vos?">"*
+- **Frase del jugador:** *"<la respuesta cruda de una sola frase a "¿qué debería saber el DM sobre ti?">"*
 - **Pilar derivado:** <Vínculo / Defecto / Ideal / Meta> — <destilado en una sola frase>
 - **Ganchos activos:** <cómo está usando el DM este pilar en la partida actualmente — actualizar cada sesión>
 

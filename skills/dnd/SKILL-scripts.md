@@ -2,7 +2,7 @@
 
 Sintaxis completa de todos los scripts Python auxiliares. Cargá este archivo una vez en `/dm:dnd load`, y queda en contexto durante toda la sesión.
 
-> **Nota de rutas:** los comandos de abajo usan `${CLAUDE_SKILL_DIR}` como directorio del skill. Este archivo se lee verbatim, así que ese token **no** se auto-expande acá — sustituí la ruta absoluta del skill dir (desde `SKILL.md`) antes de ejecutar cualquier comando, o va a fallar con una ruta `/scripts/…` rota.
+> **Nota de rutas:** los comandos de abajo usan `${CLAUDE_SKILL_DIR}` como directorio del skill. Este archivo se lee verbatim, así que ese token **no** se auto-expande acá — sustituye la ruta absoluta del skill dir (desde `SKILL.md`) antes de ejecutar cualquier comando, o va a fallar con una ruta `/scripts/…` rota.
 
 ---
 
@@ -18,30 +18,30 @@ python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20 adv       # ventaja
 python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+3 dis     # desventaja + modificador
 python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20 --silent  # devuelve solo el entero
 
-# Siempre pasá --label para que el HUD del teléfono muestre para qué es la tirada:
+# Siempre pasa --label para que el HUD del teléfono muestre para qué es la tirada:
 python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+4 --label "Chequeo de Percepción"
 python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+6 adv --label "Ataque — Jefe Goblin vs Piper"
 python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py 2d8+3 --label "Daño de Hacha Grande"
 
-# Tiradas de jugador — pasá --player <nombre-pj> para enrutar al teléfono de ese jugador:
+# Tiradas de jugador — pasa --player <nombre-pj> para enrutar al teléfono de ese jugador:
 python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+4 --label "Percepción" --player piper
 python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+6 adv --label "Ataque" --player piper
-# Tiradas de PNJ / monstruo / lado del DM — omití --player (enruta al canal del DM,
+# Tiradas de PNJ / monstruo / lado del DM — omite --player (enruta al canal del DM,
 # que auto-tira del lado del servidor si el DM no tiene una pestaña abierta).
 python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+5 --label "Ataque de goblin"
 ```
 
-**Regla de enrutamiento:** si la tirada es **para un personaje jugador**, pasá `--player <nombre-pj>` (minúsculas, coincidiendo con el nombre que el jugador usó en la URL). Si la tirada es para un PNJ/monstruo/algo que resuelve el DM, omití `--player` para que no le suene el teléfono a los jugadores.
+**Regla de enrutamiento:** si la tirada es **para un personaje jugador**, pasa `--player <nombre-pj>` (minúsculas, coincidiendo con el nombre que el jugador usó en la URL). Si la tirada es para un PNJ/monstruo/algo que resuelve el DM, omite `--player` para que no le suene el teléfono a los jugadores.
 
 **Regla de etiqueta (importante):** cuando invoques con `--player`, el jugador no está mirando su teléfono — está escuchando tu narración. **Siempre avisale en voz alta antes de invocar**, para que agarre el teléfono. Patrón:
 
-> *"Piper — hacé un chequeo de Percepción. Tiralo."*
+> *"Piper — haz un chequeo de Percepción. Tiralo."*
 
-Después corré el comando. La llamada de Bash va a bloquear mientras el jugador agarra el teléfono, ve el prompt, y tira; el resultado te vuelve después. Sin el aviso verbal el jugador no va a saber que tiene que mirar, y la llamada va a esperar unos 3 minutos antes de expirar hacia una auto-tirada.
+Después corre el comando. La llamada de Bash va a bloquear mientras el jugador agarra el teléfono, ve el prompt, y tira; el resultado te vuelve después. Sin el aviso verbal el jugador no va a saber que tiene que mirar, y la llamada va a esperar unos 3 minutos antes de expirar hacia una auto-tirada.
 
-Marca 20 natural (GOLPE CRÍTICO) y 1 natural (PIFIA) automáticamente. Si el output contiene `[auto]`, el teléfono del objetivo no estaba conectado y el servidor tiró por su cuenta — no hace falta ninguna acción, solo narrá el resultado.
+Marca 20 natural (GOLPE CRÍTICO) y 1 natural (PIFIA) automáticamente. Si el output contiene `[auto]`, el teléfono del objetivo no estaba conectado y el servidor tiró por su cuenta — no hace falta ninguna acción, solo narra el resultado.
 
-Para forzar que se salte el tirador físico (ej. tiradas de PNJ de alto volumen que no querés mostrar): flag `--auto`, o `DND_DICE_PHYSICAL=0 python3 ...`.
+Para forzar que se salte el tirador físico (ej. tiradas de PNJ de alto volumen que no quieres mostrar): flag `--auto`, o `DND_DICE_PHYSICAL=0 python3 ...`.
 
 ---
 
@@ -156,7 +156,7 @@ python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --replace-players --json '{
 
 # subclaves de sheet: attacks, spells ({slots, save_dc, attack_bonus, cantrips, prepared} o null),
 # features ([{name, text}]), inventory ([strings])
-# sheet es opcional — omitir si solo necesitás la barra lateral de estadísticas sin el modal de ficha completa
+# sheet es opcional — omitir si solo necesitas la barra lateral de estadísticas sin el modal de ficha completa
 
 # Actualizaciones parciales (usar cada vez que cambien valores durante la sesión):
 python3 ${CLAUDE_SKILL_DIR}/display/push_stats.py --player Flerb --hp 7 12
@@ -330,7 +330,7 @@ python3 ${CLAUDE_SKILL_DIR}/scripts/calendar.py -c $CAMP time night
 python3 ${CLAUDE_SKILL_DIR}/scripts/calendar.py -c $CAMP events
 ```
 
-**Cuándo correrlo:** después de cada descanso; después de un viaje significativo o un salto de tiempo; al actualizar manualmente la fecha en `state.md` — usá `calendar.py set` para mantenerlos sincronizados.
+**Cuándo correrlo:** después de cada descanso; después de un viaje significativo o un salto de tiempo; al actualizar manualmente la fecha en `state.md` — usa `calendar.py set` para mantenerlos sincronizados.
 
 **Nota:** `--time`/`calendar.py time` solo acepta estos seis tokens literales en inglés (`midnight`, `early morning`, `morning`, `afternoon`, `evening`, `night`, más `midday`) — son vocabulario de CLI que el script matchea exactamente, no traducir aunque la documentación esté en español. El campo `time` de `push_stats.py --world-time` es distinto: es un string libre que se muestra tal cual en la barra lateral, y ahí sí se puede poner "mañana", "tarde", etc.
 
@@ -358,7 +358,7 @@ python3 ${CLAUDE_SKILL_DIR}/scripts/campaign_search.py -c $CAMP Harwick -C 6
 Claves de archivo: `state`, `log`, `archive`, `world`, `seeds`, `npcs`, `npcsfull`
 Archivos buscados por defecto: state, log, archive, world, npcs
 
-**Cuándo usarlo:** cada vez que un jugador pregunte sobre un evento pasado, un detalle de PNJ, una ubicación, o un hilo argumental que podría no estar en el contexto activo. Corré esto primero — escalá a un `Read` completo solo si la búsqueda devuelve contexto insuficiente.
+**Cuándo usarlo:** cada vez que un jugador pregunte sobre un evento pasado, un detalle de PNJ, una ubicación, o un hilo argumental que podría no estar en el contexto activo. Corré esto primero — escala a un `Read` completo solo si la búsqueda devuelve contexto insuficiente.
 
 ---
 
@@ -501,7 +501,7 @@ open https://localhost:5001                                  # abrir el navegado
 
 El skill de DM envía cada bloque de narración, resultado de dados, y actualización de estadística vía llamadas a `send.py` (ver Modo DM Activo en SKILL.md para la secuencia completa de sends y la referencia de flags de estadísticas).
 
-Abrí la pestaña del navegador y hacé Chromecast *antes* de correr `/dm:dnd load` para que el navegador esté conectado cuando llegue la narración de apertura. El display guarda un buffer de los últimos 60 fragmentos y los reproduce a los navegadores que se reconectan.
+Abrí la pestaña del navegador y haz Chromecast *antes* de correr `/dm:dnd load` para que el navegador esté conectado cuando llegue la narración de apertura. El display guarda un buffer de los últimos 60 fragmentos y los reproduce a los navegadores que se reconectan.
 
 **Detección de escena:** el servidor escanea la narración en busca de palabras clave y cambia el degradado de fondo + tipo de partícula (17 escenas: taberna, mazmorra, bosque, cripta, arcano, océano, etc.). Transición con fundido en ~2.5 s.
 
