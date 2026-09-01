@@ -1,7 +1,7 @@
 {
   "name": "dm",
   "version": "2.4.0",
-  "description": "Asistente de Dungeon Master para llevar campañas persistentes de D&D 5e, en español. Creación/carga de campaña, gestión de personajes, seguimiento de combate, generación de PNJ, tiradas de dados, un display companion en vivo opcional, y estado de sesión completo — todo persistido entre sesiones. Provee el skill `dnd`; invocalo como /dm:dnd, o simplemente describí lo que querés una vez que una campaña está cargada.",
+  "description": "Asistente de Dungeon Master para llevar campañas persistentes de D&D 5e, en español. Creación/carga de campaña, gestión de personajes, seguimiento de combate, generación de PNJ, tiradas de dados, un display companion en vivo opcional, y estado de sesión completo — todo persistido entre sesiones. Provee el skill `dnd`; invócalo como /dm:dnd, o simplemente describe lo que quieres una vez que una campaña está cargada.",
   "author": {
     "name": "Neural Initiative",
     "url": "https://github.com/neuralinitiative"

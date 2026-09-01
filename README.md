@@ -813,7 +813,7 @@ Cada campaña declara su ruleset en la línea de encabezado de `state.md`: `**Ru
 
 ### Dataset 2024 (opt-in)
 
-`data/dnd5e_srd_2024.json` — construido a partir de `5e-bits/5e-database` (`src/2024/en/`), `foundryvtt/dnd5e` (`packs/_source/spells24/`, `packs/_source/actors24/`, `packs/_source/classfeatures24/`). Todo el contenido de foundry es CC-BY-4.0, con procedencia `_source` y `_license` preservada en cada registro. Aproximadamente 1,420+ registros: 341 conjuros nativos 2024, 376 monstruos nativos 2024, 8 propiedades de maestría de arma, 9 especies, 24 subespecies, 17 dotes de origen/generales/de estilo de combate, 4 trasfondos, más equipo / objetos mágicos / rasgos. Construilo con `python3 scripts/build_srd.py --ruleset 2024` (una sola vez, ~3 min).
+`data/dnd5e_srd_2024.json` — construido a partir de `5e-bits/5e-database` (`src/2024/en/`), `foundryvtt/dnd5e` (`packs/_source/spells24/`, `packs/_source/actors24/`, `packs/_source/classfeatures24/`). Todo el contenido de foundry es CC-BY-4.0, con procedencia `_source` y `_license` preservada en cada registro. Aproximadamente 1,420+ registros: 341 conjuros nativos 2024, 376 monstruos nativos 2024, 8 propiedades de maestría de arma, 9 especies, 24 subespecies, 17 dotes de origen/generales/de estilo de combate, 4 trasfondos, más equipo / objetos mágicos / rasgos. Constrúyelo con `python3 scripts/build_srd.py --ruleset 2024` (una sola vez, ~3 min).
 
 ### Diferencias mecánicas aplicadas en la mesa
 
