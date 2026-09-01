@@ -1,70 +1,75 @@
-# Physical Dice Server (optional)
+# Servidor de dados físicos (opcional)
 
-A small local web server that gives every player at the table a 3D dice tray on
-their phone. When the DM (Claude) rolls for a player character, the dice are
-pushed to that player's phone, where they shake or tap to cast — and the result
-is returned to the campaign.
+Un pequeño servidor web local que le da a cada jugador en la mesa una bandeja
+de dados 3D en su teléfono. Cuando el DM (Claude) tira por un personaje
+jugador, los dados se envían al teléfono de ese jugador, donde sacude o toca
+para lanzar — y el resultado vuelve a la campaña.
 
-It's fully optional: the [`scripts/dice.py`](../scripts/dice.py) command checks
-for the server at startup and falls back to local Python `random` if it isn't
-running, so installing this changes nothing about the skill's default behavior.
-
----
-
-## How it feels
-
-1. The DM (Claude Code) is sitting on the table with the skill loaded.
-2. Each player opens `http://<dm-mac-ip>:7777/?player=<their-pc-name>` on their
-   phone once at the start of the session and taps "tap to consecrate."
-3. When the DM resolves an action — *"Make a Perception check"* — Claude runs
-   `dice.py d20+4 --player piper --label "Perception"`.
-4. Piper's phone vibrates a 3D d20 onto a candle-lit table. Piper shakes the
-   phone. The die tumbles, settles, and Piper sees the result.
-5. The result returns to Claude, which narrates the outcome.
-
-NPC / monster / hidden DM rolls are kept off the players' phones (omit
-`--player`); they auto-roll server-side and only Claude sees them.
+Es completamente opcional: el comando [`scripts/dice.py`](../scripts/dice.py)
+chequea si el servidor está corriendo al arrancar y recae en el `random` local
+de Python si no lo está, así que instalar esto no cambia nada del
+comportamiento por defecto del skill.
 
 ---
 
-## Requirements
+## Cómo se siente
 
-- macOS or Linux host (the DM's machine running Claude Code)
-- Python 3.9+ with Flask: `pip3 install flask`
-- All phones on the same Wi-Fi as the host (LAN-only by design)
-- A reasonably modern phone browser — the dice scene uses WebGL via Three.js
-  loaded from `unpkg.com`. Tested on iOS 16+ Safari and Chrome.
+1. El DM (Claude Code) está sentado en la mesa con el skill cargado.
+2. Cada jugador abre `http://<ip-mac-del-dm>:7777/?player=<su-nombre-de-pj>`
+   en su teléfono una vez al inicio de la sesión y toca "tap to consecrate."
+3. Cuando el DM resuelve una acción — *"Haz una tirada de Percepción"* —
+   Claude corre `dice.py d20+4 --player piper --label "Perception"`.
+4. El teléfono de Piper vibra un d20 3D sobre una mesa iluminada con velas.
+   Piper sacude el teléfono. El dado da vueltas, se asienta, y Piper ve el
+   resultado.
+5. El resultado vuelve a Claude, que narra el desenlace.
+
+Las tiradas de PNJ / monstruo / ocultas del DM se mantienen fuera de los
+teléfonos de los jugadores (omitiendo `--player`); se auto-tiran del lado del
+servidor y solo Claude las ve.
 
 ---
 
-## Install
+## Requisitos
 
-### Quickest: run it in the foreground
+- Host macOS o Linux (la máquina del DM corriendo Claude Code)
+- Python 3.9+ con Flask: `pip3 install flask`
+- Todos los teléfonos en el mismo Wi-Fi que el host (LAN-only por diseño)
+- Un navegador de teléfono razonablemente moderno — la escena de dados usa
+  WebGL vía Three.js cargado desde `unpkg.com`. Probado en iOS 16+ Safari y
+  Chrome.
+
+---
+
+## Instalación
+
+### Lo más rápido: correrlo en primer plano
 
 ```bash
 python3 dice-server/server.py
 ```
 
-You'll see something like:
+Vas a ver algo como:
 
 ```
 🎲 dice server
    local:   http://localhost:7777
-   network: http://192.168.1.42:7777/?player=<your-name>   ← players
-            http://192.168.1.42:7777/                       ← DM tab
+   network: http://192.168.1.42:7777/?player=<tu-nombre>   ← jugadores
+            http://192.168.1.42:7777/                       ← pestaña del DM
 ```
 
-Players open the `?player=...` URL on their phones. Done.
+Los jugadores abren la URL `?player=...` en sus teléfonos. Listo.
 
-### Recommended on macOS: launchd auto-start
+### Recomendado en macOS: auto-inicio con launchd
 
 ```bash
 ./dice-server/install-launchd.sh
 ```
 
-This installs `~/Library/LaunchAgents/com.dnd-skill.dice-server.plist`, starts
-the server, and keeps it running across logins / crashes. Re-run the script to
-upgrade or after moving the skill directory. To remove:
+Esto instala `~/Library/LaunchAgents/com.dnd-skill.dice-server.plist`, arranca
+el servidor, y lo mantiene corriendo entre logins / crashes. Vuelve a correr el
+script para actualizar o después de mover el directorio del skill. Para
+quitarlo:
 
 ```bash
 launchctl unload ~/Library/LaunchAgents/com.dnd-skill.dice-server.plist
@@ -73,56 +78,60 @@ rm ~/Library/LaunchAgents/com.dnd-skill.dice-server.plist
 
 ### Linux
 
-The server is a plain Flask app. Run it under systemd, screen, tmux, or in a
-terminal — whatever you prefer. Bind address is `0.0.0.0:7777` by default;
-change with `DND_DICE_PORT=8081`.
+El servidor es una app Flask sencilla. Córrelo bajo systemd, screen, tmux, o
+en una terminal — lo que prefieras. La dirección de bind es `0.0.0.0:7777`
+por defecto; cámbiala con `DND_DICE_PORT=8081`.
 
 ---
 
-## How players join
+## Cómo se unen los jugadores
 
-Each player opens this URL on their phone, substituting their own PC name:
+Cada jugador abre esta URL en su teléfono, sustituyendo su propio nombre de PJ:
 
 ```
-http://<dm-mac-ip>:7777/?player=piper
+http://<ip-mac-del-dm>:7777/?player=piper
 ```
 
-Lowercase, no spaces (use hyphens). The name must match what the DM passes via
-`--player` in `dice.py`. Convention is to use the PC's short name.
+Minúsculas, sin espacios (usa guiones). El nombre debe coincidir con lo que el
+DM pasa vía `--player` en `dice.py`. La convención es usar el nombre corto del
+PJ.
 
-The phone should be kept open and on the active tab during play. The page
-holds a screen wake-lock so it won't sleep mid-session.
+El teléfono debe mantenerse abierto y en la pestaña activa durante la partida.
+La página mantiene un wake-lock de pantalla para que no se duerma a mitad de
+sesión.
 
-If a player closes the tab, rolls addressed to them will instead auto-roll
-server-side — the game never deadlocks waiting for a missing phone.
+Si un jugador cierra la pestaña, las tiradas dirigidas a él se auto-tiran del
+lado del servidor en su lugar — el juego nunca se traba esperando un teléfono
+ausente.
 
 ---
 
-## Skill integration
+## Integración con el skill
 
-The opt-in is already wired into `scripts/dice.py`:
+El opt-in ya está cableado en `scripts/dice.py`:
 
 ```bash
-# DM-resolved roll (NPC attacks, monster saves, etc.)
+# Tirada resuelta por el DM (ataques de PNJ, salvaciones de monstruos, etc.)
 python3 scripts/dice.py d20+5 --label "Goblin attack"
 
-# Player roll — routes to that player's phone
+# Tirada de jugador — se enruta al teléfono de ese jugador
 python3 scripts/dice.py d20+4 --label "Perception" --player piper
 
-# Force-skip the physical roller for this one call
+# Forzar-saltear el roller físico para esta llamada puntual
 python3 scripts/dice.py d20+5 --auto
 
-# Force-skip globally for a session
+# Forzar-saltear globalmente para una sesión
 DND_DICE_PHYSICAL=0 python3 scripts/dice.py d20+5
 ```
 
-If the server isn't running, the script silently falls back to local random
-— exactly the original `dice.py` behavior. So a campaign can be played on a
-machine without the server installed and nothing breaks.
+Si el servidor no está corriendo, el script recae silenciosamente en el
+random local — exactamente el comportamiento original de `dice.py`. Así que
+una campaña se puede jugar en una máquina sin el servidor instalado y nada se
+rompe.
 
-When the server *was* used but no phone was on the target channel, the output
-gets an `[auto]` tag so you know the result came from the server rather than
-a physical cast:
+Cuando el servidor *sí* se usó pero ningún teléfono estaba en el canal
+objetivo, la salida recibe una etiqueta `[auto]` para que sepas que el
+resultado vino del servidor en vez de una tirada física:
 
 ```
 Roll: 17 + 5 = 22 [auto]
@@ -130,53 +139,57 @@ Roll: 17 + 5 = 22 [auto]
 
 ---
 
-## What it looks like
+## Cómo se ve
 
-The phone scene is a single `<canvas>` rendered with [Three.js](https://threejs.org/):
-real polyhedron geometry (`IcosahedronGeometry` for d20,
-`DodecahedronGeometry` for d12, etc.), PBR brass material lit by a warm key
-light and a cool blue rim, dice numbered with engraved bronze decals drawn to
-canvas textures (Cormorant Garamond typography), hand-rolled physics
-(gravity, bounce, settle-to-target-face), and synthesized audio (clatter,
-thud per bounce, chime on a natural 20). It tone-maps in ACES with a subtle
-film-grain overlay for the antique-print mood.
+La escena del teléfono es un único `<canvas>` renderizado con
+[Three.js](https://threejs.org/): geometría de poliedro real
+(`IcosahedronGeometry` para el d20, `DodecahedronGeometry` para el d12, etc.),
+material PBR de bronce iluminado por una luz clave cálida y un rim frío azul,
+dados numerados con calcomanías de bronce grabadas dibujadas sobre texturas de
+canvas (tipografía Cormorant Garamond), física hecha a mano (gravedad, rebote,
+asentamiento hacia la cara objetivo), y audio sintetizado (traqueteo, golpe
+por rebote, campanilla en un 20 natural). Aplica tone-mapping ACES con una
+sutil superposición de grano de película para el ambiente de impresión
+antigua.
 
-No external CDN dependencies other than Three.js itself and Google Fonts —
-no `node_modules`, no build step, no compilation.
+Sin dependencias de CDN externas más allá del propio Three.js y Google Fonts
+— sin `node_modules`, sin paso de build, sin compilación.
 
 ---
 
-## Protocol (for the curious)
+## Protocolo (para los curiosos)
 
-| Endpoint | Method | Purpose |
+| Endpoint | Método | Propósito |
 |---|---|---|
-| `GET /` | — | The dice page. Add `?player=NAME` to subscribe a channel. |
-| `GET /events` | SSE | Server-Sent Events stream of rolls for this player's channel (default: `_dm`). |
+| `GET /` | — | La página de dados. Agrega `?player=NOMBRE` para suscribir un canal. |
+| `GET /events` | SSE | Stream de Server-Sent Events de tiradas para el canal de este jugador (default: `_dm`). |
 | `POST /roll` | JSON | `{"spec":"1d20+5","label":"...","player":"piper","physical":true}` |
-| `GET /spec/<id>` | — | Returns the spec for an in-flight roll (page uses this on load). |
+| `GET /spec/<id>` | — | Devuelve la spec de una tirada en vuelo (la página usa esto al cargar). |
 | `POST /submit/<id>` | JSON | `{"total":17,"rolls":[12],"kept":[12],"modifier":5,"spec":"1d20+5"}` |
-| `GET /result/<id>` | — | Poll for a roll's result (used by `dice.py`). |
+| `GET /result/<id>` | — | Consulta por el resultado de una tirada (usado por `dice.py`). |
 | `GET /health` | — | `{"ok":true,"subscribers":{"piper":1}}` |
 
-The notation supported by the server matches `dice.py`:
-`NdM[kh|kl N][+|-K]` (e.g. `4d6kh3`, `2d20kh1+5`).
+La notación soportada por el servidor coincide con `dice.py`:
+`NdM[kh|kl N][+|-K]` (ej. `4d6kh3`, `2d20kh1+5`).
 
 ---
 
-## Privacy & security
+## Privacidad y seguridad
 
-- LAN-only: binds `0.0.0.0:7777`. There's no auth — anyone on the same Wi-Fi
-  can connect, see rolls, and trigger fake rolls. This is intentional for a
-  trusted home/table setting.
-- Do not expose the port to the internet without adding auth.
-- No telemetry, no analytics, no outbound network calls beyond Three.js +
-  Google Fonts on the player's phone (both load over HTTPS direct from CDNs).
+- Solo-LAN: hace bind a `0.0.0.0:7777`. No hay auth — cualquiera en el mismo
+  Wi-Fi puede conectarse, ver tiradas, y disparar tiradas falsas. Esto es
+  intencional para un entorno de confianza de hogar/mesa.
+- No expongas el puerto a internet sin agregar auth.
+- Sin telemetría, sin analytics, sin llamadas de red salientes más allá de
+  Three.js + Google Fonts en el teléfono del jugador (ambos cargan por HTTPS
+  directo desde CDNs).
 
 ---
 
-## Why this exists
+## Por qué existe esto
 
-The default `dice.py` rolls deterministically in Python. That's fine, but it
-removes the moment a die actually lands — the tiny rite that makes D&D feel
-like a ritual rather than a chat. This bolts that moment back on without
-changing how the skill works for anyone who doesn't want it.
+El `dice.py` por defecto tira de forma determinística en Python. Eso está
+bien, pero elimina el momento en que un dado realmente cae — el pequeño rito
+que hace que D&D se sienta como un ritual en vez de un chat. Esto vuelve a
+agregar ese momento sin cambiar cómo funciona el skill para quien no lo
+quiera.

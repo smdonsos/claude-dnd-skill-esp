@@ -1,55 +1,55 @@
-# Narrator TTS setup (optional)
+# Configuración de TTS del narrador (opcional)
 
-The display companion can read narrator and NPC blocks aloud via Google's Gemini Flash TTS. It's optional, off by default, and the rest of the skill works fine without it. This guide gets you a working setup in ~5 minutes using a free Google account.
+El display companion puede leer en voz alta los bloques de narrador y de PNJ usando Gemini Flash TTS de Google. Es opcional, está apagado por defecto, y el resto del skill funciona bien sin esto. Esta guía te deja con una configuración funcionando en ~5 minutos usando una cuenta de Google gratuita.
 
-If you skip this guide, the display still renders text exactly as it does today — no audio, no warnings, no behavior change.
+Si te saltas esta guía, el display sigue renderizando el texto exactamente como lo hace hoy — sin audio, sin advertencias, sin cambios de comportamiento.
 
-## What you get
+## Qué obtienes
 
-- A speaker button at the bottom of every narrator and NPC block. Click to hear that block read aloud.
-- A 9-voice dropdown (4 male, 5 female) sitting next to the speaker button. Change voice mid-session.
-- An optional **Auto Narrate** toggle in the top-right audio controls. When on, every new narrator/NPC block auto-plays in **your browser only** — perfect for a TV or main-display cast device while player phones stay quiet.
-- Multi-language support — Gemini auto-detects the language from the text, so a campaign played in Spanish, Japanese, Hindi, or any of the [24 supported languages](https://ai.google.dev/gemini-api/docs/speech-generation) just works.
+- Un botón de altavoz al final de cada bloque de narrador y de PNJ. Haz clic para escuchar ese bloque leído en voz alta.
+- Un desplegable de 9 voces (4 masculinas, 5 femeninas) al lado del botón de altavoz. Cambia de voz a mitad de sesión.
+- Un toggle opcional de **Narración automática** en los controles de audio arriba a la derecha. Cuando está activo, cada bloque nuevo de narrador/PNJ se reproduce automáticamente **solo en tu navegador** — perfecto para un dispositivo de TV o pantalla principal mientras los teléfonos de los jugadores se mantienen en silencio.
+- Soporte multi-idioma — Gemini detecta automáticamente el idioma a partir del texto, así que una campaña jugada en español, japonés, hindi, o cualquiera de los [24 idiomas soportados](https://ai.google.dev/gemini-api/docs/speech-generation) simplemente funciona.
 
-## What it costs
+## Qué cuesta
 
-Gemini Flash TTS bills per character. Typical narration block is ~600 characters; current pricing is ~$0.001 per block. A 3-hour session with ~30 narration blocks costs roughly 3¢. **The free tier handles casual use** — you only need to enable billing if you hit rate-limit errors or if you're a new AI Studio account (Google requires prepaid billing for new accounts as of 2026).
+Gemini Flash TTS cobra por carácter. Un bloque de narración típico tiene ~600 caracteres; el precio actual es de ~$0.001 por bloque. Una sesión de 3 horas con ~30 bloques de narración cuesta aproximadamente 3¢. **El nivel gratuito cubre el uso casual** — solo necesitas habilitar la facturación si te topas con errores de rate-limit o si eres una cuenta nueva de AI Studio (Google requiere facturación prepaga para cuentas nuevas desde 2026).
 
-## Setup — three steps, ~5 minutes
+## Configuración — tres pasos, ~5 minutos
 
-### 1. Get a Gemini API key from Google AI Studio
+### 1. Consigue una API key de Gemini en Google AI Studio
 
-This is the easiest path. No `gcloud`, no Cloud Console, no service accounts.
+Este es el camino más fácil. Sin `gcloud`, sin Cloud Console, sin service accounts.
 
-1. Visit **https://aistudio.google.com/apikey** and sign in with your Google / Gmail account. Accept the terms on first visit.
-2. Click **Create API key**. If it asks which project to use, accept the default — Google will create one.
-3. Copy the key. It looks like `AIza...` and is roughly 39 characters.
+1. Visita **https://aistudio.google.com/apikey** e inicia sesión con tu cuenta de Google / Gmail. Acepta los términos la primera vez.
+2. Haz clic en **Create API key**. Si pregunta qué proyecto usar, acepta el default — Google va a crear uno.
+3. Copia la key. Se ve como `AIza...` y tiene aproximadamente 39 caracteres.
 
-### 2. Save the key to your local config
+### 2. Guarda la key en tu configuración local
 
 ```bash
 mkdir -p ~/.config/claude-dnd && chmod 700 ~/.config/claude-dnd
 
-# Paste the key when prompted, press Return, then Ctrl-D:
+# Pega la key cuando se te pida, presiona Enter, después Ctrl-D:
 cat > ~/.config/claude-dnd/tts.key
 
 chmod 600 ~/.config/claude-dnd/tts.key
 ```
 
-The skill reads from this path automatically. If you'd rather use an environment variable, export `DND_TTS_KEY` (or `GEMINI_API_KEY`) instead and skip the key file — env vars take precedence.
+El skill lee de esta ruta automáticamente. Si prefieres usar una variable de entorno, exporta `DND_TTS_KEY` (o `GEMINI_API_KEY`) en su lugar y sáltate el archivo de key — las variables de entorno tienen prioridad.
 
-### 3. Verify
+### 3. Verifica
 
-From the skill base directory:
+Desde el directorio base del skill:
 
 ```bash
 python3 display/tts.py --test
 ```
 
-You should see:
+Deberías ver:
 
 ```
-API key source: file:/Users/you/.config/claude-dnd/tts.key
+API key source: file:/Users/usuario/.config/claude-dnd/tts.key
 Model: gemini-2.5-flash-preview-tts
 Voice: Enceladus
 Text:  'Hello, narrator voice test. The torchlit hall awaits.'
@@ -57,73 +57,73 @@ Calling Gemini Flash TTS…
   OK — received 76800 bytes of L16 PCM (24 kHz mono).
 ```
 
-To also hear it (macOS only):
+Para también escucharlo (solo macOS):
 
 ```bash
 python3 display/tts.py --test --speak
 ```
 
-If verification fails, check the **Troubleshooting** table at the bottom.
+Si la verificación falla, revisa la tabla de **Solución de problemas** al final.
 
-## Using it during a session
+## Usándolo durante una sesión
 
-Once the key is configured and the display companion is running:
+Una vez que la key está configurada y el display companion está corriendo:
 
-- A small speaker icon appears at the bottom-right of every narrator (`.dm-block`) and NPC (`.npc-block`) block. Click to play. Click again to stop.
-- A **Voices** dropdown next to it lets you switch narrator voice. The selection persists per-campaign in `state.md → ## Session Flags → tts_voice: <name>`.
-- The **Auto Narrate** row in the top-right audio controls is per-browser — toggle it on for your TV cast, off on your player phones. Setting is saved in `localStorage`.
+- Aparece un pequeño ícono de altavoz abajo a la derecha de cada bloque de narrador (`.dm-block`) y de PNJ (`.npc-block`). Haz clic para reproducir. Haz clic de nuevo para detener.
+- Un desplegable de **Voces** al lado te deja cambiar la voz del narrador. La selección persiste por campaña en `state.md → ## Session Flags → tts_voice: <name>`.
+- La fila de **Narración automática** en los controles de audio arriba a la derecha es por navegador — actívala para tu TV de proyección, desactívala en los teléfonos de los jugadores. La configuración se guarda en `localStorage`.
 
-Player input blocks, dice-roll blocks, and tutor/help blocks intentionally **don't** get a speaker button — they're metadata, not narrative voice. The 2000-character cap on the synthesis endpoint is the upper bound; longer narration blocks are truncated server-side.
+Los bloques de input de jugador, los bloques de tirada de dados, y los bloques de tutor/ayuda intencionalmente **no** tienen botón de altavoz — son metadata, no voz narrativa. El límite de 2000 caracteres del endpoint de síntesis es el tope máximo; los bloques de narración más largos se truncan del lado del servidor.
 
-## Voice catalog
+## Catálogo de voces
 
-Curated 9-voice subset from Gemini's 30-voice catalog, scoped for narrative DM voices.
+Subconjunto curado de 9 voces del catálogo de 30 voces de Gemini, acotado a voces narrativas de DM.
 
-| Group | Voice | Notes |
+| Grupo | Voz | Notas |
 |---|---|---|
-| Male | Charon | Low, gravelly — heavies, villains |
-| Male | **Enceladus** *(default)* | Deep, measured — classic narrator |
-| Male | Fenrir | Rough, growling — feral characters |
-| Male | Umbriel | Soft, reflective — sages and elders |
-| Female | Aoede | Clear, bright — heroic / informative |
-| Female | Gacrux | Mature, warm — innkeepers, mentors |
-| Female | Kore | Youthful, energetic |
-| Female | Vindemiatrix | Crisp, formal — nobles, scholars |
-| Female | Zephyr | Light, airy — fey, sprites |
+| Masculina | Charon | Grave, áspera — villanos, personajes pesados |
+| Masculina | **Enceladus** *(default)* | Profunda, medida — narrador clásico |
+| Masculina | Fenrir | Ruda, gruñona — personajes feroces |
+| Masculina | Umbriel | Suave, reflexiva — sabios y ancianos |
+| Femenina | Aoede | Clara, brillante — heroica / informativa |
+| Femenina | Gacrux | Madura, cálida — taberneros, mentores |
+| Femenina | Kore | Juvenil, enérgica |
+| Femenina | Vindemiatrix | Nítida, formal — nobles, eruditos |
+| Femenina | Zephyr | Ligera, aérea — feéricos, hadas |
 
-To expand the dropdown to Gemini's full 30 voices, edit `_TTS_VOICES_MALE` / `_TTS_VOICES_FEMALE` in `display/templates/index.html` and add the new names to `VALID_VOICES` in `display/tts.py`. The full catalog is documented at [Google's speech-generation guide](https://ai.google.dev/gemini-api/docs/speech-generation).
+Para expandir el desplegable a las 30 voces completas de Gemini, edita `_TTS_VOICES_MALE` / `_TTS_VOICES_FEMALE` en `display/templates/index.html` y agrega los nombres nuevos a `VALID_VOICES` en `display/tts.py`. El catálogo completo está documentado en la [guía de speech-generation de Google](https://ai.google.dev/gemini-api/docs/speech-generation).
 
-## Per-browser cost surfacing
+## Costo visible por navegador
 
-Each player clicking the speaker button on the same narration block produces a **separate** call to Gemini — there's no server-side caching by content hash. A 4-player table where everyone clicks every block roughly 4× the per-block cost. If that becomes a concern, two practical mitigations:
+Cada jugador que hace clic en el botón de altavoz sobre el mismo bloque de narración produce una llamada **separada** a Gemini — no hay caché del lado del servidor por hash de contenido. Una mesa de 4 jugadores donde todos hacen clic multiplica aproximadamente por 4× el costo por bloque. Si eso se vuelve una preocupación, dos mitigaciones prácticas:
 
-1. Use **Auto Narrate on the casting TV only** — players hear the audio from the TV speaker and don't click their own phones.
-2. Set a daily spend cap on your Google billing project at [console.cloud.google.com/billing](https://console.cloud.google.com/billing).
+1. Usar **Narración automática solo en la TV de proyección** — los jugadores escuchan el audio desde el parlante de la TV y no hacen clic en sus propios teléfonos.
+2. Poner un tope de gasto diario en tu proyecto de facturación de Google en [console.cloud.google.com/billing](https://console.cloud.google.com/billing).
 
-## Multi-language sessions
+## Sesiones multi-idioma
 
-Gemini Flash TTS auto-detects the input language from the text content. To play a Spanish-language campaign, just narrate in Spanish — the same `/tts` endpoint comes back synthesized correctly. The voice catalog stays identical across languages.
+Gemini Flash TTS detecta automáticamente el idioma de entrada a partir del contenido del texto. Para reproducir una campaña en español, simplemente narra en español — el mismo endpoint `/tts` devuelve la síntesis correctamente. El catálogo de voces se mantiene idéntico entre idiomas.
 
-To also wire up SFX trigger packs (sword-clash sounds, magic shimmer, etc.) for non-English narration, set the active SFX languages either via environment:
+Para también activar los paquetes de triggers de SFX (sonidos de choque de espadas, destello mágico, etc.) para narración en un idioma distinto del inglés, configura los idiomas de SFX activos ya sea vía variable de entorno:
 
 ```bash
-export DND_SFX_LANGUAGES=en,es     # English first, then Spanish
+export DND_SFX_LANGUAGES=en,es     # inglés primero, después español
 ```
 
-…or per-campaign via `state.md → ## Session Flags`:
+…o por campaña vía `state.md → ## Session Flags`:
 
 ```
 sfx_languages: en,zh
 ```
 
-The skill currently ships SFX packs for all 24 Gemini-supported languages (`ar`, `bn`, `de`, `en`, `es`, `fr`, `hi`, `id`, `it`, `ja`, `ko`, `mr`, `nl`, `pl`, `pt`, `ro`, `ru`, `ta`, `te`, `th`, `tr`, `uk`, `vi`, `zh`). Community PRs to extend any pack are welcome.
+El skill actualmente trae paquetes de SFX para los 24 idiomas soportados por Gemini (`ar`, `bn`, `de`, `en`, `es`, `fr`, `hi`, `id`, `it`, `ja`, `ko`, `mr`, `nl`, `pl`, `pt`, `ro`, `ru`, `ta`, `te`, `th`, `tr`, `uk`, `vi`, `zh`). Los PRs de la comunidad para extender cualquier paquete son bienvenidos.
 
-## Path B — `gcloud` restricted key (advanced, optional)
+## Camino B — key restringida con `gcloud` (avanzado, opcional)
 
-If you already use the `gcloud` CLI and would rather mint a key scoped to *only* the TTS API — so a leak can't reach Cloud Storage, BigQuery, or other Google services on the same project — use this path:
+Si ya usas la CLI de `gcloud` y prefieres acuñar una key acotada *solo* a la API de TTS — para que una filtración no pueda alcanzar Cloud Storage, BigQuery, u otros servicios de Google en el mismo proyecto — usa este camino:
 
 ```bash
-PROJ=my-dnd-tts                  # any globally-unique project id
+PROJ=my-dnd-tts                  # cualquier id de proyecto globalmente único
 BILLING=YOUR-BILLING-ID          # gcloud billing accounts list
 
 gcloud projects create "$PROJ"
@@ -140,26 +140,26 @@ gcloud alpha services api-keys create \
 chmod 600 ~/.config/claude-dnd/tts.key
 ```
 
-The `--api-target` restriction means a leaked key can only call `generativelanguage.googleapis.com` on this specific project. Disable / rotate without affecting any other surface.
+La restricción `--api-target` significa que una key filtrada solo puede llamar a `generativelanguage.googleapis.com` en este proyecto específico. Deshabilítala / rótala sin afectar ninguna otra superficie.
 
-## Troubleshooting
+## Solución de problemas
 
-| Symptom | Likely cause |
+| Síntoma | Causa probable |
 |---|---|
-| `python3 display/tts.py --test` says "API key: unset" | No env var **and** no key file — save your key to `~/.config/claude-dnd/tts.key`. |
-| Speaker button shows "TTS 401" | API key invalid or disabled — re-mint at https://aistudio.google.com/apikey. |
-| Speaker button shows "TTS 403" | Key not authorized for `generativelanguage.googleapis.com` (Path B keys), or billing not configured on a new AI Studio account. |
-| Speaker button shows "TTS 429" | Free-tier rate limit, or new AI Studio account without billing — enable billing at https://aistudio.google.com or set a prepaid balance. |
-| Speaker button shows "TTS 503" | Server reports TTS not configured — re-verify the key file and restart the display. |
-| Audio doesn't play but no error label | Check device volume; on iOS Safari, click the speaker once to grant the AudioContext gesture, then auto-narrate will work for the rest of the session. |
-| 1-3 second delay before audio starts | Normal — Gemini Flash TTS synthesis latency. Type Speed `Fast` paired with auto-narrate gives the tightest pairing of text and voice. |
+| `python3 display/tts.py --test` dice "API key: unset" | No hay variable de entorno **ni** archivo de key — guarda tu key en `~/.config/claude-dnd/tts.key`. |
+| El botón de altavoz muestra "TTS 401" | API key inválida o deshabilitada — acuña una nueva en https://aistudio.google.com/apikey. |
+| El botón de altavoz muestra "TTS 403" | La key no está autorizada para `generativelanguage.googleapis.com` (keys del Camino B), o la facturación no está configurada en una cuenta nueva de AI Studio. |
+| El botón de altavoz muestra "TTS 429" | Límite de rate del nivel gratuito, o cuenta nueva de AI Studio sin facturación — habilita la facturación en https://aistudio.google.com o configura un saldo prepago. |
+| El botón de altavoz muestra "TTS 503" | El servidor reporta que TTS no está configurado — reverifica el archivo de key y reinicia el display. |
+| El audio no se reproduce pero no hay etiqueta de error | Revisa el volumen del dispositivo; en iOS Safari, haz clic en el altavoz una vez para conceder el gesto de AudioContext, después la narración automática va a funcionar el resto de la sesión. |
+| Demora de 1-3 segundos antes de que empiece el audio | Normal — latencia de síntesis de Gemini Flash TTS. La velocidad de tipeo `Fast` combinada con narración automática da el emparejamiento más ajustado de texto y voz. |
 
-## How to disable
+## Cómo deshabilitarlo
 
-Delete the key file:
+Borra el archivo de key:
 
 ```bash
 rm ~/.config/claude-dnd/tts.key
 ```
 
-The speaker buttons disappear from the display on next page load. Nothing else changes.
+Los botones de altavoz desaparecen del display en la próxima carga de página. Nada más cambia.
