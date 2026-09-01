@@ -39,7 +39,7 @@ python3 ${CLAUDE_SKILL_DIR}/scripts/dice.py d20+5 --label "Ataque de goblin"
 
 Después corré el comando. La llamada de Bash va a bloquear mientras el jugador agarra el teléfono, ve el prompt, y tira; el resultado te vuelve después. Sin el aviso verbal el jugador no va a saber que tiene que mirar, y la llamada va a esperar unos 3 minutos antes de expirar hacia una auto-tirada.
 
-Marca 20 natural (CRITICAL HIT) y 1 natural (FUMBLE) automáticamente. Si el output contiene `[auto]`, el teléfono del objetivo no estaba conectado y el servidor tiró por su cuenta — no hace falta ninguna acción, solo narrá el resultado.
+Marca 20 natural (GOLPE CRÍTICO) y 1 natural (PIFIA) automáticamente. Si el output contiene `[auto]`, el teléfono del objetivo no estaba conectado y el servidor tiró por su cuenta — no hace falta ninguna acción, solo narrá el resultado.
 
 Para forzar que se salte el tirador físico (ej. tiradas de PNJ de alto volumen que no querés mostrar): flag `--auto`, o `DND_DICE_PHYSICAL=0 python3 ...`.
 
