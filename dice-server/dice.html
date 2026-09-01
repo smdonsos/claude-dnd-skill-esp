@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>fortune's table</title>
+  <title>la mesa del destino</title>
 
   <!-- Google Fonts: SRI intentionally omitted on the CSS link because Google
        serves UA-varying content (different WOFF2/WOFF rules per browser) and
@@ -338,18 +338,18 @@
 
   <div id="prompt">
     <div class="ornament">⚜ the table is set ⚜</div>
-    <div class="verse">Cast the die</div>
+    <div class="verse">Tirá el dado</div>
     <div class="rule"></div>
     <div class="sub">tap · or shake the phone</div>
   </div>
 
-  <div id="status"><span class="dot"></span><span id="status-text">connecting</span></div>
+  <div id="status"><span class="dot"></span><span id="status-text">conectando</span></div>
 
   <div id="unlock">
     <div class="ornament">⚜</div>
-    <h1>fortune's table</h1>
+    <h1>la mesa del destino</h1>
     <div class="rule"></div>
-    <p class="sub" id="unlock-sub">tap to consecrate</p>
+    <p class="sub" id="unlock-sub">tocá para consagrar</p>
     <div id="player-name-display" style="margin-top:18px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:24px;opacity:0.85;letter-spacing:0.04em;"></div>
   </div>
 
@@ -1028,10 +1028,10 @@
     {
       const disp = document.getElementById("player-name-display");
       if (PLAYER) {
-        disp.textContent = `cast for ${PLAYER}`;
+        disp.textContent = `tirando por ${PLAYER}`;
         document.title = `🎲 ${PLAYER}`;
       } else {
-        disp.textContent = "the dungeon master's table";
+        disp.textContent = "la mesa del DM";
       }
     }
 
@@ -1090,7 +1090,7 @@
       let parsed;
       try { parsed = parseSpec(meta.spec); }
       catch {
-        labelEl.textContent = "unreadable rune: " + meta.spec;
+        labelEl.textContent = "runa ilegible: " + meta.spec;
         labelEl.classList.add("show");
         busy = false; return;
       }
@@ -1103,14 +1103,14 @@
 
       // pick a flavorful verb per die count for the prompt
       const verseOptions = parsed.count > 1
-        ? ["Cast the dice", "Loose them", "Throw fate"]
-        : ["Cast the die", "Throw it", "Let it fall"];
+        ? ["Tirá los dados", "Soltalos", "Lanzá tu suerte"]
+        : ["Tirá el dado", "Lanzalo", "Dejalo caer"];
       promptVerse.textContent = verseOptions[Math.floor(Math.random() * verseOptions.length)];
       promptEl.classList.add("show");
-      statusText.textContent = "awaiting your hand";
+      statusText.textContent = "esperando tu mano";
       await waitForRollTrigger();
       promptEl.classList.remove("show");
-      statusText.textContent = "casting…";
+      statusText.textContent = "tirando…";
 
       clatter();
 
@@ -1181,7 +1181,7 @@
         });
       } catch {}
 
-      statusText.textContent = "awaiting the next casting";
+      statusText.textContent = "esperando la próxima tirada";
 
       await new Promise(r => setTimeout(r, queue.length ? 2400 : 0));
       busy = false;
@@ -1210,11 +1210,11 @@
       es = new EventSource(url);
       es.onopen = () => {
         statusEl.classList.remove("disconnected");
-        statusText.textContent = PLAYER ? `${PLAYER}'s table · awaiting` : "awaiting the casting";
+        statusText.textContent = PLAYER ? `mesa de ${PLAYER} · esperando` : "esperando la tirada";
       };
       es.onerror = () => {
         statusEl.classList.add("disconnected");
-        statusText.textContent = "the link is broken";
+        statusText.textContent = "se cortó el enlace";
       };
       es.onmessage = e => {
         const msg = JSON.parse(e.data);
