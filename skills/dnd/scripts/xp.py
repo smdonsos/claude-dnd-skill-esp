@@ -173,16 +173,28 @@ def _next_level_xp(current_level: int) -> int:
 
 # ── Character file I/O ────────────────────────────────────────────────────────
 
+def _normalize_char_key(name: str) -> str:
+    """Fold a character name/filename-stem down to bare alphanumerics for
+    matching regardless of which separator convention was used to save the
+    file — the codebase isn't consistent (hyphenated slugs per
+    npc_rename.py's "characters/<slug>.md" convention, underscored slugs per
+    name_registry.py, or literal spaces), so award lookups must tolerate all
+    three rather than only the literal-lowercase form."""
+    return re.sub(r"[^a-z0-9]", "", name.lower())
+
+
 def _find_char_path(campaign: str, char_name: str) -> pathlib.Path:
     char_dir = CAMPAIGNS_DIR / campaign / "characters"
-    # Try exact match first
+    # Try exact match first (literal spaces, e.g. "Bren Alderath.md")
     exact = char_dir / f"{char_name.lower()}.md"
     if exact.exists():
         return exact
-    # Case-insensitive search
+    # Normalized search — tolerates hyphenated/underscored slugs and
+    # case differences regardless of separator convention.
     if char_dir.exists():
+        target = _normalize_char_key(char_name)
         for p in char_dir.glob("*.md"):
-            if p.stem.lower() == char_name.lower():
+            if _normalize_char_key(p.stem) == target:
                 return p
     raise FileNotFoundError(
         f"Character file not found for '{char_name}' in campaign '{campaign}'.\n"
