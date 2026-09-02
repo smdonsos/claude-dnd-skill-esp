@@ -5307,6 +5307,22 @@ function renderXpBlock(xpData) {
 
 // ── Replay batch (reconnect / session resume) ─────────────────────────
 function renderReplayBatch(items) {
+  // A replay batch is the server's full narration log, sent on every fresh
+  // /stream connection — including the browser's own automatic EventSource
+  // reconnects (network hiccups, idle timeouts). Without wiping first, each
+  // reconnect re-appended the entire history on top of what was already
+  // rendered, duplicating every block once per reconnect.
+  charQueue        = [];
+  isTyping         = false;
+  _currentInlineEl = null;
+  if (currentCursor && currentCursor.parentNode) {
+    currentCursor.parentNode.removeChild(currentCursor);
+  }
+  currentCursor = null;
+  currentEl     = null;
+  clearTimeout(idleTimer);
+  textContent.innerHTML = '';
+
   flushNewBlock();
   items.forEach(item => {
     if (!item) return;
